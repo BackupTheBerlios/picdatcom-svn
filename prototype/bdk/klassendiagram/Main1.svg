@@ -1,0 +1,364 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<!DOCTYPE svg PUBLIC "-//W3C//DTD SVG 1.0//EN" "http://www.w3.org/TR/2001/PR-SVG-20010719/DTD/svg10.dtd">
+<svg width="97cm" height="88cm" viewBox="-3 3 97 88">
+  <rect style="fill: #ffffff" x="38.25" y="3.5" width="8.45" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="38.25" y="3.5" width="8.45" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: italic; font-weight: 700" x="42.475" y="4.5">BDK_entry_point</text>
+  <rect style="fill: #ffffff" x="38.25" y="4.9" width="8.45" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="38.25" y="4.9" width="8.45" height="0.4"/>
+  <rect style="fill: #ffffff" x="38.25" y="5.3" width="8.45" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="38.25" y="5.3" width="8.45" height="0.4"/>
+  <rect style="fill: #ffffff" x="1.5" y="9.4" width="7.7" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="1.5" y="9.4" width="7.7" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="5.35" y="10.4">SIZ_part_one</text>
+  <rect style="fill: #ffffff" x="1.5" y="10.8" width="7.7" height="9"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="1.5" y="10.8" width="7.7" height="9"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="11.7">+Lsiz: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="12.5">+Rsiz: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="13.3">+Xsiz: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="14.1">+Ysiz: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="14.9">+XOsiz: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="15.7">+YOsiz: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="16.5">+XTsiz: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="17.3">+YTsiz: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="18.1">+XTOsiz: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="18.9">+YTOsiz: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.65" y="19.7">+Csiz: unsigned char</text>
+  <rect style="fill: #ffffff" x="1.5" y="19.8" width="7.7" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="1.5" y="19.8" width="7.7" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="5.35,9.4 5.35,4.2 36.9914,4.2 "/>
+  <polygon style="fill: #ffffff" points="38.25,4.2 37.55,4.44 36.85,4.2 37.55,3.96 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="38.25,4.2 37.55,4.44 36.85,4.2 37.55,3.96 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="21.8" y="4"></text>
+  <rect style="fill: #ffffff" x="1.4" y="25.6" width="7.9" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="1.4" y="25.6" width="7.9" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="5.35" y="26.6">SIZ_part_two</text>
+  <rect style="fill: #ffffff" x="1.4" y="27" width="7.9" height="2.6"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="1.4" y="27" width="7.9" height="2.6"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.55" y="27.9">+Ssiz: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.55" y="28.7">+XRsiz: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="1.55" y="29.5">+YRsiz: unsigned char</text>
+  <rect style="fill: #ffffff" x="1.4" y="29.6" width="7.9" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="1.4" y="29.6" width="7.9" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="5.35,25.6 5.35,25.6 5.35,21.4586 "/>
+  <polygon style="fill: #ffffff" points="5.35,20.2 5.59,20.9 5.35,21.6 5.11,20.9 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="5.35,20.2 5.59,20.9 5.35,21.6 5.11,20.9 "/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="5.45" y="22.7"></text>
+  <rect style="fill: #ffffff" x="17.95" y="20.05" width="11.85" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="17.95" y="20.05" width="11.85" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="23.875" y="21.05">Region_of_interest_RGN</text>
+  <rect style="fill: #ffffff" x="17.95" y="21.45" width="11.85" height="4.2"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="17.95" y="21.45" width="11.85" height="4.2"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="18.1" y="22.35">+Lrgn: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="18.1" y="23.15">+Crgn: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="18.1" y="23.95">+Srgn: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="18.1" y="24.75">+SPrgn: unsigned</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="18.1" y="25.55">+use_RGN: bool</text>
+  <rect style="fill: #ffffff" x="17.95" y="25.65" width="11.85" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="17.95" y="25.65" width="11.85" height="0.4"/>
+  <rect style="fill: #ffffff" x="38.8" y="13.8" width="5" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="38.8" y="13.8" width="5" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="41.3" y="14.8">Decoder</text>
+  <rect style="fill: #ffffff" x="38.8" y="15.2" width="5" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="38.8" y="15.2" width="5" height="0.4"/>
+  <rect style="fill: #ffffff" x="38.8" y="15.6" width="5" height="1"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="38.8" y="15.6" width="5" height="1"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="38.95" y="16.35">+Decoder()</text>
+  <rect style="fill: #ffffff" x="58.6" y="10.55" width="18.95" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="58.6" y="10.55" width="18.95" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="68.075" y="11.55">Encoder</text>
+  <rect style="fill: #ffffff" x="58.6" y="11.95" width="18.95" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="58.6" y="11.95" width="18.95" height="0.4"/>
+  <rect style="fill: #ffffff" x="58.6" y="12.35" width="18.95" height="2.45"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="58.6" y="12.35" width="18.95" height="2.45"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="58.75" y="13.1">+Encoder()</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="58.75" y="13.9">+start_encode_RGB(in Rsiz:unsigned short,</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="58.75" y="14.55">                  in Xsiz:unsigned int)</text>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="42.475,6.6118 42.475,9.75 41.3,9.75 41.3,13.8 "/>
+  <polygon style="fill: #ffffff" points="42.875,6.6118 42.475,5.8118 42.075,6.6118 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="42.875,6.6118 42.475,5.8118 42.075,6.6118 "/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="42.475,6.6118 42.475,8.125 68.075,8.125 68.075,10.55 "/>
+  <polygon style="fill: #ffffff" points="42.875,6.6118 42.475,5.8118 42.075,6.6118 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="42.875,6.6118 42.475,5.8118 42.075,6.6118 "/>
+  <rect style="fill: #ffffff" x="35.4437" y="22.85" width="3.05" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="35.4437" y="22.85" width="3.05" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="36.9687" y="23.85">Tile</text>
+  <rect style="fill: #ffffff" x="35.4437" y="24.25" width="3.05" height="3.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="35.4437" y="24.25" width="3.05" height="3.4"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="35.5937" y="25.15">+tx0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="35.5937" y="25.95">+tx1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="35.5937" y="26.75">+ty0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="35.5937" y="27.55">+ty1: int</text>
+  <rect style="fill: #ffffff" x="35.4437" y="27.65" width="3.05" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="35.4437" y="27.65" width="3.05" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="36.9687,22.8015 36.9687,10.8 38.25,10.8 38.25,6.95858 "/>
+  <polygon style="fill: #ffffff" points="38.25,5.7 38.49,6.4 38.25,7.1 38.01,6.4 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="38.25,5.7 38.49,6.4 38.25,7.1 38.01,6.4 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="37.6093" y="10.6"></text>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="29.8,23.55 29.8,23.55 35.4437,23.55 35.4437,23.55 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="32.6219" y="23.35"></text>
+  <rect style="fill: #ffffff" x="32.7076" y="36.45" width="6.15" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="32.7076" y="36.45" width="6.15" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="35.7826" y="37.45">Component</text>
+  <rect style="fill: #ffffff" x="32.7076" y="37.85" width="6.15" height="4.2"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="32.7076" y="37.85" width="6.15" height="4.2"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.8576" y="38.75">+tcx0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.8576" y="39.55">+tcx1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.8576" y="40.35">+tcy0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.8576" y="41.15">+tcy1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.8576" y="41.95">+NL: unsigned int</text>
+  <rect style="fill: #ffffff" x="32.7076" y="42.05" width="6.15" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="32.7076" y="42.05" width="6.15" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="35.7826,36.45 35.7826,32.25 36.9687,32.25 36.9687,29.3086 "/>
+  <polygon style="fill: #ffffff" points="36.9687,28.05 37.2087,28.75 36.9687,29.45 36.7287,28.75 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="36.9687,28.05 37.2087,28.75 36.9687,29.45 36.7287,28.75 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="36.3757" y="32.05"></text>
+  <rect style="fill: #ffffff" x="31.8576" y="62.8564" width="7.2" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="31.8576" y="62.8564" width="7.2" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="35.4576" y="63.8564">Resolution</text>
+  <rect style="fill: #ffffff" x="31.8576" y="64.2564" width="7.2" height="9"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="31.8576" y="64.2564" width="7.2" height="9"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="65.1564">+trx0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="65.9564">+trx1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="66.7564">+try0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="67.5564">+try1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="68.3564">+n: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="69.1564">+r: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="69.9564">+tpn0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="70.7564">+tpn1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="71.5564">+tpm0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="72.3564">+tpm1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="32.0076" y="73.1564">+numberprecinct: int</text>
+  <rect style="fill: #ffffff" x="31.8576" y="73.2564" width="7.2" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="31.8576" y="73.2564" width="7.2" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="35.4576,62.8061 35.4576,52.628 35.7826,52.628 35.7826,43.7086 "/>
+  <polygon style="fill: #ffffff" points="35.7826,42.45 36.0226,43.15 35.7826,43.85 35.5426,43.15 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="35.7826,42.45 36.0226,43.15 35.7826,43.85 35.5426,43.15 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="35.6201" y="52.428"></text>
+  <rect style="fill: #ffffff" x="-1" y="33.3814" width="12.75" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="-1" y="33.3814" width="12.75" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="5.375" y="34.3814">Quantization_default_QCD</text>
+  <rect style="fill: #ffffff" x="-1" y="34.7814" width="12.75" height="1.8"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="-1" y="34.7814" width="12.75" height="1.8"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="-0.85" y="35.6814">+Lqcd: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="-0.85" y="36.4814">+use_in: BDK_use_in</text>
+  <rect style="fill: #ffffff" x="-1" y="36.5814" width="12.75" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="-1" y="36.5814" width="12.75" height="0.4"/>
+  <rect style="fill: #ffffff" x="-2.2" y="41.15" width="15.1" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="-2.2" y="41.15" width="15.1" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="5.35" y="42.15">Quantization_component_QCC</text>
+  <rect style="fill: #ffffff" x="-2.2" y="42.55" width="15.1" height="4.2"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="-2.2" y="42.55" width="15.1" height="4.2"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="-2.05" y="43.45">+Lqcc: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="-2.05" y="44.25">+Cqcc: short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="-2.05" y="45.05">+quantization_style: BDK_Quantization_style</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="-2.05" y="45.85">+number_of_guardbits: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="-2.05" y="46.65">+use_in: BDK_use_in</text>
+  <rect style="fill: #ffffff" x="-2.2" y="46.75" width="15.1" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="-2.2" y="46.75" width="15.1" height="0.4"/>
+  <rect style="fill: #ffffff" x="-2.2" y="52.925" width="14.95" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="-2.2" y="52.925" width="14.95" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="5.275" y="53.925">Quantization_of_values_SPqcc</text>
+  <rect style="fill: #ffffff" x="-2.2" y="54.325" width="14.95" height="1.8"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="-2.2" y="54.325" width="14.95" height="1.8"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="-2.05" y="55.225">+mantissa: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="-2.05" y="56.025">+exponent: unsigned int</text>
+  <rect style="fill: #ffffff" x="-2.2" y="56.125" width="14.95" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="-2.2" y="56.125" width="14.95" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="5.35,41.0996 5.35,39.0405 5.375,39.0405 5.375,38.24 "/>
+  <polygon style="fill: #ffffff" points="5.375,36.9814 5.615,37.6814 5.375,38.3814 5.135,37.6814 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="5.375,36.9814 5.615,37.6814 5.375,38.3814 5.135,37.6814 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="5.3625" y="38.8405"></text>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="5.275,52.925 5.275,50.0627 5.35,50.0627 5.35,48.459 "/>
+  <polygon style="fill: #ffffff" points="5.35,47.2004 5.59,47.9004 5.35,48.6004 5.11,47.9004 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="5.35,47.2004 5.59,47.9004 5.35,48.6004 5.11,47.9004 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="5.3125" y="49.8627"></text>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="31.8576,67.9564 23.5001,67.9564 23.5001,71.9564 30.599,71.9564 "/>
+  <polygon style="fill: #ffffff" points="31.8576,71.9564 31.1576,72.1964 30.4576,71.9564 31.1576,71.7164 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="31.8576,71.9564 31.1576,72.1964 30.4576,71.9564 31.1576,71.7164 "/>
+  <text style="fill: #000000; text-anchor:end; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="31.6576" y="67.3064">+lower</text>
+  <text style="fill: #000000; text-anchor:end; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="30.2576" y="71.3064">+top</text>
+  <rect style="fill: #ffffff" x="46.7808" y="64.325" width="7.45" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="46.7808" y="64.325" width="7.45" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="50.5058" y="65.325">Subband</text>
+  <rect style="fill: #ffffff" x="46.7808" y="65.725" width="7.45" height="7.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="46.7808" y="65.725" width="7.45" height="7.4"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.9308" y="66.625">+tbx0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.9308" y="67.425">+tbx1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.9308" y="68.225">+tby0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.9308" y="69.025">+tby1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.9308" y="69.825">+maximum_value: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.9308" y="70.625">+cn0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.9308" y="71.425">+cn1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.9308" y="72.225">+cm0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.9308" y="73.025">+cm1: int</text>
+  <rect style="fill: #ffffff" x="46.7808" y="73.125" width="7.45" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="46.7808" y="73.125" width="7.45" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="46.7808,67.825 42.9192,67.825 42.9192,67.9564 40.3162,67.9564 "/>
+  <polygon style="fill: #ffffff" points="39.0576,67.9564 39.7576,67.7164 40.4576,67.9564 39.7576,68.1964 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="39.0576,67.9564 39.7576,67.7164 40.4576,67.9564 39.7576,68.1964 "/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="43.0192" y="67.6907"></text>
+  <rect style="fill: #ffffff" x="47.881" y="81.275" width="6.85" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="47.881" y="81.275" width="6.85" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="51.306" y="82.275">Precinct</text>
+  <rect style="fill: #ffffff" x="47.881" y="82.675" width="6.85" height="5.8"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="47.881" y="82.675" width="6.85" height="5.8"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="48.031" y="83.575">+n: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="48.031" y="84.375">+m: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="48.031" y="85.175">+cn0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="48.031" y="85.975">+cn1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="48.031" y="86.775">+cm0: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="48.031" y="87.575">+cm1: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="48.031" y="88.375">+empty: boot = true</text>
+  <rect style="fill: #ffffff" x="47.881" y="88.475" width="6.85" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="47.881" y="88.475" width="6.85" height="0.4"/>
+  <rect style="fill: #ffffff" x="57.8811" y="67.275" width="10.45" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="57.8811" y="67.275" width="10.45" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="63.1061" y="68.275">Codeblock</text>
+  <rect style="fill: #ffffff" x="57.8811" y="68.675" width="10.45" height="2.6"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="57.8811" y="68.675" width="10.45" height="2.6"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="58.0311" y="69.575">+maximum_value: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="58.0311" y="70.375">+Zero_bitplane_information: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="58.0311" y="71.175">+Codeblock_inclusion: int</text>
+  <rect style="fill: #ffffff" x="57.8811" y="71.275" width="10.45" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="57.8811" y="71.275" width="10.45" height="0.4"/>
+  <rect style="fill: #ffffff" x="58.1811" y="81.425" width="10.9" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="58.1811" y="81.425" width="10.9" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="63.6311" y="82.425">Layer</text>
+  <rect style="fill: #ffffff" x="58.1811" y="82.825" width="10.9" height="1.8"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="58.1811" y="82.825" width="10.9" height="1.8"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="58.3311" y="83.725">+number_of_coding_pass: int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="58.3311" y="84.525">+codeword_length_segment: int</text>
+  <rect style="fill: #ffffff" x="58.1811" y="84.625" width="10.9" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="58.1811" y="84.625" width="10.9" height="0.4"/>
+  <rect style="fill: #ffffff" x="44.4635" y="24.7625" width="4.05" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="44.4635" y="24.7625" width="4.05" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="46.4885" y="25.7625">Tilepart</text>
+  <rect style="fill: #ffffff" x="44.4635" y="26.1625" width="4.05" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="44.4635" y="26.1625" width="4.05" height="0.4"/>
+  <rect style="fill: #ffffff" x="44.4635" y="26.5625" width="4.05" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="44.4635" y="26.5625" width="4.05" height="0.4"/>
+  <rect style="fill: #ffffff" x="70.5635" y="23.5125" width="11.05" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="70.5635" y="23.5125" width="11.05" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="76.0885" y="24.5125">Start_of_tile_part_SOT</text>
+  <rect style="fill: #ffffff" x="70.5635" y="24.9125" width="11.05" height="4.2"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="70.5635" y="24.9125" width="11.05" height="4.2"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="70.7135" y="25.8125">+Lsot: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="70.7135" y="26.6125">+Isot: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="70.7135" y="27.4125">+Psot: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="70.7135" y="28.2125">+TPsot: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="70.7135" y="29.0125">+TNsot: unsigned char</text>
+  <rect style="fill: #ffffff" x="70.5635" y="29.1125" width="11.05" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="70.5635" y="29.1125" width="11.05" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="44.4635,25.4625 41.4786,25.4625 41.4786,24.75 39.7523,24.75 "/>
+  <polygon style="fill: #ffffff" points="38.4937,24.75 39.1937,24.51 39.8937,24.75 39.1937,24.99 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="38.4937,24.75 39.1937,24.51 39.8937,24.75 39.1937,24.99 "/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="41.5786" y="24.9063"></text>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="70.5635,25.4125 59.5385,25.4125 59.5385,25.4625 49.7721,25.4625 "/>
+  <polygon style="fill: #ffffff" points="48.5135,25.4625 49.2135,25.2225 49.9135,25.4625 49.2135,25.7025 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="48.5135,25.4625 49.2135,25.2225 49.9135,25.4625 49.2135,25.7025 "/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="59.6385" y="25.2375"></text>
+  <rect style="fill: #ffffff" x="46.5512" y="30.8625" width="16" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="46.5512" y="30.8625" width="16" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="54.5512" y="31.8625">Progression_order_change_POC</text>
+  <rect style="fill: #ffffff" x="46.5512" y="32.2625" width="16" height="2.6"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="46.5512" y="32.2625" width="16" height="2.6"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.7012" y="33.1625">+Lpoc: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.7012" y="33.9625">+is_used: bool = false</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="46.7012" y="34.7625">+use_in: BDK_use_in</text>
+  <rect style="fill: #ffffff" x="46.5512" y="34.8625" width="16" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="46.5512" y="34.8625" width="16" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="54.5512,30.8122 54.5512,28.8874 46.4885,28.8874 46.4885,28.2211 "/>
+  <polygon style="fill: #ffffff" points="46.4885,26.9625 46.7285,27.6625 46.4885,28.3625 46.2485,27.6625 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="46.4885,26.9625 46.7285,27.6625 46.4885,28.3625 46.2485,27.6625 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="50.5199" y="28.6874"></text>
+  <rect style="fill: #ffffff" x="47.4512" y="47.0125" width="14.15" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="47.4512" y="47.0125" width="14.15" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="54.5262" y="48.0125">Progression_order_change_i</text>
+  <rect style="fill: #ffffff" x="47.4512" y="48.4125" width="14.15" height="5"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="47.4512" y="48.4125" width="14.15" height="5"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="47.6012" y="49.3125">+RSpoc: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="47.6012" y="50.1125">+CSpoc: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="47.6012" y="50.9125">+LYEpoc: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="47.6012" y="51.7125">+REpoc: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="47.6012" y="52.5125">+CEpoc: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="47.6012" y="53.3125">+Ppoc: BDK_Progression_order</text>
+  <rect style="fill: #ffffff" x="47.4512" y="53.4125" width="14.15" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="47.4512" y="53.4125" width="14.15" height="0.4"/>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="54.5262,47.0125 54.5262,41.1626 54.5512,41.1626 54.5512,36.5714 "/>
+  <polygon style="fill: #ffffff" points="54.5512,35.3128 54.7912,36.0128 54.5512,36.7128 54.3112,36.0128 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="54.5512,35.3128 54.7912,36.0128 54.5512,36.7128 54.3112,36.0128 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="54.5387" y="40.9626"></text>
+  <polyline style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="55.7512,30.7125 55.7512,8.3 46.7,8.3 46.7,6.95858 "/>
+  <polygon style="fill: #ffffff" points="46.7,5.7 46.94,6.4 46.7,7.1 46.46,6.4 "/>
+  <polygon style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" points="46.7,5.7 46.94,6.4 46.7,7.1 46.46,6.4 "/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 0.8; font-family: monospace; font-style: normal; font-weight: normal" x="51.2256" y="8.1"></text>
+  <rect style="fill: #ffffff" x="63.8313" y="37.9" width="28.25" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="63.8313" y="37.9" width="28.25" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="77.9563" y="38.9">Coding_style_default_COD</text>
+  <rect style="fill: #ffffff" x="63.8313" y="39.3" width="28.25" height="5.8"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="63.8313" y="39.3" width="28.25" height="5.8"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="63.9813" y="40.2">+Lcod: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="63.9813" y="41">+use_SOP: bool</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="63.9813" y="41.8">+use_EPH: bool</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="63.9813" y="42.6">+progression_order: BDK_Progression_order</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="63.9813" y="43.4">+number_of_Layer: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="63.9813" y="44.2">+multiple_component_transformation: BDK_Multiple_component_transformation_type</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="63.9813" y="45">+use_in: BDK_use_in</text>
+  <rect style="fill: #ffffff" x="63.8313" y="45.1" width="28.25" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="63.8313" y="45.1" width="28.25" height="0.4"/>
+  <rect style="fill: #ffffff" x="75.7617" y="50.3" width="15.1" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="75.7617" y="50.3" width="15.1" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="83.3117" y="51.3">Coding_style_component_COC</text>
+  <rect style="fill: #ffffff" x="75.7617" y="51.7" width="15.1" height="3.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="75.7617" y="51.7" width="15.1" height="3.4"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="75.9117" y="52.6">+Lcoc: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="75.9117" y="53.4">+Ccoc: unsigned short</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="75.9117" y="54.2">+use_default_PPx_PPy: bool</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="75.9117" y="55">+use_in: BDK_use_in</text>
+  <rect style="fill: #ffffff" x="75.7617" y="55.1" width="15.1" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="75.7617" y="55.1" width="15.1" height="0.4"/>
+  <rect style="fill: #ffffff" x="74.1652" y="62.4725" width="19.7" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="74.1652" y="62.4725" width="19.7" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="84.0152" y="63.4725">SPcoc</text>
+  <rect style="fill: #ffffff" x="74.1652" y="63.8725" width="19.7" height="8.2"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="74.1652" y="63.8725" width="19.7" height="8.2"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="64.7725">+number_of decomposition_level: unsigned char = 0</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="65.5725">+codeblock_width_value_xcb: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="66.3725">+codeblock_width_value_ycb: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="67.1725">+use_selective_arithmetic_coding_bypass: bool</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="67.9725">+use_reset_of_context_probabilities_on_coding_pass: bool</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="68.7725">+use_termination_on_each_coding_pass: bool</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="69.5725">+use_vertical_causal_context: bool</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="70.3725">+use_predictiable_termination: bool</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="71.1725">+use_segmentation_symbols: bool</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="74.3152" y="71.9725">+transformation: Transformation_type</text>
+  <rect style="fill: #ffffff" x="74.1652" y="72.0725" width="19.7" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="74.1652" y="72.0725" width="19.7" height="0.4"/>
+  <rect style="fill: #ffffff" x="62.3153" y="58.175" width="7.3" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="62.3153" y="58.175" width="7.3" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="65.9653" y="59.175">Precinct_size</text>
+  <rect style="fill: #ffffff" x="62.3153" y="59.575" width="7.3" height="1.8"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="62.3153" y="59.575" width="7.3" height="1.8"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="62.4653" y="60.475">+PPx: unsigned char</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="62.4653" y="61.275">+PPy: unsigned char</text>
+  <rect style="fill: #ffffff" x="62.3153" y="61.375" width="7.3" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="62.3153" y="61.375" width="7.3" height="0.4"/>
+  <rect style="fill: #ffffff" x="24.2744" y="81.1" width="8.8" height="1.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="24.2744" y="81.1" width="8.8" height="1.4"/>
+  <text style="fill: #000000; text-anchor:middle; font-size: 1; font-family: sans; font-style: normal; font-weight: 700" x="28.6744" y="82.1">Data</text>
+  <rect style="fill: #ffffff" x="24.2744" y="82.5" width="8.8" height="8.2"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="24.2744" y="82.5" width="8.8" height="8.2"/>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="83.4">+free_pointer: void*</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="84.2">+data_float: float*</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="85">+data_int: int*</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="85.8">+total_sizeX: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="86.6">+total_sizeY: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="87.4">+work_x0: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="88.2">+work_x1: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="89">+work_y0: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="89.8">+work_y1: unsigned int</text>
+  <text style="fill: #000000; text-anchor:start; font-size: 0.8; font-family: sans; font-style: normal; font-weight: normal" x="24.4244" y="90.6">+free_void: bool</text>
+  <rect style="fill: #ffffff" x="24.2744" y="90.7" width="8.8" height="0.4"/>
+  <rect style="fill: none; fill-opacity:0; stroke-width: 0.1; stroke: #000000" x="24.2744" y="90.7" width="8.8" height="0.4"/>
+</svg>
