@@ -18,49 +18,19 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifndef __PDC_EXCEPTION_H__
-#define __PDC_EXCEPTION_H__
+#ifndef __PDC_PARAMETER_H__
+#define __PDC_PARAMETER_H__
 
 #ifdef __cplusplus     
 extern "C" {         
 #endif
-
-struct str_PDC_Exception;
-typedef struct str_PDC_Exception PDC_Exception;
-
-	typedef enum{	PDC_EXCEPTION_NO_EXCEPTION	= 0,
-					PDC_EXCEPTION_OUT_OF_MEMORY	= 1}PDC_EXCEPTION_TYPES;	
+	typedef unsigned char	PDC_uchar;
+	typedef unsigned int	PDC_uint;
 
 
-	#define MAX_NUMBER_OF_EXCEPTION 10
-
-	struct str_PDC_Exception 
-	{
-		/*
-		 *	With PDC_error_code[] it describe the exception in words.
-		 */
-		PDC_EXCEPTION_TYPES	code;
-
-		/*
-		 * The line where the exception occur.
-		 */
-		unsigned int	line;
-
-		/*
-		 * The file where the exception occur.
-		 */
-		char			file[200];
-
-	};
-
-
-
-	int error(const PDC_EXCEPTION_TYPES code, const unsigned int line, const char* file);
-	int print_errors();
-
+	
 #ifdef __cplusplus     
 }         
 #endif
 
 #endif
-

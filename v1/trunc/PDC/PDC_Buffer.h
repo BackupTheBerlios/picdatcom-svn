@@ -18,49 +18,51 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifndef __PDC_EXCEPTION_H__
-#define __PDC_EXCEPTION_H__
+#ifndef __PDC_BUFFER_H__
+#define __PDC_BUFFER_H__
 
 #ifdef __cplusplus     
 extern "C" {         
 #endif
 
-struct str_PDC_Exception;
-typedef struct str_PDC_Exception PDC_Exception;
+	struct str_PDC_Buffer;
+	typedef struct str_PDC_Buffer PDC_Buffer;
 
-	typedef enum{	PDC_EXCEPTION_NO_EXCEPTION	= 0,
-					PDC_EXCEPTION_OUT_OF_MEMORY	= 1}PDC_EXCEPTION_TYPES;	
+	#include "PDC_Parameter.h"
+	#include "PDC_Exception.h"
 
-
-	#define MAX_NUMBER_OF_EXCEPTION 10
-
-	struct str_PDC_Exception 
-	{
-		/*
-		 *	With PDC_error_code[] it describe the exception in words.
-		 */
-		PDC_EXCEPTION_TYPES	code;
-
-		/*
-		 * The line where the exception occur.
-		 */
-		unsigned int	line;
-
-		/*
-		 * The file where the exception occur.
-		 */
-		char			file[200];
-
+	struct str_PDC_Buffer{
+		PDC_uchar*  buffer;
+		PDC_uint	length;
+		PDC_uint	read_byte_pos;
+		PDC_uint	write_byte_pos;
 	};
 
+	/*
+	 *	Length of the buffer
+	 */
+	PDC_Buffer* new_PDC_Buffer_1(PDC_uint length);
 
+	/*
+	 *	Length of the buffer
+	 *
+	 *  buffer_size is the number of bytes in buffer that have to be copyed
+	 *
+	 *  buffer the pointer to the bytes.
+	 *
+	 */
+	PDC_Buffer* new_PDC_Buffer_2(	PDC_uint length,
+									PDC_uint buffer_size;
+									PDC_uchar* buffer);
 
-	int error(const PDC_EXCEPTION_TYPES code, const unsigned int line, const char* file);
-	int print_errors();
+	/*
+	 * Destructor of the PDC_Buffer*
+	 */
+	void delete_PDC_Buffer(PDC_Buffer* buffer);
+	
 
 #ifdef __cplusplus     
 }         
 #endif
 
 #endif
-

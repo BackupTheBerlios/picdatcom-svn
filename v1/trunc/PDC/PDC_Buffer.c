@@ -1,6 +1,5 @@
 /*
  * Copyright (C) 2008  Uwe Brünen
- *      Contact Email: 
  * 
  * This file is part of PicDatCom.
  * 
@@ -18,49 +17,29 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifndef __PDC_EXCEPTION_H__
-#define __PDC_EXCEPTION_H__
-
 #ifdef __cplusplus     
 extern "C" {         
 #endif
 
-struct str_PDC_Exception;
-typedef struct str_PDC_Exception PDC_Exception;
+PDC_Buffer* new_PDC_Buffer_1(PDC_uint length)
+{
+	PDC_Buffer* buffer = NULL;
+	PDC_uchar*	charbuffer = NULL;
+	buffer = malloc(sizeof(PDC_Buffer));
+	if(buffer == NULL){
+		error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+	}
 
-	typedef enum{	PDC_EXCEPTION_NO_EXCEPTION	= 0,
-					PDC_EXCEPTION_OUT_OF_MEMORY	= 1}PDC_EXCEPTION_TYPES;	
+	charbuffer = malloc(sizeof(PDC_uchar) * length);
+	if(charbuffer == NULL){
+		free(buffer);
+		error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+	}
+	buffer->buffer = charbuffer;
 
-
-	#define MAX_NUMBER_OF_EXCEPTION 10
-
-	struct str_PDC_Exception 
-	{
-		/*
-		 *	With PDC_error_code[] it describe the exception in words.
-		 */
-		PDC_EXCEPTION_TYPES	code;
-
-		/*
-		 * The line where the exception occur.
-		 */
-		unsigned int	line;
-
-		/*
-		 * The file where the exception occur.
-		 */
-		char			file[200];
-
-	};
-
-
-
-	int error(const PDC_EXCEPTION_TYPES code, const unsigned int line, const char* file);
-	int print_errors();
+	return buffer;
+}
 
 #ifdef __cplusplus     
-}         
+}       
 #endif
-
-#endif
-

@@ -42,7 +42,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="0"
 				AdditionalIncludeDirectories="&quot;$(SolutionDir)\PDC&quot;;&quot;$(SolutionDir)\extern\Win32\pthreads.2&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -179,6 +179,10 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
+				RelativePath="..\PDC\PDC_Buffer.c"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_Buffer_test.c"
 				>
 			</File>
@@ -193,7 +197,15 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
+				RelativePath="..\PDC\PDC_Buffer.h"
+				>
+			</File>
+			<File
 				RelativePath="..\PDC\PDC_Exception.h"
+				>
+			</File>
+			<File
+				RelativePath="..\PDC\PDC_Parameter.h"
 				>
 			</File>
 		</Filter>
