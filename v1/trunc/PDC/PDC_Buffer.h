@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008  Uwe Brünen
- *      Contact Email: 
+ * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
  * 
@@ -21,27 +21,27 @@
 #ifndef __PDC_BUFFER_H__
 #define __PDC_BUFFER_H__
 
-#ifdef __cplusplus     
-extern "C" {         
-#endif
+#include <stdlib.h>
+#include "PDC_Parameter.h"
+
+START_C
 
 	struct str_PDC_Buffer;
 	typedef struct str_PDC_Buffer PDC_Buffer;
 
-	#include "PDC_Parameter.h"
 	#include "PDC_Exception.h"
 
 	struct str_PDC_Buffer{
 		PDC_uchar*  buffer;
-		PDC_uint	length;
-		PDC_uint	read_byte_pos;
-		PDC_uint	write_byte_pos;
+		PDC_uint_32	length;
+		PDC_uint_32	read_byte_pos;
+		PDC_uint_32	write_byte_pos;
 	};
 
 	/*
 	 *	Length of the buffer
 	 */
-	PDC_Buffer* new_PDC_Buffer_1(PDC_uint length);
+	PDC_Buffer* new_PDC_Buffer_1(	PDC_uint_32 length);
 
 	/*
 	 *	Length of the buffer
@@ -51,18 +51,26 @@ extern "C" {
 	 *  buffer the pointer to the bytes.
 	 *
 	 */
-	PDC_Buffer* new_PDC_Buffer_2(	PDC_uint length,
-									PDC_uint buffer_size;
+	PDC_Buffer* new_PDC_Buffer_2(	PDC_uint_32 length,
+									PDC_uint_32 buffer_size,
 									PDC_uchar* buffer);
 
 	/*
 	 * Destructor of the PDC_Buffer*
 	 */
 	void delete_PDC_Buffer(PDC_Buffer* buffer);
-	
 
-#ifdef __cplusplus     
-}         
-#endif
+	/*
+	 *
+	 */
+	PDC_Buffer* PDC_Buffer_realloc(PDC_Buffer* buffer, PDC_uint_32 plus_buffer_length);
+	
+	/*
+	 *
+	 */
+	PDC_Buffer* PDC_Buffer_add_byte_1(PDC_Buffer* buffer, PDC_uchar byte);
+
+
+STOP_C
 
 #endif

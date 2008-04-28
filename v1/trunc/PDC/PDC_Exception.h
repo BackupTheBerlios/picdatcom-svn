@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008  Uwe Brünen
- *      Contact Email: 
+ * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
  * 
@@ -21,9 +21,9 @@
 #ifndef __PDC_EXCEPTION_H__
 #define __PDC_EXCEPTION_H__
 
-#ifdef __cplusplus     
-extern "C" {         
-#endif
+#include "PDC_Parameter.h"
+
+START_C
 
 struct str_PDC_Exception;
 typedef struct str_PDC_Exception PDC_Exception;
@@ -58,9 +58,6 @@ typedef struct str_PDC_Exception PDC_Exception;
 	int error(const PDC_EXCEPTION_TYPES code, const unsigned int line, const char* file);
 	int print_errors();
 
-#ifdef __cplusplus     
-}         
-#endif
-
+STOP_C
 #endif
 

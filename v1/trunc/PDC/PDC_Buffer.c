@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008  Uwe Brünen
+ * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
  * 
@@ -21,7 +22,9 @@
 extern "C" {         
 #endif
 
-PDC_Buffer* new_PDC_Buffer_1(PDC_uint length)
+#include "PDC_Buffer.h"
+
+PDC_Buffer* new_PDC_Buffer_1(PDC_uint_32 length)
 {
 	PDC_Buffer* buffer = NULL;
 	PDC_uchar*	charbuffer = NULL;
@@ -33,11 +36,50 @@ PDC_Buffer* new_PDC_Buffer_1(PDC_uint length)
 	charbuffer = malloc(sizeof(PDC_uchar) * length);
 	if(charbuffer == NULL){
 		free(buffer);
+		buffer = NULL;
 		error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 	}
 	buffer->buffer = charbuffer;
 
 	return buffer;
+}
+
+void delete_PDC_Buffer(PDC_Buffer* buffer)
+{
+	if(buffer != NULL){
+		if(buffer->buffer != NULL){
+			free(buffer->buffer);
+		}
+		free(buffer);
+	}
+}
+
+/*
+ *
+ */
+PDC_Buffer* PDC_Buffer_realloc(PDC_Buffer* buffer, PDC_uint_32 plus_buffer_length)
+{
+	PDC_Buffer* return_buffer = buffer;
+	PDC_uchar*  new_buffer;
+	PDC_uint_32	new_size = buffer->length + plus_buffer_length;
+	
+	new_buffer = realloc(buffer->buffer, new_size);
+	if(new_buffer == NULL){
+		return_buffer = NULL;
+		error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+	}
+	return return_buffer;
+}
+
+/*
+ *
+ */
+PDC_Buffer* PDC_Buffer_add_byte_1(PDC_Buffer* buffer, PDC_uchar byte)
+{
+	PDC_Buffer* return_buffer = buffer;
+	
+
+	return return_buffer;
 }
 
 #ifdef __cplusplus     

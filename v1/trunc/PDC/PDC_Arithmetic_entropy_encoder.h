@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008  Uwe Brünen
- *      Contact Email: 
+ * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
  * 
@@ -18,21 +18,25 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifndef __PDC_PARAMETER_H__
-#define __PDC_PARAMETER_H__
+#ifndef __PDC_ARITHMETIC_ENTROPY_ENCODER_H__
+#define __PDC_ARITHMETIC_ENTROPY_ENCODER_H__
 
-#ifdef __cplusplus     
-	#define START_C extern "C" {
-	#define STOP_C }
-#else
-	#define START_C 
-	#define STOP_C 
-#endif
+#include <stdlib.h>
+#include "PDC_Parameter.h"
 
 START_C
 
-	typedef unsigned char	PDC_uchar;
-	typedef unsigned int	PDC_uint_32;
+	struct str_PDC_Arithmetic_entropy_encoder;
+	typedef struct str_PDC_Arithmetic_entropy_encoder PDC_Arithmetic_entropy_encoder;
+
+	#include "PDC_Parameter.h"
+	#include "PDC_Exception.h"
+
+	struct str_PDC_Arithmetic_entropy_encoder{
+		PDC_uint_32	c_register;
+		PDC_uint_32	a_register;
+
+	};
 
 STOP_C
 

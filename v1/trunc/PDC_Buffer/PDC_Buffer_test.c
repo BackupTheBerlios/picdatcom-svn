@@ -1,5 +1,6 @@
 /*
  * Copyright (C) 2008  Uwe Brünen
+ * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
  * 
