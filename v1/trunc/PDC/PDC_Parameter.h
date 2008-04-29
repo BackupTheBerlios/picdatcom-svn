@@ -32,7 +32,10 @@
 START_C
 
 	typedef unsigned char	PDC_uchar;
+	typedef unsigned int	PDC_uint;
 	typedef unsigned int	PDC_uint_32;
+	typedef unsigned char	PDC_decision;
+	typedef unsigned char	PDC_context;
 
 STOP_C
 

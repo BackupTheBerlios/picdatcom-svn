@@ -29,7 +29,8 @@ struct str_PDC_Exception;
 typedef struct str_PDC_Exception PDC_Exception;
 
 	typedef enum{	PDC_EXCEPTION_NO_EXCEPTION	= 0,
-					PDC_EXCEPTION_OUT_OF_MEMORY	= 1}PDC_EXCEPTION_TYPES;	
+					PDC_EXCEPTION_OUT_OF_MEMORY	= 1,
+					PDC_EXCEPTION_NULL_POINTER	= 2}PDC_EXCEPTION_TYPES;	
 
 
 	#define MAX_NUMBER_OF_EXCEPTION 10

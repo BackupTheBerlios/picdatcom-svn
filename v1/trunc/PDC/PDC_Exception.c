@@ -23,7 +23,7 @@
 #include <stdio.h>
 #include <pthread.h>
 
-char PDC_error_code[][20]	= {"No Error", "Out of memory"};
+char PDC_error_code[][20]	= {"No Error", "Out of memory", "NULL Pointer"};
 PDC_Exception exception[]	= {{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0}};
 unsigned int exception_pos	= 0;
 

@@ -23,20 +23,57 @@
 
 #include <stdlib.h>
 #include "PDC_Parameter.h"
+#include "PDC_Exception.h"
+
 
 START_C
 
 	struct str_PDC_Arithmetic_entropy_encoder;
 	typedef struct str_PDC_Arithmetic_entropy_encoder PDC_Arithmetic_entropy_encoder;
 
-	#include "PDC_Parameter.h"
-	#include "PDC_Exception.h"
+	#include "PDC_Buffer.h"
+
+	#define MPS_I_LENGTH 19
+	#define RESIZE_BUFFER 10
 
 	struct str_PDC_Arithmetic_entropy_encoder{
-		PDC_uint_32	c_register;
-		PDC_uint_32	a_register;
-
+		PDC_uint_32		c_register;
+		PDC_uint_32		a_register;
+		PDC_uint_32		CT;
+		PDC_decision	MPS[MPS_I_LENGTH];
+		PDC_uint_32		I[MPS_I_LENGTH];
 	};
+
+	/*
+	 *
+	 */
+	PDC_Arithmetic_entropy_encoder* new_PDC_Arithmetic_entropy_encoder();
+
+	/*
+	 *
+	 */
+	PDC_Arithmetic_entropy_encoder* delete_PDC_Arithmetic_entropy_encoder(PDC_Arithmetic_entropy_encoder* encoder);
+
+	/*
+	 *
+	 */
+	PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encoder* in_encoder, 
+														PDC_decision* d,
+														PDC_context* cx,
+														PDC_uint size,
+														PDC_Buffer* in_buffer);
+
+	/*
+	 *
+	 */
+	PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder* in_encoder, 
+														PDC_Buffer* in_buffer);
+	/*
+	 *
+	 */
+	PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Arithmetic_entropy_encoder* in_encoder,
+														PDC_decision* default_MPS,
+														PDC_uint_32* default_I);		
 
 STOP_C
 

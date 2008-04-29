@@ -25,19 +25,24 @@
 void *print_minus(void *data);
 void *print_plus(void *data);
 void thread_test();
+void Arithmetic_entropy_test();
+
+#define TESTSIZE 800
 
 int main()
 {
 	printf("This is the PDC_Buffer test\n");
-	
-	error(PDC_EXCEPTION_OUT_OF_MEMORY	,__LINE__,__FILE__);
-	error(PDC_EXCEPTION_NO_EXCEPTION	,__LINE__,__FILE__);
 
-	print_errors();
-
-	thread_test();
+	//thread_test();
 	return 0;
 }
+
+
+void Arithmetic_entropy_test()
+{
+
+}
+
 
 
 void thread_test()
