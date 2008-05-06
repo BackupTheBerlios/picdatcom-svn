@@ -31,6 +31,9 @@ START_C
 	struct str_PDC_Arithmetic_entropy_encoder;
 	typedef struct str_PDC_Arithmetic_entropy_encoder PDC_Arithmetic_entropy_encoder;
 
+	PDC_uint_32 PDC_A_Encoder__index[];
+	PDC_decision PDC_A_Encoder__mps[];
+
 	#include "PDC_Buffer.h"
 
 	#define MPS_I_LENGTH 19

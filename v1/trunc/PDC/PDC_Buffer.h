@@ -28,14 +28,16 @@ START_C
 
 	struct str_PDC_Buffer;
 	typedef struct str_PDC_Buffer PDC_Buffer;
+	typedef enum {END_OF_BUFFER, MORE_DATA_EXPECTED} PDC_buffer_end_state;
 
 	#include "PDC_Exception.h"
 
 	struct str_PDC_Buffer{
-		PDC_uchar*  buffer;
-		PDC_uint_32	length;
-		PDC_uint_32	read_byte_pos;
-		PDC_uint_32	write_byte_pos;
+		PDC_uchar*				buffer;
+		PDC_uint_32				length;
+		PDC_uint_32				read_byte_pos;
+		PDC_uint_32				write_byte_pos;
+		PDC_buffer_end_state	end_state;
 	};
 
 	/*

@@ -20,6 +20,8 @@
 
 #include <stdio.h>
 #include "PDC_Exception.h"
+#include "PDC_Arithmetic_entropy_encoder.h"
+#include "PDC_Arithmetic_entropy_decoder.h"
 #include <pthread.h>
 
 void *print_minus(void *data);
@@ -27,12 +29,11 @@ void *print_plus(void *data);
 void thread_test();
 void Arithmetic_entropy_test();
 
-#define TESTSIZE 800
+#define TESTSIZE 30
 
 int main()
 {
-	printf("This is the PDC_Buffer test\n");
-
+	Arithmetic_entropy_test();
 	//thread_test();
 	return 0;
 }
@@ -40,7 +41,47 @@ int main()
 
 void Arithmetic_entropy_test()
 {
+	
+	PDC_Arithmetic_entropy_encoder*	encoder;
+	PDC_Arithmetic_entropy_decoder*	decoder;
+	PDC_Buffer*						buffer1;
+	int								i;
+	PDC_decision					d1[TESTSIZE];
+	PDC_decision					d2[TESTSIZE];
+	PDC_context						cx[TESTSIZE];
+	
+	printf("This is the PDC_Arithmetic_entropy_**coder test\n");
 
+	srand(0);
+	for(i = 0; i < TESTSIZE; i++){
+		cx[i]	= rand() % 19;
+		d1[i]	= rand() % 2;
+	}
+	
+	encoder = new_PDC_Arithmetic_entropy_encoder();
+	decoder	= new_PDC_Arithmetic_entropy_decoder();
+	buffer1	= new_PDC_Buffer_1(0);
+
+	encoder = PDC_Aee_init_01( encoder, PDC_A_Encoder__mps, PDC_A_Encoder__index);
+	encoder = PDC_Aee_encode_01( encoder, d1, cx, TESTSIZE,	buffer1);
+	encoder = PDC_Aee_flush_01(	encoder, buffer1);
+
+	for(i = 0; i < buffer1->write_byte_pos; i++){
+		printf(" %d \n", (int)(buffer1->buffer[i]));
+	}
+
+	buffer1->end_state = END_OF_BUFFER;
+	decoder = PDC_Aed_set_I_MPS_01(decoder, PDC_A_Encoder__mps, PDC_A_Encoder__index);
+	decoder = PDC_Aed_initdec_01(decoder, buffer1);
+
+	for(i = 0; i < TESTSIZE; i++){
+		decoder	= PDC_Aed_decode_01( decoder, cx[i], buffer1);
+		d2[i]	= decoder->D;
+	}
+
+	for(i = 0; i < TESTSIZE; i++){
+		printf(" %d  Input %d --> Output %d diff %d\n",i, (int)d1[i], (int)d2[i], (int)d1[i] - (int)d2[i]);
+	}
 }
 
 

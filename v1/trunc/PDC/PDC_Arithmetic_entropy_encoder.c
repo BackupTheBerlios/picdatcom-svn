@@ -152,9 +152,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 								buffer		= in_buffer->buffer;
 								length		= in_buffer->length;
 							}
+							B = C >> 20;
 							buffer[write_byte_pos] = B;
 							write_byte_pos += 1;
-							B = C >> 20;
 							C &= 0xFFFF;
 							CT = 7;
 						}else{
@@ -164,13 +164,16 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 									buffer		= in_buffer->buffer;
 									length		= in_buffer->length;
 								}
+								B = C >> 19;
 								buffer[write_byte_pos] = B;
 								write_byte_pos += 1;
-								B = C >> 19;
 								C &= 0x7FFFF;
 								CT = 8;
 							}else{
 								B += 1;
+								if(write_byte_pos != 0){
+									buffer[write_byte_pos - 1] = B;
+								}
 								if(B == 0xFF){
 									C &= 0x7FFFFFF;
 									if(write_byte_pos >= length){
@@ -178,9 +181,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 										buffer		= in_buffer->buffer;
 										length		= in_buffer->length;
 									}
+									B = C >> 20;
 									buffer[write_byte_pos] = B;
 									write_byte_pos += 1;
-									B = C >> 20;
 									C &= 0xFFFF;
 									CT = 7;
 								}else{
@@ -189,9 +192,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 										buffer		= in_buffer->buffer;
 										length		= in_buffer->length;
 									}
+									B = C >> 19;
 									buffer[write_byte_pos] = B;
 									write_byte_pos += 1;
-									B = C >> 19;
 									C &= 0x7FFFF;
 									CT = 8;
 								}
@@ -229,9 +232,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 							buffer		= in_buffer->buffer;
 							length		= in_buffer->length;
 						}
+						B = C >> 20;
 						buffer[write_byte_pos] = B;
 						write_byte_pos += 1;
-						B = C >> 20;
 						C &= 0xFFFF;
 						CT = 7;
 					}else{
@@ -241,13 +244,16 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 								buffer		= in_buffer->buffer;
 								length		= in_buffer->length;
 							}
+							B = C >> 19;
 							buffer[write_byte_pos] = B;
 							write_byte_pos += 1;
-							B = C >> 19;
 							C &= 0x7FFFF;
 							CT = 8;
 						}else{
 							B += 1;
+							if(write_byte_pos != 0){
+								buffer[write_byte_pos - 1] = B;
+							}
 							if(B == 0xFF){
 								C &= 0x7FFFFFF;
 								if(write_byte_pos >= length){
@@ -255,9 +261,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 									buffer		= in_buffer->buffer;
 									length		= in_buffer->length;
 								}
+								B = C >> 20;
 								buffer[write_byte_pos] = B;
 								write_byte_pos += 1;
-								B = C >> 20;
 								C &= 0xFFFF;
 								CT = 7;
 							}else{
@@ -266,9 +272,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 									buffer		= in_buffer->buffer;
 									length		= in_buffer->length;
 								}
+								B = C >> 19;
 								buffer[write_byte_pos] = B;
 								write_byte_pos += 1;
-								B = C >> 19;
 								C &= 0x7FFFF;
 								CT = 8;
 							}
@@ -366,9 +372,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 			buffer		= in_buffer->buffer;
 			length		= in_buffer->length;
 		}
+		B = C >> 20;
 		buffer[write_byte_pos] = B;
 		write_byte_pos += 1;
-		B = C >> 20;
 		C &= 0xFFFF;
 		CT = 7;
 	}else{
@@ -378,13 +384,16 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 				buffer		= in_buffer->buffer;
 				length		= in_buffer->length;
 			}
+			B = C >> 19;
 			buffer[write_byte_pos] = B;
 			write_byte_pos += 1;
-			B = C >> 19;
 			C &= 0x7FFFF;
 			CT = 8;
 		}else{
 			B += 1;
+			if(write_byte_pos != 0){
+				buffer[write_byte_pos - 1] = B;
+			}
 			if(B == 0xFF){
 				C &= 0x7FFFFFF;
 				if(write_byte_pos >= length){
@@ -392,9 +401,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 					buffer		= in_buffer->buffer;
 					length		= in_buffer->length;
 				}
+				B = C >> 20;
 				buffer[write_byte_pos] = B;
 				write_byte_pos += 1;
-				B = C >> 20;
 				C &= 0xFFFF;
 				CT = 7;
 			}else{
@@ -403,9 +412,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 					buffer		= in_buffer->buffer;
 					length		= in_buffer->length;
 				}
+				B = C >> 19;
 				buffer[write_byte_pos] = B;
 				write_byte_pos += 1;
-				B = C >> 19;
 				C &= 0x7FFFF;
 				CT = 8;
 			}
@@ -420,9 +429,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 			buffer		= in_buffer->buffer;
 			length		= in_buffer->length;
 		}
+		B = C >> 20;
 		buffer[write_byte_pos] = B;
 		write_byte_pos += 1;
-		B = C >> 20;
 		C &= 0xFFFF;
 		CT = 7;
 	}else{
@@ -432,13 +441,16 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 				buffer		= in_buffer->buffer;
 				length		= in_buffer->length;
 			}
+			B = C >> 19;
 			buffer[write_byte_pos] = B;
 			write_byte_pos += 1;
-			B = C >> 19;
 			C &= 0x7FFFF;
 			CT = 8;
 		}else{
 			B += 1;
+			if(write_byte_pos != 0){
+				buffer[write_byte_pos - 1] = B;
+			}
 			if(B == 0xFF){
 				C &= 0x7FFFFFF;
 				if(write_byte_pos >= length){
@@ -446,9 +458,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 					buffer		= in_buffer->buffer;
 					length		= in_buffer->length;
 				}
+				B = C >> 20;
 				buffer[write_byte_pos] = B;
 				write_byte_pos += 1;
-				B = C >> 20;
 				C &= 0xFFFF;
 				CT = 7;
 			}else{
@@ -457,9 +469,9 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 					buffer		= in_buffer->buffer;
 					length		= in_buffer->length;
 				}
+				B = C >> 19;
 				buffer[write_byte_pos] = B;
 				write_byte_pos += 1;
-				B = C >> 19;
 				C &= 0x7FFFF;
 				CT = 8;
 			}

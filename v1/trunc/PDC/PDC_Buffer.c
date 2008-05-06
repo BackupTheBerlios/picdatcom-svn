@@ -31,16 +31,25 @@ PDC_Buffer* new_PDC_Buffer_1(PDC_uint_32 length)
 	buffer = malloc(sizeof(PDC_Buffer));
 	if(buffer == NULL){
 		error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-	}
+	}else{
 
-	charbuffer = malloc(sizeof(PDC_uchar) * length);
-	if(charbuffer == NULL){
-		free(buffer);
-		buffer = NULL;
-		error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-	}
-	buffer->buffer = charbuffer;
+		if(length == 0){
+			length = 1;
+		}
+		charbuffer = malloc(sizeof(PDC_uchar) * length);
+		if(charbuffer == NULL){
+			free(buffer);
+			buffer = NULL;
+			error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		}else{
 
+			buffer->buffer			= charbuffer;
+			buffer->end_state		= MORE_DATA_EXPECTED;
+			buffer->read_byte_pos	= 0;
+			buffer->write_byte_pos	= 0;
+			buffer->length			= length;
+		}
+	}
 	return buffer;
 }
 
@@ -62,11 +71,14 @@ PDC_Buffer* PDC_Buffer_realloc(PDC_Buffer* buffer, PDC_uint_32 plus_buffer_lengt
 	PDC_Buffer* return_buffer = buffer;
 	PDC_uchar*  new_buffer;
 	PDC_uint_32	new_size = buffer->length + plus_buffer_length;
-	
-	new_buffer = realloc(buffer->buffer, new_size);
+	                                   
+	new_buffer = realloc(buffer->buffer, sizeof(PDC_uchar) * new_size);
 	if(new_buffer == NULL){
 		return_buffer = NULL;
 		error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+	}else{
+		return_buffer->length = new_size;
+		return_buffer->buffer = new_buffer;
 	}
 	return return_buffer;
 }
