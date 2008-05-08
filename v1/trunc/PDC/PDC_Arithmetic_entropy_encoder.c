@@ -121,7 +121,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 	if(write_byte_pos == 0){
 		B = 0;
 	}else{
-		B = buffer[write_byte_pos];
+		B = buffer[write_byte_pos - 1];
 	}
 
 	for(sym_index = 0; sym_index < sym_index_max; sym_index += 1){
@@ -132,7 +132,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 		if(MPS[CX] == d[sym_index]){
 			/* CODEMPS */
 			A -= Qe_I_CX;
-			if((A & 0x8000) == 0){
+			if(A < 0x8000){   //if((A & 0x8000) == 0){
 				if(A < Qe_I_CX){
 					A = Qe_I_CX;
 				}else{
@@ -155,7 +155,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 							B = C >> 20;
 							buffer[write_byte_pos] = B;
 							write_byte_pos += 1;
-							C &= 0xFFFF;
+							C &= 0xFFFFF;
 							CT = 7;
 						}else{
 							if(C < 0x8000000){
@@ -184,7 +184,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 									B = C >> 20;
 									buffer[write_byte_pos] = B;
 									write_byte_pos += 1;
-									C &= 0xFFFF;
+									C &= 0xFFFFF;
 									CT = 7;
 								}else{
 									if(write_byte_pos >= length){
@@ -235,7 +235,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 						B = C >> 20;
 						buffer[write_byte_pos] = B;
 						write_byte_pos += 1;
-						C &= 0xFFFF;
+						C &= 0xFFFFF;
 						CT = 7;
 					}else{
 						if(C < 0x8000000){
@@ -264,7 +264,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 								B = C >> 20;
 								buffer[write_byte_pos] = B;
 								write_byte_pos += 1;
-								C &= 0xFFFF;
+								C &= 0xFFFFF;
 								CT = 7;
 							}else{
 								if(write_byte_pos >= length){
@@ -496,5 +496,11 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 
 	return return_encoder;
 }
+
+/*
+ *
+ */
+
+
 
 STOP_C
