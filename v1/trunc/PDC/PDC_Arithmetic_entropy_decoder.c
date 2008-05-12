@@ -187,7 +187,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Arithmetic_entropy_decode
 					}else{
 						read_byte_pos = read_byte_pos_new;
 						B = B1;
-						C = C + 0XFF00 - (B << 9);
+						C = C + 0XFE00 - (B << 9);
 						CT = 7;
 					}
 				}else{
@@ -286,7 +286,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Arithmetic_entropy_decod
 				}else{
 					B = B1;
 					read_byte_pos = read_byte_pos_new;
-					C = C + 0xFF00 - (B << 9);
+					C = C + 0xFE00 - (B << 9);
 					CT = 7;
 				}
 			}else{

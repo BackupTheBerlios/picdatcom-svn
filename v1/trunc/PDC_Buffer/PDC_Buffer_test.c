@@ -49,6 +49,7 @@ void Arithmetic_entropy_test()
 	PDC_decision					d1[TESTSIZE];
 	PDC_decision					d2[TESTSIZE];
 	PDC_context						cx[TESTSIZE];
+	PDC_uint_32						old_write_byte_pos;
 	
 	printf("This is the PDC_Arithmetic_entropy_**coder test\n");
 
@@ -70,9 +71,27 @@ void Arithmetic_entropy_test()
 	decoder = PDC_Aed_set_I_MPS_01(decoder, PDC_A_Encoder__mps, PDC_A_Encoder__index);
 	decoder = PDC_Aed_initdec_01(decoder, buffer1);
 
+	old_write_byte_pos = buffer1->write_byte_pos;
+	buffer1->write_byte_pos = buffer1->write_byte_pos / 2;
+	buffer1->end_state = MORE_DATA_EXPECTED;
 	for(i = 0; i < TESTSIZE; i++){
 		decoder	= PDC_Aed_decode_01( decoder, cx[i], buffer1);
-		d2[i]	= decoder->D;
+		if(decoder->decode_state == DECODE_SUCCESFULL){
+			d2[i]	= decoder->D;
+		}else{
+			break;
+		}
+	}
+
+	buffer1->write_byte_pos	= old_write_byte_pos;
+	buffer1->end_state		= END_OF_BUFFER;
+	for(; i < TESTSIZE; i++){
+		decoder	= PDC_Aed_decode_01( decoder, cx[i], buffer1);
+		if(decoder->decode_state == DECODE_SUCCESFULL){
+			d2[i]	= decoder->D;
+		}else{
+			break;
+		}
 	}
 
 	diff = 0;

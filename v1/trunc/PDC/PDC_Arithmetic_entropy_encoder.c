@@ -432,7 +432,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 		B = C >> 20;
 		buffer[write_byte_pos] = B;
 		write_byte_pos += 1;
-		C &= 0xFFFF;
+		C &= 0xFFFFF;
 		CT = 7;
 	}else{
 		if(C < 0x8000000){
@@ -461,7 +461,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 				B = C >> 20;
 				buffer[write_byte_pos] = B;
 				write_byte_pos += 1;
-				C &= 0xFFFF;
+				C &= 0xFFFFF;
 				CT = 7;
 			}else{
 				if(write_byte_pos >= length){

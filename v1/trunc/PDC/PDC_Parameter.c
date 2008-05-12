@@ -18,31 +18,24 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifndef __PDC_PARAMETER_H__
-#define __PDC_PARAMETER_H__
-
-#ifdef __cplusplus     
-	#define START_C extern "C" {
-	#define STOP_C }
-#else
-	#define START_C 
-	#define STOP_C 
-#endif
+#include "PDC_Parameter.h"
 
 START_C
 
-	
-	typedef enum{PDC_true = 1, PDC_false = 0}PDC_bool;
-	typedef unsigned char	PDC_uchar;
-	typedef unsigned int	PDC_uint;
-	typedef unsigned int	PDC_uint_32;
-	typedef unsigned char	PDC_decision;
-	typedef unsigned char	PDC_context;
-	typedef int				PDC_int;
+PDC_int PDC_i_ceiling(PDC_int a, PDC_int b)
+{
+	PDC_int i = a/b;
+	if(a%b != 0){
+		i += 1;
+	}
+	return i;	
+}
 
-	PDC_int PDC_i_ceiling( PDC_int , PDC_int);
-	PDC_int PDC_i_floor( PDC_int , PDC_int);
+PDC_int PDC_i_floor( PDC_int a, PDC_int b)
+{
+	PDC_int i = a/b;
+
+	return i;
+}
 
 STOP_C
-
-#endif
