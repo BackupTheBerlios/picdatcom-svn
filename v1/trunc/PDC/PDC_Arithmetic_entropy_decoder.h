@@ -35,6 +35,7 @@ START_C
 	#include "PDC_Arithmetic_entropy_encoder.h"
 
 	struct str_PDC_Arithmetic_entropy_decoder{
+		PDC_Exception*		exception;
 		PDC_uint_32			c_register;
 		PDC_uint_32			a_register;
 		PDC_uint_32			CT;

@@ -40,6 +40,7 @@ START_C
 	#define RESIZE_BUFFER 10
 
 	struct str_PDC_Arithmetic_entropy_encoder{
+		PDC_Exception*	exception;
 		PDC_uint_32		c_register;
 		PDC_uint_32		a_register;
 		PDC_uint_32		CT;

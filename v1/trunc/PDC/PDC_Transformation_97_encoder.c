@@ -38,53 +38,49 @@ PDC_Transformation_97_encoder* new_PDC_Transformation_97_encoder(PDC_uint_32 max
 
 	encoder = malloc(sizeof(PDC_Transformation_97_encoder));
 	if(encoder == NULL){
-		error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-	}else{
-		encoder->workbuffer	= NULL;
-		encoder->green		= NULL;
-		encoder->pink		= NULL;
-		encoder->orange		= NULL;
-		encoder->brown		= NULL;
+		return NULL;
+	}
+	encoder->workbuffer	= NULL;
+	encoder->green		= NULL;
+	encoder->pink		= NULL;
+	encoder->orange		= NULL;
+	encoder->brown		= NULL;
+	encoder->exception	= NULL;
 
-		encoder->maxSize = maxSize;
-		encoder->pinkSize = 
-		encoder->brownSize = 
-		encoder->greenSize = 
-		encoder->orangeSize = PDC_i_ceiling(maxSize, 2) + 4;
-		
+	encoder->maxSize = maxSize;
+	encoder->pinkSize = 
+	encoder->brownSize = 
+	encoder->greenSize = 
+	encoder->orangeSize = PDC_i_ceiling(maxSize, 2) + 4;
 	
 
-		encoder->green = malloc(sizeof(float) * encoder->greenSize);
-		if(encoder->green == NULL){
-			error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-			encoder = delete_PDC_Transformation_97_encoder(encoder);
-		}else{
-			encoder->orange	= malloc(sizeof(float) * encoder->orangeSize);
-			if(encoder->orange == NULL){
-				error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-				encoder = delete_PDC_Transformation_97_encoder(encoder);
-			}else{
-				encoder->pink	= malloc(sizeof(float) * encoder->pinkSize);
-				if(encoder->pink == NULL){
-					error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-					encoder = delete_PDC_Transformation_97_encoder(encoder);
-				}else{
-					encoder->brown	= malloc(sizeof(float) * encoder->brownSize);
-					if(encoder->brown == NULL){
-						error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-						encoder = delete_PDC_Transformation_97_encoder(encoder);
-					}else{
-						encoder->workbuffer	= malloc(sizeof(float) * maxSize);
-						if(encoder->workbuffer == NULL){
-							error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-							encoder = delete_PDC_Transformation_97_encoder(encoder);
-						}
 
-					}
-				}
-			}
-		}
+	encoder->green = malloc(sizeof(float) * encoder->greenSize);
+	if(encoder->green == NULL){
+		delete_PDC_Transformation_97_encoder(encoder);
+		return NULL;
 	}
+	encoder->orange	= malloc(sizeof(float) * encoder->orangeSize);
+	if(encoder->orange == NULL){
+		delete_PDC_Transformation_97_encoder(encoder);
+		return NULL;
+	}
+	encoder->pink	= malloc(sizeof(float) * encoder->pinkSize);
+	if(encoder->pink == NULL){
+		delete_PDC_Transformation_97_encoder(encoder);
+		return NULL;
+	}
+	encoder->brown	= malloc(sizeof(float) * encoder->brownSize);
+	if(encoder->brown == NULL){
+		delete_PDC_Transformation_97_encoder(encoder);
+		return NULL;
+	}
+	encoder->workbuffer	= malloc(sizeof(float) * maxSize);
+	if(encoder->workbuffer == NULL){
+		delete_PDC_Transformation_97_encoder(encoder);
+		return NULL;
+	}
+	
 	return encoder;
 }
 
@@ -109,6 +105,8 @@ PDC_Transformation_97_encoder* delete_PDC_Transformation_97_encoder(PDC_Transfor
 		if(encoder->workbuffer != NULL){
 			free(encoder->workbuffer);
 		}
+		delete_PDC_Exception(encoder->exception);
+
 		free(encoder);
 	}
 
@@ -361,7 +359,7 @@ PDC_Transformation_97_encoder* PDC_te_start(	PDC_Transformation_97_encoder* enco
 			} 
 		}
 	}else{
-		error(PDC_EXCEPTION_OUT_OF_SIZE, __LINE__, __FILE__);
+		PDC_Exception_error(encoder->exception, NULL, PDC_EXCEPTION_OUT_OF_SIZE, __LINE__, __FILE__);
 	}
 
 	return encoder;

@@ -66,7 +66,7 @@ PDC_Arithmetic_entropy_encoder* new_PDC_Arithmetic_entropy_encoder()
 
 	return_encoder = malloc(sizeof(PDC_Arithmetic_entropy_encoder));
 	if(return_encoder == NULL){
-		error(PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
 	}
 	return return_encoder;
 }
@@ -307,21 +307,19 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Arithmetic_entropy_encoder*
 	PDC_uint_32*	I;
 	PDC_uint_32		index;
 
-	if(return_encoder != NULL){
-		return_encoder->a_register	= 0x8000;
-		return_encoder->c_register	= 0;
-		return_encoder->CT			= 12;
 
-		MPS	= &return_encoder->MPS[0];
-		I	= &return_encoder->I[0];
-		
-		for(index = 0; index < MPS_I_LENGTH; index += 1){
-			MPS[index]	= default_MPS[index];
-			I[index]	= default_I[index];
-		}
-	}else{
-		error(PDC_EXCEPTION_NULL_POINTER, __LINE__, __FILE__);
+	return_encoder->a_register	= 0x8000;
+	return_encoder->c_register	= 0;
+	return_encoder->CT			= 12;
+
+	MPS	= &return_encoder->MPS[0];
+	I	= &return_encoder->I[0];
+	
+	for(index = 0; index < MPS_I_LENGTH; index += 1){
+		MPS[index]	= default_MPS[index];
+		I[index]	= default_I[index];
 	}
+
 
 	return return_encoder;
 }

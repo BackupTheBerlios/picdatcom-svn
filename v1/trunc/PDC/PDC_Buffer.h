@@ -33,6 +33,7 @@ START_C
 	#include "PDC_Exception.h"
 
 	struct str_PDC_Buffer{
+		PDC_Exception*			exception;
 		PDC_uchar*				buffer;
 		PDC_uint_32				length;
 		PDC_uint_32				read_byte_pos;
@@ -58,6 +59,11 @@ START_C
 									PDC_uchar* buffer);
 
 	/*
+	 * Empty Buffer
+	 */
+	PDC_Buffer* new_PDC_Buffer_3();
+
+	/*
 	 * Destructor of the PDC_Buffer*
 	 */
 	void delete_PDC_Buffer(PDC_Buffer* buffer);
@@ -72,6 +78,20 @@ START_C
 	 */
 	PDC_Buffer* PDC_Buffer_add_byte_1(PDC_Buffer* buffer, PDC_uchar byte);
 
+	/*
+	 *
+	 */
+	PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Buffer* buffer, PDC_uchar* byte, PDC_uint numbytes);
+
+	/*
+	 *
+	 */
+	PDC_Buffer* PDC_Buffer_save_state(PDC_Buffer* buffer, PDC_Buffer* save_buffer);
+
+	/*
+	 *
+	 */
+	PDC_Buffer* PDC_Buffer_read_uint16(PDC_Buffer* buffer, PDC_uint16 *value);
 
 STOP_C
 

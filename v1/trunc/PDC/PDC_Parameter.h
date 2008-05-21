@@ -29,6 +29,23 @@
 	#define STOP_C 
 #endif
 
+#if defined(PDC_IMPORT)
+	#if defined(_MSC_VER)
+		#include <windows.h>
+		#define DLL extern "C" __declspec(dllimport)
+	#else
+		#define DLL
+	#endif
+#else
+	#if defined(_MSC_VER)
+		#include <windows.h>
+		#define DLL __declspec(dllexport)
+	#else
+		#define DLL
+	#endif
+#endif
+
+
 START_C
 
 	
@@ -39,6 +56,8 @@ START_C
 	typedef unsigned char	PDC_decision;
 	typedef unsigned char	PDC_context;
 	typedef int				PDC_int;
+	typedef unsigned short	PDC_uint16;
+	typedef unsigned char	PDC_uint8;
 
 	PDC_int PDC_i_ceiling( PDC_int , PDC_int);
 	PDC_int PDC_i_floor( PDC_int , PDC_int);

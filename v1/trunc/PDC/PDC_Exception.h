@@ -28,16 +28,23 @@ START_C
 struct str_PDC_Exception;
 typedef struct str_PDC_Exception PDC_Exception;
 
-	typedef enum{	PDC_EXCEPTION_NO_EXCEPTION	= 0,
-					PDC_EXCEPTION_OUT_OF_MEMORY	= 1,
-					PDC_EXCEPTION_NULL_POINTER	= 2,
-					PDC_EXCEPTION_OUT_OF_SIZE	= 3}PDC_EXCEPTION_TYPES;	
+	typedef enum{	PDC_EXCEPTION_NO_EXCEPTION				= 0,
+					PDC_EXCEPTION_OUT_OF_MEMORY				= 1,
+					PDC_EXCEPTION_NULL_POINTER				= 2,
+					PDC_EXCEPTION_OUT_OF_SIZE				= 3,
+					PDC_EXCEPTION_OUT_OF_RANGE				= 4,
+					PDC_EXCEPTION_NO_NULLPOINTER_ALLOWED	= 5,
+					PDC_EXCEPTION_NO_CODE_FOUND				= 6,
+					PDC_EXCEPTION_FALSE_SYMBOL				= 7}PDC_EXCEPTION_TYPES;	
 
 
 	#define MAX_NUMBER_OF_EXCEPTION 10
 
 	struct str_PDC_Exception 
 	{
+
+		PDC_Exception* last_exception;
+
 		/*
 		 *	With PDC_error_code[] it describe the exception in words.
 		 */
@@ -56,9 +63,31 @@ typedef struct str_PDC_Exception PDC_Exception;
 	};
 
 
+	/*
+	 *
+	 */
+	PDC_Exception* new_PDC_Exception();
 
-	int error(const PDC_EXCEPTION_TYPES code, const unsigned int line, const char* file);
-	int print_errors();
+	/*
+	 *
+	 */
+	void delete_PDC_Exception(PDC_Exception* exception);
+
+
+	/*
+	 *
+	 */
+	void PDC_Exception_unset_exception(PDC_Exception* exception);
+
+	/*
+	 * 
+	 */
+	PDC_Exception* PDC_Exception_error(	PDC_Exception* exception,
+										PDC_Exception* last_exception, 
+										const PDC_EXCEPTION_TYPES code, 
+										const unsigned int line, 
+										const char* file);
+	
 
 STOP_C
 #endif

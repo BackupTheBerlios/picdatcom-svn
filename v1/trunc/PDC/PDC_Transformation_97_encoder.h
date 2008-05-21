@@ -34,7 +34,7 @@ START_C
 	#include"PDC_Transformation_97_decoder.h"
 
 	struct str_PDC_Transformation_97_encoder{
-
+		PDC_Exception*	exception;
 		float			*workbuffer;
 		float			*green;
 		float			*pink;

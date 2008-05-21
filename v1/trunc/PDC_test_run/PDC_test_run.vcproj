@@ -2,9 +2,9 @@
 <VisualStudioProject
 	ProjectType="Visual C++"
 	Version="9,00"
-	Name="PDC"
-	ProjectGUID="{2B3EF626-E63C-4D32-B73C-843B85F272E3}"
-	RootNamespace="PDC"
+	Name="PDC_test_run"
+	ProjectGUID="{2EA0D8B8-4136-4275-A104-344D2F8BE4B3}"
+	RootNamespace="PDC_test_run"
 	Keyword="Win32Proj"
 	TargetFrameworkVersion="196613"
 	>
@@ -20,7 +20,7 @@
 			Name="Debug|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="1"
 			>
 			<Tool
@@ -41,8 +41,8 @@
 			<Tool
 				Name="VCCLCompilerTool"
 				Optimization="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\extern\Win32\pthreads.2&quot;"
-				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PDC_EXPORTSLE;_CRT_SECURE_NO_WARNINGS"
+				AdditionalIncludeDirectories="&quot;$(SolutionDir)\PDC&quot;"
+				PreprocessorDefinitions="WIN32;_DEBUG;_CONSOLE;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
 				RuntimeLibrary="3"
@@ -63,7 +63,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="2"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				TargetMachine="1"
 			/>
 			<Tool
@@ -92,7 +92,7 @@
 			Name="Release|Win32"
 			OutputDirectory="$(SolutionDir)$(ConfigurationName)"
 			IntermediateDirectory="$(ConfigurationName)"
-			ConfigurationType="2"
+			ConfigurationType="1"
 			CharacterSet="1"
 			WholeProgramOptimization="1"
 			>
@@ -115,7 +115,7 @@
 				Name="VCCLCompilerTool"
 				Optimization="2"
 				EnableIntrinsicFunctions="true"
-				PreprocessorDefinitions="WIN32;NDEBUG;_WINDOWS;_USRDLL;PDC_EXPORTS"
+				PreprocessorDefinitions="WIN32;NDEBUG;_CONSOLE"
 				RuntimeLibrary="2"
 				EnableFunctionLevelLinking="true"
 				UsePrecompiledHeader="0"
@@ -135,7 +135,7 @@
 				Name="VCLinkerTool"
 				LinkIncremental="1"
 				GenerateDebugInformation="true"
-				SubSystem="2"
+				SubSystem="1"
 				OptimizeReferences="2"
 				EnableCOMDATFolding="2"
 				TargetMachine="1"
@@ -165,8 +165,8 @@
 	</Configurations>
 	<References>
 		<ProjectReference
-			ReferencedProjectIdentifier="{39B7DC64-4E72-40AE-8215-9DC69188A3EE}"
-			RelativePathToProject=".\extern\Win32\pthreads.2\pthread.vcproj"
+			ReferencedProjectIdentifier="{2B3EF626-E63C-4D32-B73C-843B85F272E3}"
+			RelativePathToProject=".\PDC\PDC.vcproj"
 		/>
 	</References>
 	<Files>
@@ -176,39 +176,11 @@
 			UniqueIdentifier="{4FC737F1-C7A5-4376-A066-2A32D752A2FF}"
 			>
 			<File
-				RelativePath=".\PDC_Arithmetic_entropy_decoder.c"
+				RelativePath=".\PDC_test_run.cpp"
 				>
 			</File>
 			<File
-				RelativePath=".\PDC_Arithmetic_entropy_encoder.c"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Buffer.c"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Decoder.c"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Exception.c"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Parameter.c"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Pointer_Buffer.c"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Transformation_97_decoder.c"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Transformation_97_encoder.c"
+				RelativePath=".\stdafx.cpp"
 				>
 			</File>
 		</Filter>
@@ -218,55 +190,11 @@
 			UniqueIdentifier="{93995380-89BD-4b04-88EB-625FBE52EBFB}"
 			>
 			<File
-				RelativePath=".\PDC_Arithmetic_entropy_decoder.h"
+				RelativePath=".\stdafx.h"
 				>
 			</File>
 			<File
-				RelativePath=".\PDC_Arithmetic_entropy_encoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Buffer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Decoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Exception.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Main_header.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Parameter.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Pointer_Buffer.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_SIZ_Segment.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_SIZ_Segment_Componente.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Transformation_97_decoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PDC_Transformation_97_encoder.h"
-				>
-			</File>
-			<File
-				RelativePath=".\PicDatCom.h"
+				RelativePath=".\targetver.h"
 				>
 			</File>
 		</Filter>
@@ -276,6 +204,10 @@
 			UniqueIdentifier="{67DA6AB6-F800-4c08-8B7A-83BB121AAD01}"
 			>
 		</Filter>
+		<File
+			RelativePath=".\ReadMe.txt"
+			>
+		</File>
 	</Files>
 	<Globals>
 	</Globals>

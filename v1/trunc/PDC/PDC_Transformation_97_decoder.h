@@ -34,7 +34,7 @@ START_C
 	typedef enum{USE_32, USE_64}PDC_Datatype;
 
 	struct str_PDC_Transformation_97_decoder{
-
+		PDC_Exception*	exception;
 		float			*workbuffer;
 		float			*green;
 		float			*pink;

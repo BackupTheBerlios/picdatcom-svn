@@ -23,7 +23,8 @@
 #include <stdio.h>
 #include <pthread.h>
 
-char PDC_error_code[][20]	= {"No Error", "Out of memory", "NULL Pointer", "out_size > maxSize " };
+char PDC_error_code[][25]	= {	"No Error", "Out of memory", "NULL Pointer", "out_size > maxSize ", "Out of Range.",
+								"NULL-Pointer not allowed", "No code found", "False symbol no valid jpc"};
 PDC_Exception exception[]	= {{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0}};
 unsigned int exception_pos	= 0;
 
@@ -31,33 +32,62 @@ unsigned int exception_pos	= 0;
 pthread_mutex_t exception_mutex =	PTHREAD_MUTEX_INITIALIZER;
 
 
-int error(const PDC_EXCEPTION_TYPES code, const unsigned int line, const char* file)
+/*
+ *
+ */
+PDC_Exception* new_PDC_Exception()
 {
-	int back = 0;
-	pthread_mutex_lock(&exception_mutex);
-	if(exception_pos < MAX_NUMBER_OF_EXCEPTION){
-		exception[exception_pos].code = code;
-		exception[exception_pos].line = line;
-		strcpy(exception[exception_pos].file, file);
-		exception_pos++;
-	}else{
-		back = 1;
+	PDC_Exception* exception = NULL;
+	
+	exception = malloc(sizeof(PDC_Exception));
+	
+	if(exception == NULL){
+		return NULL;
 	}
-	pthread_mutex_unlock(&exception_mutex);
-	return back;
+
+	exception->code = PDC_EXCEPTION_NO_EXCEPTION;
+	return exception;
 }
 
-int print_errors()
+/*
+ *
+ */
+void delete_PDC_Exception(PDC_Exception* exception)
 {
-	int back = 0;
-	unsigned int pos;
-
-	for(pos = 0; pos < exception_pos; pos++){
-		printf(	"Exception in file %s on line %d description %s \n",	
-				exception[pos].file, 
-				exception[pos].line, 
-				PDC_error_code[exception[pos].code]);
-
+	if(exception != NULL){
+		free(exception);
 	}
-	return back;
+}
+
+
+PDC_Exception*  PDC_Exception_error(	PDC_Exception* exception,
+										PDC_Exception* last_exception, 
+										const PDC_EXCEPTION_TYPES code, 
+										const unsigned int line, 
+										const char* file)
+{
+	
+	pthread_mutex_lock(&exception_mutex);
+
+	if(exception->code == PDC_EXCEPTION_NO_EXCEPTION){
+		exception->code = code;
+		exception->line = line;
+		strcpy(exception->file, file);
+		exception->last_exception = last_exception;
+	}
+
+	pthread_mutex_unlock(&exception_mutex);
+	return exception;
+}
+
+/*
+ *
+ */
+void PDC_Exception_unset_exception(PDC_Exception* exception)
+{
+	if(exception->last_exception != NULL){
+		PDC_Exception_unset_exception(exception->last_exception);
+	}
+	exception->code				= PDC_EXCEPTION_NO_EXCEPTION;
+	exception->last_exception	= NULL;
 }
