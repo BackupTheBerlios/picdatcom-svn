@@ -35,16 +35,16 @@ START_C
 	struct str_PDC_Buffer{
 		PDC_Exception*			exception;
 		PDC_uchar*				buffer;
-		PDC_uint_32				length;
-		PDC_uint_32				read_byte_pos;
-		PDC_uint_32				write_byte_pos;
+		PDC_uint32				length;
+		PDC_uint32				read_byte_pos;
+		PDC_uint32				write_byte_pos;
 		PDC_buffer_end_state	end_state;
 	};
 
 	/*
 	 *	Length of the buffer
 	 */
-	PDC_Buffer* new_PDC_Buffer_1(	PDC_uint_32 length);
+	PDC_Buffer* new_PDC_Buffer_1(	PDC_uint32 length);
 
 	/*
 	 *	Length of the buffer
@@ -54,8 +54,8 @@ START_C
 	 *  buffer the pointer to the bytes.
 	 *
 	 */
-	PDC_Buffer* new_PDC_Buffer_2(	PDC_uint_32 length,
-									PDC_uint_32 buffer_size,
+	PDC_Buffer* new_PDC_Buffer_2(	PDC_uint32 length,
+									PDC_uint32 buffer_size,
 									PDC_uchar* buffer);
 
 	/*
@@ -71,7 +71,7 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Buffer* PDC_Buffer_realloc(PDC_Buffer* buffer, PDC_uint_32 plus_buffer_length);
+	PDC_Buffer* PDC_Buffer_realloc(PDC_Buffer* buffer, PDC_uint32 plus_buffer_length);
 	
 	/*
 	 *
@@ -92,6 +92,16 @@ START_C
 	 *
 	 */
 	PDC_Buffer* PDC_Buffer_read_uint16(PDC_Buffer* buffer, PDC_uint16 *value);
+
+	/*
+	 *
+	 */
+	PDC_Buffer* PDC_Buffer_read_uint32(PDC_Buffer* buffer, PDC_uint32 *value);
+
+	/*
+	 *
+	 */
+	PDC_Buffer* PDC_Buffer_read_uint8(PDC_Buffer* buffer, PDC_uint8 *value);
 
 STOP_C
 

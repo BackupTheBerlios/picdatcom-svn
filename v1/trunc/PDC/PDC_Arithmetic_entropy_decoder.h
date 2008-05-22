@@ -36,11 +36,11 @@ START_C
 
 	struct str_PDC_Arithmetic_entropy_decoder{
 		PDC_Exception*		exception;
-		PDC_uint_32			c_register;
-		PDC_uint_32			a_register;
-		PDC_uint_32			CT;
-		PDC_uint_32			B;
-		PDC_uint_32			I[MPS_I_LENGTH];
+		PDC_uint32			c_register;
+		PDC_uint32			a_register;
+		PDC_uint32			CT;
+		PDC_uint32			B;
+		PDC_uint32			I[MPS_I_LENGTH];
 		PDC_decode_state	decode_state;
 		PDC_decision		MPS[MPS_I_LENGTH];
 		PDC_decision		D;
@@ -75,7 +75,7 @@ START_C
 	 */
 	PDC_Arithmetic_entropy_decoder* PDC_Aed_set_I_MPS_01(	PDC_Arithmetic_entropy_decoder* decoder,
 															PDC_decision* default_MPS,
-															PDC_uint_32* default_I);
+															PDC_uint32* default_I);
 
 
 STOP_C

@@ -204,6 +204,14 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_SIZ_Segment.c"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_SIZ_Segment_Componente.c"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_Transformation_97_decoder.c"
 				>
 			</File>

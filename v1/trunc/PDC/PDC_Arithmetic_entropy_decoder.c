@@ -25,10 +25,10 @@ START_C
 #define MPS_I_LENGTH 19
 #define RESIZE_BUFFER 10
 
-extern PDC_uint_32 PDC_A_Encoder_qe[];
-extern PDC_uint_32 PDC_A_Encoder_switcher[];
-extern PDC_uint_32 PDC_A_Encoder_nlps[];
-extern PDC_uint_32 PDC_A_Encoder_nmps[];
+extern PDC_uint32 PDC_A_Encoder_qe[];
+extern PDC_uint32 PDC_A_Encoder_switcher[];
+extern PDC_uint32 PDC_A_Encoder_nlps[];
+extern PDC_uint32 PDC_A_Encoder_nmps[];
 
 
 /*
@@ -40,24 +40,24 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Arithmetic_entropy_decode
 {
 	PDC_Arithmetic_entropy_decoder* return_decoder = decoder;
 	PDC_context		CX;
-	PDC_uint_32		I_CX;
-	PDC_uint_32		Qe_I_CX;
+	PDC_uint32		I_CX;
+	PDC_uint32		Qe_I_CX;
 	PDC_decision	D;
 
-	PDC_uint_32		C;
-	PDC_uint_32		Chigh;
-	PDC_uint_32		A;
-	PDC_uint_32		CT;
+	PDC_uint32		C;
+	PDC_uint32		Chigh;
+	PDC_uint32		A;
+	PDC_uint32		CT;
 	PDC_decision*	MPS;
 	PDC_decision	MPS_old;
-	PDC_uint_32*	I;
-	PDC_uint_32		I_old;
+	PDC_uint32*	I;
+	PDC_uint32		I_old;
 
 	PDC_uchar*		buffer;
-	PDC_uint_32		length;
-	PDC_uint_32		read_byte_pos, read_byte_pos_new;
-	PDC_uint_32		write_byte_pos;
-	PDC_uint_32		B, B1;
+	PDC_uint32		length;
+	PDC_uint32		read_byte_pos, read_byte_pos_new;
+	PDC_uint32		write_byte_pos;
+	PDC_uint32		B, B1;
 
 	return_decoder = decoder;
 
@@ -248,15 +248,15 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Arithmetic_entropy_decod
 													PDC_Buffer* in_buffer)
 {
 
-	PDC_uint_32		C;
-	PDC_uint_32		A;
-	PDC_uint_32		CT;
+	PDC_uint32		C;
+	PDC_uint32		A;
+	PDC_uint32		CT;
 
 	PDC_uchar*		buffer;
-	PDC_uint_32		length;
-	PDC_uint_32		read_byte_pos, read_byte_pos_new;
-	PDC_uint_32		write_byte_pos;
-	PDC_uint_32		B, B1;	
+	PDC_uint32		length;
+	PDC_uint32		read_byte_pos, read_byte_pos_new;
+	PDC_uint32		write_byte_pos;
+	PDC_uint32		B, B1;	
 
 	buffer			= in_buffer->buffer;
 	length			= in_buffer->length;
@@ -322,11 +322,11 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Arithmetic_entropy_decod
  */
 PDC_Arithmetic_entropy_decoder* PDC_Aed_set_I_MPS_01(	PDC_Arithmetic_entropy_decoder* decoder,
 														PDC_decision* default_MPS,
-														PDC_uint_32* default_I)
+														PDC_uint32* default_I)
 {
 	PDC_decision*	MPS;
-	PDC_uint_32*	I;
-	PDC_uint_32		index;
+	PDC_uint32*	I;
+	PDC_uint32		index;
 
 	MPS = decoder->MPS;
 	I	= decoder->I;

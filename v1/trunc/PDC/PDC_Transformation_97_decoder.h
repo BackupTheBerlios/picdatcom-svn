@@ -40,18 +40,18 @@ START_C
 		float			*pink;
 		float			*orange;
 		float			*brown;
-		PDC_uint_32		greenSize;
-		PDC_uint_32		pinkSize;
-		PDC_uint_32		orangeSize;
-		PDC_uint_32		brownSize;
-		PDC_uint_32		maxSize;
+		PDC_uint32		greenSize;
+		PDC_uint32		pinkSize;
+		PDC_uint32		orangeSize;
+		PDC_uint32		brownSize;
+		PDC_uint32		maxSize;
 		PDC_Datatype	datatype;	
 	};
 	
 	/*
 	 *
 	 */
-	PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(PDC_uint_32 maxSize);
+	PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(PDC_uint32 maxSize);
 
 	/*
 	 *

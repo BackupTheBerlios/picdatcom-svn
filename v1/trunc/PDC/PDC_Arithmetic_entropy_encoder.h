@@ -31,7 +31,7 @@ START_C
 	struct str_PDC_Arithmetic_entropy_encoder;
 	typedef struct str_PDC_Arithmetic_entropy_encoder PDC_Arithmetic_entropy_encoder;
 
-	PDC_uint_32 PDC_A_Encoder__index[];
+	PDC_uint32 PDC_A_Encoder__index[];
 	PDC_decision PDC_A_Encoder__mps[];
 
 	#include "PDC_Buffer.h"
@@ -41,11 +41,11 @@ START_C
 
 	struct str_PDC_Arithmetic_entropy_encoder{
 		PDC_Exception*	exception;
-		PDC_uint_32		c_register;
-		PDC_uint_32		a_register;
-		PDC_uint_32		CT;
+		PDC_uint32		c_register;
+		PDC_uint32		a_register;
+		PDC_uint32		CT;
 		PDC_decision	MPS[MPS_I_LENGTH];
-		PDC_uint_32		I[MPS_I_LENGTH];
+		PDC_uint32		I[MPS_I_LENGTH];
 	};
 
 	/*
@@ -77,7 +77,7 @@ START_C
 	 */
 	PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Arithmetic_entropy_encoder* in_encoder,
 														PDC_decision* default_MPS,
-														PDC_uint_32* default_I);		
+														PDC_uint32* default_I);		
 
 STOP_C
 

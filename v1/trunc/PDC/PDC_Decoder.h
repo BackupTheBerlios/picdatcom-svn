@@ -81,7 +81,7 @@ START_C
 	 */
 	DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Decoder* decoder, 
 												PDC_uchar* data, 
-												PDC_uint_32 length, 
+												PDC_uint32 length, 
 												PDC_DECODER_DATA_END end);
 
 	/*

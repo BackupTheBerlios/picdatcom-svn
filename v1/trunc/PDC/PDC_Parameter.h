@@ -52,7 +52,7 @@ START_C
 	typedef enum{PDC_true = 1, PDC_false = 0}PDC_bool;
 	typedef unsigned char	PDC_uchar;
 	typedef unsigned int	PDC_uint;
-	typedef unsigned int	PDC_uint_32;
+	typedef unsigned int	PDC_uint32;
 	typedef unsigned char	PDC_decision;
 	typedef unsigned char	PDC_context;
 	typedef int				PDC_int;

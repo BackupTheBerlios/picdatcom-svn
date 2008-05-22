@@ -40,18 +40,18 @@ START_C
 		float			*pink;
 		float			*orange;
 		float			*brown;
-		PDC_uint_32		greenSize;
-		PDC_uint_32		pinkSize;
-		PDC_uint_32		orangeSize;
-		PDC_uint_32		brownSize;
-		PDC_uint_32		maxSize;
+		PDC_uint32		greenSize;
+		PDC_uint32		pinkSize;
+		PDC_uint32		orangeSize;
+		PDC_uint32		brownSize;
+		PDC_uint32		maxSize;
 		PDC_Datatype	datatype;	
 	};
 	
 	/*
 	 *
 	 */
-	PDC_Transformation_97_encoder* new_PDC_Transformation_97_encoder(PDC_uint_32 maxSize);
+	PDC_Transformation_97_encoder* new_PDC_Transformation_97_encoder(PDC_uint32 maxSize);
 
 	/*
 	 *
@@ -63,9 +63,9 @@ START_C
 	 */
 	PDC_Transformation_97_encoder* PDC_te_start(	PDC_Transformation_97_encoder* encoder,
 													float *in, float *out_high, float* out_low, 
-													PDC_uint_32 in_start, PDC_uint_32 in_size, PDC_uint_32 in_plus, PDC_bool even, 
-													PDC_uint_32 out_high_start, PDC_uint_32 out_high_plus,
-													PDC_uint_32 out_low_start, PDC_uint_32 out_low_plus);
+													PDC_uint32 in_start, PDC_uint32 in_size, PDC_uint32 in_plus, PDC_bool even, 
+													PDC_uint32 out_high_start, PDC_uint32 out_high_plus,
+													PDC_uint32 out_low_start, PDC_uint32 out_low_plus);
 												
 
 STOP_C

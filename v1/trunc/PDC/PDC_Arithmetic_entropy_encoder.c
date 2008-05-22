@@ -22,9 +22,9 @@
 
 START_C
 
-PDC_uint_32 PDC_A_Encoder_length = 19;
+PDC_uint32 PDC_A_Encoder_length = 19;
 
-PDC_uint_32 PDC_A_Encoder__index[] = {	
+PDC_uint32 PDC_A_Encoder__index[] = {	
 						46, 3, 4, 0, 0, 0, 0, 0, 0, 0, 0,
 						0, 0, 0, 0, 0, 0, 0, 0};
 
@@ -32,7 +32,7 @@ PDC_decision PDC_A_Encoder__mps[] = {
 						0, 0, 0, 0, 0, 0, 0, 0, 0, 0, 0,
 						0, 0, 0, 0, 0, 0, 0, 0};
 
-PDC_uint_32 PDC_A_Encoder_qe[] = {
+PDC_uint32 PDC_A_Encoder_qe[] = {
 						0x5601, 0x3401, 0x1801, 0x0ac1, 0x0521, 0x0221, 0x5601,
 						0x5401, 0x4801, 0x3801, 0x3001, 0x2401, 0x1c01, 0x1601, 
 						0x5601, 0x5401, 0x5101, 0x4801, 0x3801, 0x3401, 0x3001,
@@ -42,17 +42,17 @@ PDC_uint_32 PDC_A_Encoder_qe[] = {
 						0x0015, 0x0009, 0x0005, 0x0001, 0x5601 };
 
 
-PDC_uint_32 PDC_A_Encoder_nmps[] = {	
+PDC_uint32 PDC_A_Encoder_nmps[] = {	
 						1 , 2, 3, 4, 5,38, 7, 8, 9,10,11,12,13,29,15,16,17,
 						18,19,20,21,22,23,24,25,26,27,28,29,30,31,32,33,34,
 						35,36,37,38,39,40,41,42,43,44,45,45,46 };
 
-PDC_uint_32 PDC_A_Encoder_nlps[] = {	
+PDC_uint32 PDC_A_Encoder_nlps[] = {	
 						1 , 6, 9,12,29,33, 6,14,14,14,17,18,20,21,14,14,15,
 						16,17,18,19,19,20,21,22,23,24,25,26,27,28,29,30,31,
 						32,33,34,35,36,37,38,39,40,41,42,43,46 };
 
-PDC_uint_32 PDC_A_Encoder_switcher[] = {	
+PDC_uint32 PDC_A_Encoder_switcher[] = {	
 						1,0,0,0,0,0,1,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,
 						0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0 };
 
@@ -94,18 +94,18 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 	PDC_Arithmetic_entropy_encoder* return_encoder = in_encoder;
 	PDC_uint		sym_index, sym_index_max;
 	PDC_decision*	MPS;
-	PDC_uint_32*	I;
-	PDC_uint_32		C;
-	PDC_uint_32		A;
-	PDC_uint_32		CT;
-	PDC_uint_32		I_CX;
-	PDC_uint_32		Qe_I_CX;
+	PDC_uint32*	I;
+	PDC_uint32		C;
+	PDC_uint32		A;
+	PDC_uint32		CT;
+	PDC_uint32		I_CX;
+	PDC_uint32		Qe_I_CX;
 	PDC_context		CX;
 	PDC_uchar		B;
 
 	PDC_uchar*		buffer;
-	PDC_uint_32		length;
-	PDC_uint_32		write_byte_pos;
+	PDC_uint32		length;
+	PDC_uint32		write_byte_pos;
 
 	sym_index_max	= size;
 	MPS				= return_encoder->MPS;
@@ -300,12 +300,12 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
  */
 PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Arithmetic_entropy_encoder* in_encoder,
 													PDC_decision* default_MPS,
-													PDC_uint_32* default_I)
+													PDC_uint32* default_I)
 {
 	PDC_Arithmetic_entropy_encoder* return_encoder = in_encoder;
 	PDC_decision*	MPS;
-	PDC_uint_32*	I;
-	PDC_uint_32		index;
+	PDC_uint32*	I;
+	PDC_uint32		index;
 
 
 	return_encoder->a_register	= 0x8000;
@@ -331,15 +331,15 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 													PDC_Buffer* in_buffer)
 {
 	PDC_Arithmetic_entropy_encoder* return_encoder = in_encoder;
-	PDC_uint_32	TEMP;
-	PDC_uint_32 A;
-	PDC_uint_32 C;
-	PDC_uint_32 CT;
+	PDC_uint32	TEMP;
+	PDC_uint32 A;
+	PDC_uint32 C;
+	PDC_uint32 CT;
 	PDC_uchar	B;
 
 	PDC_uchar*		buffer;
-	PDC_uint_32		length;
-	PDC_uint_32		write_byte_pos;
+	PDC_uint32		length;
+	PDC_uint32		write_byte_pos;
 
 	A	= return_encoder->a_register;
 	C	= return_encoder->c_register;

@@ -28,7 +28,8 @@ START_C
 
 	struct str_PDC_SIZ_Segment_Componente;
 	typedef struct str_PDC_SIZ_Segment_Componente PDC_SIZ_Segment_Componente;
-
+	
+	#include "PDC_Buffer.h"
 
 	struct str_PDC_SIZ_Segment_Componente{
 		PDC_Exception*	exception;
@@ -37,6 +38,26 @@ START_C
 		PDC_uint8		YRsiz;
 	}
 
+	/*
+	 * 
+	 */
+	PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_01();
+
+	/*
+	 * 
+	 */
+	PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_02(PDC_Buffer* buffer);
+
+	/*
+	 *
+	 */
+	void delete_PDC_SIZ_Segment_Componente(PDC_SIZ_Segment_Componente* siz_segment_com);
+
+	/*
+	 *
+	 */
+	PDC_SIZ_Segment_Componente* PDC_SIZ_Segment_Componente_read_buffer(	PDC_SIZ_Segment_Componente* siz_segment,
+																		PDC_Buffer* buffer);
 
 STOP_C
 #endif
