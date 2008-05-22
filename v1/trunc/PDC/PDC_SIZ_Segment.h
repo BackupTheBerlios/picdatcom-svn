@@ -31,7 +31,9 @@ START_C
 
 	#include "PDC_Pointer_Buffer.h"
 	#include "PDC_Buffer.h"
-#define DEFAULT_NUMBER_COMPONENTEN 3
+	#include "PDC_SIZ_Segment_Componente.h"
+
+	#define DEFAULT_NUMBER_COMPONENTEN 3
 
 	struct str_PDC_SIZ_Segment{
 		PDC_Exception*	exception;

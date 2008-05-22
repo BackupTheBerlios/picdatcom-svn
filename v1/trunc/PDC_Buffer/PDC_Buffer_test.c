@@ -49,7 +49,7 @@ void Arithmetic_entropy_test()
 	PDC_decision					d1[TESTSIZE];
 	PDC_decision					d2[TESTSIZE];
 	PDC_context						cx[TESTSIZE];
-	PDC_uint_32						old_write_byte_pos;
+	PDC_uint32						old_write_byte_pos;
 	
 	printf("This is the PDC_Arithmetic_entropy_**coder test\n");
 

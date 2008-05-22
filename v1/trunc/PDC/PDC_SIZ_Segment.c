@@ -36,6 +36,8 @@ PDC_SIZ_Segment* new_PDC_SIZ_Segment_01()
 	siz_segment->exception			= NULL;
 	siz_segment->componente_part	= NULL;
 
+	siz_segment->exception = new_PDC_Exception();
+
 	siz_segment->Lsiz	= 0;
 	siz_segment->Rsiz	= 0;
 	siz_segment->Xsiz	= 0;
@@ -63,6 +65,16 @@ PDC_SIZ_Segment* new_PDC_SIZ_Segment_02(PDC_Buffer* buffer)
 {
 	PDC_SIZ_Segment* siz_segment = NULL;
 
+	siz_segment = new_PDC_SIZ_Segment_01();
+	if(siz_segment == NULL){
+		return NULL;
+	}
+	siz_segment = PDC_SIZ_Segment_read_buffer(siz_segment, buffer);
+	if(siz_segment->exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_SIZ_Segment_01(siz_segment);
+		return NULL;
+	}
+
 	return siz_segment;
 }
 
@@ -71,7 +83,19 @@ PDC_SIZ_Segment* new_PDC_SIZ_Segment_02(PDC_Buffer* buffer)
  */
 void delete_PDC_SIZ_Segment_01(PDC_SIZ_Segment* siz_segment)
 {
-
+	PDC_uint32 pos;
+	if(siz_segment != NULL){
+		if(siz_segment->componente_part != NULL){
+			if(siz_segment->componente_part->full){
+				for(pos = 0; pos < siz_segment->componente_part->last_pointer; pos += 1){
+					delete_PDC_SIZ_Segment_Componente((PDC_SIZ_Segment_Componente*)siz_segment->componente_part->pointer[pos]);
+				}
+			}
+			delete_PDC_Pointer_Buffer_01(siz_segment->componente_part);
+		}
+		delete_PDC_Exception(siz_segment->exception);
+		free(siz_segment);
+	}
 }
 
 /*
@@ -80,17 +104,17 @@ void delete_PDC_SIZ_Segment_01(PDC_SIZ_Segment* siz_segment)
 PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_SIZ_Segment* siz_segment, 
 												PDC_Buffer* buffer)
 {
-	PDC_uint32 read_byte_pos;
+	PDC_uint32 read_byte_pos, csiz_pos_delete;
 	PDC_uint16 csiz_pos;
 	PDC_SIZ_Segment_Componente* siz_segment_com;
 
-	if(buffer->read_byte_pos + 38 < buffer->write_byte_pos){
-		PDC_Exception_error(siz_segment->exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+	if(buffer->read_byte_pos + 38 >= buffer->write_byte_pos){
+		PDC_Exception_error(	siz_segment->exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return siz_segment;
 	}
 	read_byte_pos = buffer->read_byte_pos;
 
-	PDC_Buffer_read_uint16(buffer, &(siz_segment->Csiz));
+	PDC_Buffer_read_uint16(buffer, &(siz_segment->Lsiz));
 	PDC_Buffer_read_uint16(buffer, &(siz_segment->Rsiz));
 	PDC_Buffer_read_uint32(buffer, &(siz_segment->Xsiz));
 	PDC_Buffer_read_uint32(buffer, &(siz_segment->Ysiz));
@@ -102,14 +126,27 @@ PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_SIZ_Segment* siz_segment,
 	PDC_Buffer_read_uint32(buffer, &(siz_segment->YTOsiz));
 	PDC_Buffer_read_uint16(buffer, &(siz_segment->Csiz));
 
-	if(siz_segment->Csiz * 3 > buffer->write_byte_pos - buffer->read_byte_pos){
-		// Todo
-		buffer->read_byte_pos = read_byte_po
+	if((PDC_uint32)(siz_segment->Csiz * 3) > (buffer->write_byte_pos - buffer->read_byte_pos)){
+		buffer->read_byte_pos = read_byte_pos;
+		PDC_Exception_error(	siz_segment->exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+		return siz_segment;
 	}
 
 
 	for(csiz_pos = 0;csiz_pos < siz_segment->Csiz; csiz_pos += 1){
-		siz_segment_com = 
+		siz_segment_com = new_PDC_SIZ_Segment_Componente_02(buffer);
+		if(siz_segment_com == NULL){
+			PDC_Exception_error(	siz_segment->exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+			buffer->read_byte_pos = read_byte_pos;
+			delete_PDC_SIZ_Segment_01(siz_segment);
+			if(siz_segment->componente_part->full){
+				for(csiz_pos_delete = 0; csiz_pos_delete < siz_segment->componente_part->last_pointer; csiz_pos_delete += 1){
+					delete_PDC_SIZ_Segment_Componente(siz_segment->componente_part->pointer[csiz_pos_delete]);
+				}
+			}
+			return siz_segment;			
+		}
+		PDC_Pointer_Buffer_add_pointer(siz_segment->componente_part, siz_segment_com);
 	}
 
 	return siz_segment;

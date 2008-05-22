@@ -18,46 +18,31 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifndef __PDC_SIZ_SEGMENT_COMPONENTE_H__
-#define __PDC_SIZ_SEGMENT_COMPONENTE_H__
+#ifndef __PDC_PICTURE_H__
+#define __PDC_PICTURE_H__
 
 #include <stdlib.h>
 #include "PDC_Parameter.h"
 
 START_C
+	struct str_PDC_Picture;
+	typedef struct str_PDC_Picture PDC_Picture;
 
-	struct str_PDC_SIZ_Segment_Componente;
-	typedef struct str_PDC_SIZ_Segment_Componente PDC_SIZ_Segment_Componente;
-	
-	#include "PDC_Buffer.h"
+	#include "PDC_SIZ_Segment.h"
 
-	struct str_PDC_SIZ_Segment_Componente{
-		PDC_Exception*	exception;
-		PDC_uint8		Ssiz;
-		PDC_uint8		XRsiz;
-		PDC_uint8		YRsiz;
+	struct str_PDC_Picture{
+		PDC_SIZ_Segment* siz_segment;
 	};
 
 	/*
-	 * 
-	 */
-	PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_01();
-
-	/*
-	 * 
-	 */
-	PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_02(PDC_Buffer* buffer);
-
-	/*
 	 *
 	 */
-	void delete_PDC_SIZ_Segment_Componente(PDC_SIZ_Segment_Componente* siz_segment_com);
+	PDC_Picture* new_PDC_Picture();
 
 	/*
-	 *
+	 * 
 	 */
-	PDC_SIZ_Segment_Componente* PDC_SIZ_Segment_Componente_read_buffer(	PDC_SIZ_Segment_Componente* siz_segment,
-																		PDC_Buffer* buffer);
-
+	void delete_PDC_Picture(PDC_Picture* picture);
+	
 STOP_C
 #endif

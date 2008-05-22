@@ -27,7 +27,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	PDC_Decoder* decoder;
 
 	decoder = new_PDC_Decoder();
-	print_errors();
+	//print_errors();
 	
 	do{
 		read_byte = _read(inf, data, data_read_plus);
@@ -37,7 +37,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	PDC_Decoder_add_Data_01( decoder, NULL, 0, PDC_DATA_END);
 
-	print_errors();
+	//print_errors();
 	
 	return 0;
 }

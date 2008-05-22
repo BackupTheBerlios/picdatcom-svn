@@ -188,6 +188,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_COD_Segment.c"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_Decoder.c"
 				>
 			</File>
@@ -197,6 +201,10 @@
 			</File>
 			<File
 				RelativePath=".\PDC_Parameter.c"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_Picture.c"
 				>
 			</File>
 			<File
@@ -238,6 +246,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_COD_Segment.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_Decoder.h"
 				>
 			</File>
@@ -251,6 +263,10 @@
 			</File>
 			<File
 				RelativePath=".\PDC_Parameter.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_Picture.h"
 				>
 			</File>
 			<File

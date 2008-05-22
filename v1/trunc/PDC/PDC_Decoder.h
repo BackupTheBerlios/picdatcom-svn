@@ -33,6 +33,7 @@ START_C
 	typedef enum{PDC_WAIT_FOR_DATA, PDC_HAS_DATA} PDC_DATA_SITUATION;
 
 	#include "PDC_Buffer.h"
+	#include "PDC_Picture.h"
 	
 	#define PDC_FIRST_LENGTH 204800
 
@@ -62,6 +63,7 @@ START_C
 		PDC_Exception*		exception;
 		PDC_Buffer*			in_data;
 		PDC_Buffer*			in_data_save;
+		PDC_Picture*		picture;
 		PDC_READING_STATE	reading_state;
 		PDC_DATA_SITUATION	data_situation;
 	};
@@ -98,6 +100,11 @@ START_C
 	 * 
 	 */
 	PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Decoder* decoder);
+
+	/*
+	 * 
+	 */
+	PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Decoder* decoder);
 
 STOP_C
 #endif

@@ -119,7 +119,7 @@ PDC_Pointer_Buffer* PDC_Pointer_Buffer_add_pointer(PDC_Pointer_Buffer* buffer, v
 		buffer->pointer[buffer->last_pointer] = pointer;
 	}else{
 		buffer->pointer[0]		= pointer;
-		buffer->last_pointer	= 0
+		buffer->last_pointer	= 0;	
 		buffer->full			= PDC_true;
 	}
 

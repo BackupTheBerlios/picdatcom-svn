@@ -80,7 +80,7 @@ void delete_PDC_SIZ_Segment_Componente(PDC_SIZ_Segment_Componente* siz_segment_c
 PDC_SIZ_Segment_Componente* PDC_SIZ_Segment_Componente_read_buffer(	PDC_SIZ_Segment_Componente* siz_segment_com,
 																	PDC_Buffer* buffer)
 {
-	if(buffer->read_byte_pos + 3 < buffer->write_byte_pos){
+	if(buffer->read_byte_pos + 3 >= buffer->write_byte_pos){
 		PDC_Exception_error(siz_segment_com->exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return siz_segment_com;
 	}
