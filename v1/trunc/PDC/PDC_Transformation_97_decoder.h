@@ -51,17 +51,20 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(PDC_uint32 maxSize);
+	PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception* exception, 
+																		PDC_uint32 maxSize);
 
 	/*
 	 *
 	 */
-	PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(PDC_Transformation_97_decoder* decoder);
+	PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(PDC_Exception* exception,
+																		PDC_Transformation_97_decoder* decoder);
 	
 	/*
 	 *
 	 */
-	PDC_Transformation_97_decoder* PDC_td_start(	PDC_Transformation_97_decoder* decoder,
+	PDC_Transformation_97_decoder* PDC_td_start(	PDC_Exception* exception,
+													PDC_Transformation_97_decoder* decoder,
 													float *out, float *in_high, float* in_low, 
 													PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even, 
 													PDC_uint in_high_start, PDC_uint in_hight_plus,

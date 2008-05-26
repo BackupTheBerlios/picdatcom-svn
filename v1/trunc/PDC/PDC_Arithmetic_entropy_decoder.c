@@ -34,7 +34,8 @@ extern PDC_uint32 PDC_A_Encoder_nmps[];
 /*
  *	This is the software version see page 151 and 152.
  */
-PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Arithmetic_entropy_decoder* decoder,
+PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
+													PDC_Arithmetic_entropy_decoder* decoder,
 													PDC_context context,
 		 											PDC_Buffer* in_buffer)
 {
@@ -221,12 +222,13 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Arithmetic_entropy_decode
 /*
  *
  */
-PDC_Arithmetic_entropy_decoder* new_PDC_Arithmetic_entropy_decoder()
+PDC_Arithmetic_entropy_decoder* new_PDC_Arithmetic_entropy_decoder(PDC_Exception* exception)
 {
 	PDC_Arithmetic_entropy_decoder* return_decoder = NULL;
 
 	return_decoder = malloc(sizeof(PDC_Arithmetic_entropy_decoder));
 	if(return_decoder != NULL){
+		PDC_Exception_error(exception,NULL, PDC_EXCEPTION_OUT_OF_MEMORY	,__LINE__, __FILE__);
 		return_decoder->decode_state = INIT_DECODER;
 	}
 	return return_decoder;
@@ -235,7 +237,8 @@ PDC_Arithmetic_entropy_decoder* new_PDC_Arithmetic_entropy_decoder()
 /*
  *
  */
-PDC_Arithmetic_entropy_decoder* delete_PDC_Arithmetic_entropy_decoder(PDC_Arithmetic_entropy_decoder* decoder)
+PDC_Arithmetic_entropy_decoder* delete_PDC_Arithmetic_entropy_decoder(	PDC_Exception* exception,
+																		PDC_Arithmetic_entropy_decoder* decoder)
 {
 	free(decoder);
 	return NULL;
@@ -244,7 +247,8 @@ PDC_Arithmetic_entropy_decoder* delete_PDC_Arithmetic_entropy_decoder(PDC_Arithm
 /*
  *
  */
-PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Arithmetic_entropy_decoder* decoder,
+PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Exception* exception,
+													PDC_Arithmetic_entropy_decoder* decoder,
 													PDC_Buffer* in_buffer)
 {
 
@@ -320,7 +324,8 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Arithmetic_entropy_decod
 /*
  *
  */
-PDC_Arithmetic_entropy_decoder* PDC_Aed_set_I_MPS_01(	PDC_Arithmetic_entropy_decoder* decoder,
+PDC_Arithmetic_entropy_decoder* PDC_Aed_set_I_MPS_01(	PDC_Exception* exception,
+														PDC_Arithmetic_entropy_decoder* decoder,
 														PDC_decision* default_MPS,
 														PDC_uint32* default_I)
 {

@@ -27,36 +27,29 @@ START_C
 /*
  * 
  */
-DLL PDC_Decoder* new_PDC_Decoder()
+DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 {
 	PDC_Decoder* decoder = NULL;
 
 	decoder = malloc(sizeof(PDC_Decoder));
 	if(decoder == NULL){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-
-	decoder->exception		= NULL;
 	decoder->in_data		= NULL;
 	decoder->in_data_save	= NULL;
 	decoder->picture		= NULL;
 
-	decoder->exception =  new_PDC_Exception();
-	if(decoder->exception == NULL){
-		delete_PDC_Decoder(decoder);
+
+	decoder->in_data = new_PDC_Buffer_1( exception, PDC_FIRST_LENGTH);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Decoder(exception, decoder);
 		return NULL;
 	}
 
-
-	decoder->in_data = new_PDC_Buffer_1( PDC_FIRST_LENGTH);
-	if(decoder->in_data == NULL){
-		delete_PDC_Decoder(decoder);
-		return NULL;
-	}
-
-	decoder->in_data_save = new_PDC_Buffer_3();
-	if(decoder->in_data_save == NULL){
-		delete_PDC_Decoder(decoder);
+	decoder->in_data_save = new_PDC_Buffer_3(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Decoder(exception, decoder);
 		return NULL;
 	}
 
@@ -69,28 +62,27 @@ DLL PDC_Decoder* new_PDC_Decoder()
 /*
  *
  */
-DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Decoder* decoder, 
+DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
+											PDC_Decoder* decoder, 
 											PDC_uchar* data, 
 											PDC_uint32 length, 
 											PDC_DECODER_DATA_END end)
 {
-	PDC_Buffer* temp_buffer;
-
 	if(decoder->in_data->end_state != END_OF_BUFFER && data != NULL && length != 0 && decoder != NULL){
-		temp_buffer = PDC_Buffer_add_bytes_1(decoder->in_data, data, length);
-		if(temp_buffer == NULL){
-			return NULL;
+		decoder->in_data = PDC_Buffer_add_bytes_1(exception, decoder->in_data, data, length);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return decoder;
 		}
-		decoder->in_data = temp_buffer;
+	
 
 		if(end == PDC_DATA_END){
 			decoder->in_data->end_state = END_OF_BUFFER;
 		}
 		decoder->data_situation	= PDC_HAS_DATA;
-		PDC_Decoder_decode(decoder);
+		PDC_Decoder_decode(exception, decoder);
 
 	}else{
-		PDC_Exception_error(decoder->exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return NULL;
 	}
 
@@ -101,13 +93,12 @@ DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Decoder* decoder,
 /*
  * 
  */
-DLL PDC_Decoder* delete_PDC_Decoder(PDC_Decoder* decoder)
+DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception, PDC_Decoder* decoder)
 {
 	if(decoder != NULL){
-		delete_PDC_Buffer(decoder->in_data);
-		delete_PDC_Buffer(decoder->in_data_save);
-		delete_PDC_Exception(decoder->exception);
-		delete_PDC_Picture(decoder->picture);
+		delete_PDC_Buffer(exception, decoder->in_data);
+		delete_PDC_Buffer(exception, decoder->in_data_save);
+		delete_PDC_Picture(exception, decoder->picture);
 	}
 	return NULL;
 }
@@ -116,7 +107,7 @@ DLL PDC_Decoder* delete_PDC_Decoder(PDC_Decoder* decoder)
 /*
  * 
  */
-PDC_Decoder* PDC_Decoder_decode(PDC_Decoder* decoder)
+PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decoder)
 {
 
 	PDC_READING_STATE	reading_state;
@@ -126,17 +117,17 @@ PDC_Decoder* PDC_Decoder_decode(PDC_Decoder* decoder)
 	do{
 		switch(reading_state){
 			case PDC_UNKNOW:
-				decoder			= PDC_Decoder_decode_unknow(decoder);
+				decoder			= PDC_Decoder_decode_unknow(exception, decoder);
 				reading_state	= decoder->reading_state;
 				break;
 
 			case PDC_MAIN_HEADER_SIZ:
-				decoder			= PDC_Decoder_decode_main_header_siz(decoder);
+				decoder			= PDC_Decoder_decode_main_header_siz(exception, decoder);
 				reading_state	= decoder->reading_state;
 				break;
 
 			case PDC_MAIN_HEADER:
-				PDC_Decoder_decode_main_header(decoder);
+				PDC_Decoder_decode_main_header(exception, decoder);
 				reading_state	= decoder->reading_state;
 				break;
 
@@ -157,7 +148,7 @@ PDC_Decoder* PDC_Decoder_decode(PDC_Decoder* decoder)
 /*
  * 
  */
-PDC_Decoder* PDC_Decoder_decode_unknow(PDC_Decoder* decoder)
+PDC_Decoder* PDC_Decoder_decode_unknow(PDC_Exception* exception, PDC_Decoder* decoder)
 {
 	PDC_uint16			symbol;
 	PDC_Buffer*			buffer;
@@ -165,14 +156,14 @@ PDC_Decoder* PDC_Decoder_decode_unknow(PDC_Decoder* decoder)
 	buffer = decoder->in_data;
 
 	do{
-		buffer = PDC_Buffer_read_uint16(buffer, &symbol);
-		if(buffer->exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		buffer = PDC_Buffer_read_uint16(exception, buffer, &symbol);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			if(buffer->end_state == END_OF_BUFFER){
-				PDC_Exception_error(decoder->exception, buffer->exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+				PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 				decoder->data_situation = PDC_WAIT_FOR_DATA;
 				return decoder;
 			}else{
-				PDC_Exception_unset_exception(buffer->exception);
+				PDC_Exception_unset_exception(exception);
 				decoder->data_situation = PDC_WAIT_FOR_DATA;
 				return decoder;
 			}
@@ -180,9 +171,9 @@ PDC_Decoder* PDC_Decoder_decode_unknow(PDC_Decoder* decoder)
 
 		if(symbol == PDC_SOC){
 			decoder->reading_state	= PDC_MAIN_HEADER_SIZ;
-			decoder->picture		= new_PDC_Picture();
+			decoder->picture		= new_PDC_Picture(exception);
 			if(decoder->picture == NULL){
-				PDC_Exception_error(decoder->exception, buffer->exception, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+				PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 				return decoder;
 			}
 		}else{
@@ -197,7 +188,7 @@ PDC_Decoder* PDC_Decoder_decode_unknow(PDC_Decoder* decoder)
 /*
  * 
  */
-PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Decoder* decoder)
+PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_Decoder* decoder)
 {
 	PDC_uint16			symbol;
 	PDC_Buffer*			buffer;
@@ -205,29 +196,29 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Decoder* decoder)
 
 	buffer = decoder->in_data;
 
-	buffer = PDC_Buffer_read_uint16(buffer, &symbol);
-	if(buffer->exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+	buffer = PDC_Buffer_read_uint16(exception, buffer, &symbol);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		if(buffer->end_state == END_OF_BUFFER){
-			PDC_Exception_error(decoder->exception, buffer->exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 			decoder->data_situation = PDC_WAIT_FOR_DATA;
 			return decoder;
 		}else{
-			PDC_Exception_unset_exception(buffer->exception);
+			PDC_Exception_unset_exception(exception);
 			decoder->data_situation = PDC_WAIT_FOR_DATA;
 			return decoder;
 		}
 	}
 
 	if(symbol == PDC_SIZ){
-		siz_segment = new_PDC_SIZ_Segment_02(buffer);
+		siz_segment = new_PDC_SIZ_Segment_02(exception, buffer);
 		if(siz_segment == NULL){
-			PDC_Exception_error(decoder->exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 			return decoder;
 		}
 		decoder->picture->siz_segment = siz_segment;
 		decoder->reading_state = PDC_MAIN_HEADER;
 	}else{
-		PDC_Exception_error(decoder->exception, NULL, PDC_EXCEPTION_FALSE_SYMBOL, __LINE__, __FILE__);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_FALSE_SYMBOL, __LINE__, __FILE__);
 	}
 
 	return decoder;
@@ -236,7 +227,7 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Decoder* decoder)
 /*
  * 
  */
-PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Decoder* decoder)
+PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decoder* decoder)
 {
 	PDC_uint16		symbol;
 	PDC_Buffer*		buffer;
@@ -247,18 +238,28 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Decoder* decoder)
 	decode_more = PDC_false;
 
 	do{
-		buffer = PDC_Buffer_read_uint16(buffer, &symbol);
-		if(buffer->exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		buffer = PDC_Buffer_read_uint16(exception, buffer, &symbol);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			if(buffer->end_state == END_OF_BUFFER){
-				PDC_Exception_error(decoder->exception, buffer->exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+				PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 				decoder->data_situation = PDC_WAIT_FOR_DATA;
 				return decoder;
 			}else{
-				PDC_Exception_unset_exception(buffer->exception);
+				PDC_Exception_unset_exception(exception);
 				decoder->data_situation = PDC_WAIT_FOR_DATA;
 				return decoder;
 			}
-		}			
+		}
+
+		switch(symbol){
+			case PDC_COD:
+				break;
+			default:
+				PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+				return decoder;
+				break;
+
+		}
 
 	}while(decode_more);
 

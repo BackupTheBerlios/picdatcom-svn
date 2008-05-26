@@ -60,12 +60,13 @@ PDC_uint32 PDC_A_Encoder_switcher[] = {
 /*
  *
  */
-PDC_Arithmetic_entropy_encoder* new_PDC_Arithmetic_entropy_encoder()
+PDC_Arithmetic_entropy_encoder* new_PDC_Arithmetic_entropy_encoder(PDC_Exception*	exception)
 {
 	PDC_Arithmetic_entropy_encoder* return_encoder = NULL;
 
 	return_encoder = malloc(sizeof(PDC_Arithmetic_entropy_encoder));
 	if(return_encoder == NULL){
+		PDC_Exception_error(exception,NULL, PDC_EXCEPTION_OUT_OF_MEMORY	,__LINE__, __FILE__);
 		return NULL;
 	}
 	return return_encoder;
@@ -74,7 +75,8 @@ PDC_Arithmetic_entropy_encoder* new_PDC_Arithmetic_entropy_encoder()
 /*
  *
  */
-PDC_Arithmetic_entropy_encoder* delete_PDC_Arithmetic_entropy_encoder(PDC_Arithmetic_entropy_encoder* encoder)
+PDC_Arithmetic_entropy_encoder* delete_PDC_Arithmetic_entropy_encoder(	PDC_Exception* exception,
+																		PDC_Arithmetic_entropy_encoder* encoder)
 {
 	if(encoder != NULL){
 		free(encoder);
@@ -85,7 +87,8 @@ PDC_Arithmetic_entropy_encoder* delete_PDC_Arithmetic_entropy_encoder(PDC_Arithm
 /*
  *
  */
-PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encoder* in_encoder, 
+PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Exception* exception,
+													PDC_Arithmetic_entropy_encoder* in_encoder, 
 													PDC_decision* d,
 													PDC_context* cx,
 													PDC_uint size,
@@ -148,7 +151,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 						/* BYTEOUT */
 						if(B == 0xFF){
 							if(write_byte_pos >= length){
-								in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+								in_buffer	= PDC_Buffer_realloc(exception,in_buffer, RESIZE_BUFFER);
 								buffer		= in_buffer->buffer;
 								length		= in_buffer->length;
 							}
@@ -160,7 +163,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 						}else{
 							if(C < 0x8000000){
 								if(write_byte_pos >= length){
-									in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+									in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 									buffer		= in_buffer->buffer;
 									length		= in_buffer->length;
 								}
@@ -177,7 +180,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 								if(B == 0xFF){
 									C &= 0x7FFFFFF;
 									if(write_byte_pos >= length){
-										in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+										in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 										buffer		= in_buffer->buffer;
 										length		= in_buffer->length;
 									}
@@ -188,7 +191,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 									CT = 7;
 								}else{
 									if(write_byte_pos >= length){
-										in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+										in_buffer	= PDC_Buffer_realloc(exception,in_buffer, RESIZE_BUFFER);
 										buffer		= in_buffer->buffer;
 										length		= in_buffer->length;
 									}
@@ -228,7 +231,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 					/* BYTEOUT */
 					if(B == 0xFF){
 						if(write_byte_pos >= length){
-							in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+							in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 							buffer		= in_buffer->buffer;
 							length		= in_buffer->length;
 						}
@@ -240,7 +243,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 					}else{
 						if(C < 0x8000000){
 							if(write_byte_pos >= length){
-								in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+								in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 								buffer		= in_buffer->buffer;
 								length		= in_buffer->length;
 							}
@@ -257,7 +260,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 							if(B == 0xFF){
 								C &= 0x7FFFFFF;
 								if(write_byte_pos >= length){
-									in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+									in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 									buffer		= in_buffer->buffer;
 									length		= in_buffer->length;
 								}
@@ -268,7 +271,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 								CT = 7;
 							}else{
 								if(write_byte_pos >= length){
-									in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+									in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 									buffer		= in_buffer->buffer;
 									length		= in_buffer->length;
 								}
@@ -298,7 +301,8 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encode
 /*
  *
  */
-PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Arithmetic_entropy_encoder* in_encoder,
+PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Exception* exception,
+													PDC_Arithmetic_entropy_encoder* in_encoder,
 													PDC_decision* default_MPS,
 													PDC_uint32* default_I)
 {
@@ -327,7 +331,8 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Arithmetic_entropy_encoder*
 /*
  *
  */
-PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder* in_encoder, 
+PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Exception* exception,
+													PDC_Arithmetic_entropy_encoder* in_encoder, 
 													PDC_Buffer* in_buffer)
 {
 	PDC_Arithmetic_entropy_encoder* return_encoder = in_encoder;
@@ -366,7 +371,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 	/* BYTEOUT */
 	if(B == 0xFF){
 		if(write_byte_pos >= length){
-			in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+			in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 			buffer		= in_buffer->buffer;
 			length		= in_buffer->length;
 		}
@@ -378,7 +383,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 	}else{
 		if(C < 0x8000000){
 			if(write_byte_pos >= length){
-				in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+				in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 				buffer		= in_buffer->buffer;
 				length		= in_buffer->length;
 			}
@@ -395,7 +400,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 			if(B == 0xFF){
 				C &= 0x7FFFFFF;
 				if(write_byte_pos >= length){
-					in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+					in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 					buffer		= in_buffer->buffer;
 					length		= in_buffer->length;
 				}
@@ -406,7 +411,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 				CT = 7;
 			}else{
 				if(write_byte_pos >= length){
-					in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+					in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 					buffer		= in_buffer->buffer;
 					length		= in_buffer->length;
 				}
@@ -423,7 +428,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 	/* BYTEOUT */
 	if(B == 0xFF){
 		if(write_byte_pos >= length){
-			in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+			in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 			buffer		= in_buffer->buffer;
 			length		= in_buffer->length;
 		}
@@ -435,7 +440,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 	}else{
 		if(C < 0x8000000){
 			if(write_byte_pos >= length){
-				in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+				in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 				buffer		= in_buffer->buffer;
 				length		= in_buffer->length;
 			}
@@ -452,7 +457,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 			if(B == 0xFF){
 				C &= 0x7FFFFFF;
 				if(write_byte_pos >= length){
-					in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+					in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 					buffer		= in_buffer->buffer;
 					length		= in_buffer->length;
 				}
@@ -463,7 +468,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 				CT = 7;
 			}else{
 				if(write_byte_pos >= length){
-					in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+					in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 					buffer		= in_buffer->buffer;
 					length		= in_buffer->length;
 				}
@@ -478,7 +483,7 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder
 	/* BYTEOUT END */
 	if(B != 0xFF){
 		if(write_byte_pos >= length){
-			in_buffer	= PDC_Buffer_realloc(in_buffer, RESIZE_BUFFER);
+			in_buffer	= PDC_Buffer_realloc(exception, in_buffer, RESIZE_BUFFER);
 			buffer		= in_buffer->buffer;
 			length		= in_buffer->length;
 		}

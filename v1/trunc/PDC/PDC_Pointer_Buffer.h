@@ -34,7 +34,6 @@ START_C
 	#define PDC_POINTER_BUFFER_RESIZE 3
 
 	struct str_PDC_Pointer_Buffer{
-		PDC_Exception*	exception;
 		void**			pointer;
 		PDC_uint		last_pointer;
 		PDC_uint		size;
@@ -44,27 +43,27 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Pointer_Buffer* new_PDC_Pointer_Buffer_01(PDC_uint size);
+	PDC_Pointer_Buffer* new_PDC_Pointer_Buffer_01(	PDC_Exception* exception,PDC_uint size);
 
 	/*
 	 *
 	 */
-	PDC_Pointer_Buffer* new_PDC_Pointer_Buffer_02();
+	PDC_Pointer_Buffer* new_PDC_Pointer_Buffer_02(	PDC_Exception* exception);
 
 	/*
 	 *
 	 */
-	PDC_Pointer_Buffer* delete_PDC_Pointer_Buffer_01(PDC_Pointer_Buffer* buffer);
+	PDC_Pointer_Buffer* delete_PDC_Pointer_Buffer_01(PDC_Exception* exception, PDC_Pointer_Buffer* buffer);
 
 	/*
 	 *
 	 */
-	void* PDC_Pointer_Buffer_get_pointer(PDC_Pointer_Buffer* buffer, PDC_uint pos);
+	void* PDC_Pointer_Buffer_get_pointer(PDC_Exception* exception, PDC_Pointer_Buffer* buffer, PDC_uint pos);
 
 	/*
 	 *
 	 */
-	PDC_Pointer_Buffer*  PDC_Pointer_Buffer_add_pointer(PDC_Pointer_Buffer* buffer, void* pointer);
+	PDC_Pointer_Buffer*  PDC_Pointer_Buffer_add_pointer(PDC_Exception* exception, PDC_Pointer_Buffer* buffer, void* pointer);
 
 STOP_C
 #endif

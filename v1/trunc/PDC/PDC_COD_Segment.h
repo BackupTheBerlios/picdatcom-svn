@@ -29,6 +29,8 @@ START_C
 	struct str_PDC_COD_Segment;
 	typedef struct str_PDC_COD_Segment PDC_COD_Segment;
 
+	#include "PDC_Buffer.h"
+
 	#define LAYER_RESOLUTION_LEVEL_COMPONENT_POSITION 0x00
 	#define	RESOLUTION_LEVEL_LAYER_COMPONENT_POSITION 0x01
 	#define RESOLUTION_LEVEL_POSITION_COMPONENT_LAYER 0x02
@@ -62,7 +64,13 @@ START_C
 	/*
 	 *
 	 */
-	PDC_COD_Segment* new_PDC_COD_Segment(PDC_Exception *exception);
+	PDC_COD_Segment* new_PDC_COD_Segment_01(PDC_Exception *exception);
+
+	/*
+	 *
+	 */
+	PDC_COD_Segment* new_PDC_COD_Segment_02(	PDC_Exception *exception,
+												PDC_Buffer* buffer);
 
 	/*
 	 *
@@ -79,3 +87,4 @@ START_C
 
 
 STOP_C
+#endif

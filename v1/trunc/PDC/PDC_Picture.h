@@ -37,12 +37,13 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Picture* new_PDC_Picture();
+	PDC_Picture* new_PDC_Picture(PDC_Exception* exception);
 
 	/*
 	 * 
 	 */
-	void delete_PDC_Picture(PDC_Picture* picture);
+	void delete_PDC_Picture(PDC_Exception* exception,
+							PDC_Picture* picture);
 	
 STOP_C
 #endif

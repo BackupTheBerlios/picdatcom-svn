@@ -60,7 +60,6 @@ START_C
 
 
 	struct str_PDC_Decoder{
-		PDC_Exception*		exception;
 		PDC_Buffer*			in_data;
 		PDC_Buffer*			in_data_save;
 		PDC_Picture*		picture;
@@ -71,17 +70,19 @@ START_C
 	/*
 	 * 
 	 */
-	DLL PDC_Decoder* new_PDC_Decoder();
+	DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception);
 
 	/*
 	 * 
 	 */
-	DLL PDC_Decoder* delete_PDC_Decoder(PDC_Decoder* decoder);
+	DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception,
+										PDC_Decoder* decoder);
 
 	/*
 	 *
 	 */
-	DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Decoder* decoder, 
+	DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
+												PDC_Decoder* decoder, 
 												PDC_uchar* data, 
 												PDC_uint32 length, 
 												PDC_DECODER_DATA_END end);
@@ -89,22 +90,26 @@ START_C
 	/*
 	 * 
 	 */
-	PDC_Decoder* PDC_Decoder_decode(PDC_Decoder* decoder);
+	PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception,
+									PDC_Decoder* decoder);
 
 	/*
 	 * 
 	 */
-	PDC_Decoder* PDC_Decoder_decode_unknow(PDC_Decoder* decoder);
+	PDC_Decoder* PDC_Decoder_decode_unknow(	PDC_Exception* exception,
+											PDC_Decoder* decoder);
 
 	/*
 	 * 
 	 */
-	PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Decoder* decoder);
+	PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception,
+													PDC_Decoder* decoder);
 
 	/*
 	 * 
 	 */
-	PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Decoder* decoder);
+	PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception,
+												PDC_Decoder* decoder);
 
 STOP_C
 #endif

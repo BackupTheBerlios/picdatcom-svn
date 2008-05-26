@@ -35,7 +35,6 @@ START_C
 	#include "PDC_Arithmetic_entropy_encoder.h"
 
 	struct str_PDC_Arithmetic_entropy_decoder{
-		PDC_Exception*		exception;
 		PDC_uint32			c_register;
 		PDC_uint32			a_register;
 		PDC_uint32			CT;
@@ -50,30 +49,33 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_decoder* new_PDC_Arithmetic_entropy_decoder();
+	PDC_Arithmetic_entropy_decoder* new_PDC_Arithmetic_entropy_decoder(PDC_Exception* exception);
 
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_decoder* delete_PDC_Arithmetic_entropy_decoder(PDC_Arithmetic_entropy_decoder* decoder);
+	PDC_Arithmetic_entropy_decoder* delete_PDC_Arithmetic_entropy_decoder(PDC_Exception* exception,PDC_Arithmetic_entropy_decoder* decoder);
 
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Arithmetic_entropy_decoder* decoder,
+	PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
+														PDC_Arithmetic_entropy_decoder* decoder,
 														PDC_context context,
 														PDC_Buffer* in_buffer);
 
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Arithmetic_entropy_decoder* decoder,
+	PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Exception* exception,
+														PDC_Arithmetic_entropy_decoder* decoder,
 														PDC_Buffer* in_buffer);
 
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_decoder* PDC_Aed_set_I_MPS_01(	PDC_Arithmetic_entropy_decoder* decoder,
+	PDC_Arithmetic_entropy_decoder* PDC_Aed_set_I_MPS_01(	PDC_Exception* exception,
+															PDC_Arithmetic_entropy_decoder* decoder,
 															PDC_decision* default_MPS,
 															PDC_uint32* default_I);
 

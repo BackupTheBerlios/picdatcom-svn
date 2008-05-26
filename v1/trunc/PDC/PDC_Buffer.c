@@ -24,23 +24,16 @@ extern "C" {
 
 #include "PDC_Buffer.h"
 
-PDC_Buffer* new_PDC_Buffer_1(PDC_uint32 length)
+PDC_Buffer* new_PDC_Buffer_1(PDC_Exception* exception, PDC_uint32 length)
 {
 	PDC_Buffer* buffer = NULL;
 	PDC_uchar*	charbuffer = NULL;
 	buffer = malloc(sizeof(PDC_Buffer));
 	if(buffer == NULL){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	buffer->exception	= NULL;
 	buffer->buffer		= NULL;	
-	
-	buffer->exception = new_PDC_Exception();
-	if(buffer->exception == NULL){
-		delete_PDC_Buffer(buffer);
-		return NULL;		
-	}	
-	
 
 	if(length == 0){
 		length = 1;
@@ -48,7 +41,8 @@ PDC_Buffer* new_PDC_Buffer_1(PDC_uint32 length)
 
 	charbuffer = malloc(sizeof(PDC_uchar) * length);
 	if(charbuffer == NULL){
-		delete_PDC_Buffer(buffer);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		delete_PDC_Buffer(exception, buffer);
 		return NULL;
 	}
 
@@ -64,22 +58,17 @@ PDC_Buffer* new_PDC_Buffer_1(PDC_uint32 length)
 /*
  * Empty Buffer
  */
-PDC_Buffer* new_PDC_Buffer_3()
+PDC_Buffer* new_PDC_Buffer_3(PDC_Exception* exception)
 {
 	PDC_Buffer* buffer = NULL;
 
 	buffer = malloc(sizeof(PDC_Buffer));
 	if(buffer == NULL){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}	
-	buffer->exception	= NULL;
-	buffer->buffer		= NULL;	
-	buffer->exception = new_PDC_Exception();
-	if(buffer->exception == NULL){
-		delete_PDC_Buffer(buffer);
-		return NULL;		
-	}
-
+	
+	buffer->buffer			= NULL;	
 	buffer->length			= 0;
 	buffer->read_byte_pos	= 0;
 	buffer->write_byte_pos	= 0;
@@ -88,21 +77,21 @@ PDC_Buffer* new_PDC_Buffer_3()
 	return buffer;
 }
 
-void delete_PDC_Buffer(PDC_Buffer* buffer)
+PDC_Buffer* delete_PDC_Buffer(PDC_Exception* exception, PDC_Buffer* buffer)
 {
 	if(buffer != NULL){
 		if(buffer->buffer != NULL){
 			free(buffer->buffer);
-			delete_PDC_Exception(buffer->exception);
 		}
 		free(buffer);
 	}
+	return NULL;
 }
 
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_realloc(PDC_Buffer* buffer, PDC_uint32 plus_buffer_length)
+PDC_Buffer* PDC_Buffer_realloc(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint32 plus_buffer_length)
 {
 	PDC_Buffer* return_buffer = buffer;
 	PDC_uchar*  new_buffer;
@@ -110,7 +99,7 @@ PDC_Buffer* PDC_Buffer_realloc(PDC_Buffer* buffer, PDC_uint32 plus_buffer_length
 	                                   
 	new_buffer = realloc(buffer->buffer, sizeof(PDC_uchar) * new_size);
 	if(new_buffer == NULL){
-		PDC_Exception_error(buffer->exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 	}else{
 		return_buffer->length = new_size;
 		return_buffer->buffer = new_buffer;
@@ -121,7 +110,7 @@ PDC_Buffer* PDC_Buffer_realloc(PDC_Buffer* buffer, PDC_uint32 plus_buffer_length
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_add_byte_1(PDC_Buffer* buffer, PDC_uchar byte)
+PDC_Buffer* PDC_Buffer_add_byte_1(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uchar byte)
 {
 	PDC_Buffer* return_buffer = buffer;
 	
@@ -132,7 +121,7 @@ PDC_Buffer* PDC_Buffer_add_byte_1(PDC_Buffer* buffer, PDC_uchar byte)
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Buffer* buffer, PDC_uchar* byte, PDC_uint numbytes)
+PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uchar* byte, PDC_uint numbytes)
 {
 	PDC_uint32	plus_length, i, i2;
 	PDC_uchar*	data;
@@ -140,8 +129,8 @@ PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Buffer* buffer, PDC_uchar* byte, PDC_uint
 		plus_length = buffer->write_byte_pos + numbytes - buffer->length;
 		plus_length += 1024;
 
-		buffer =  PDC_Buffer_realloc(buffer, plus_length);
-		if(buffer->exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		buffer =  PDC_Buffer_realloc(exception, buffer, plus_length);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return buffer;
 		}
 	}
@@ -157,7 +146,7 @@ PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Buffer* buffer, PDC_uchar* byte, PDC_uint
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_save_state(PDC_Buffer* buffer, PDC_Buffer* save_buffer)
+PDC_Buffer* PDC_Buffer_save_state(PDC_Exception* exception, PDC_Buffer* buffer, PDC_Buffer* save_buffer)
 {
 	
 	save_buffer->read_byte_pos	= buffer->read_byte_pos;
@@ -168,7 +157,7 @@ PDC_Buffer* PDC_Buffer_save_state(PDC_Buffer* buffer, PDC_Buffer* save_buffer)
 
 
 
-PDC_Buffer* PDC_Buffer_read_uint16(PDC_Buffer* buffer, PDC_uint16 *value)
+PDC_Buffer* PDC_Buffer_read_uint16(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint16 *value)
 {
 	PDC_uint16 temp_value = 0;
 	*value = 0;
@@ -185,7 +174,7 @@ PDC_Buffer* PDC_Buffer_read_uint16(PDC_Buffer* buffer, PDC_uint16 *value)
 
 
 	}else{
-		PDC_Exception_error(buffer->exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return buffer;
 	}
 
@@ -196,7 +185,7 @@ PDC_Buffer* PDC_Buffer_read_uint16(PDC_Buffer* buffer, PDC_uint16 *value)
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_read_uint32(PDC_Buffer* buffer, PDC_uint32 *value)
+PDC_Buffer* PDC_Buffer_read_uint32(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint32 *value)
 {
 	PDC_uint32 temp_value = 0;
 	*value = 0;
@@ -219,7 +208,7 @@ PDC_Buffer* PDC_Buffer_read_uint32(PDC_Buffer* buffer, PDC_uint32 *value)
 		*value  |= temp_value;
 
 	}else{
-		PDC_Exception_error(buffer->exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return buffer;
 	}
 
@@ -229,7 +218,7 @@ PDC_Buffer* PDC_Buffer_read_uint32(PDC_Buffer* buffer, PDC_uint32 *value)
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_read_uint8(PDC_Buffer* buffer, PDC_uint8 *value)
+PDC_Buffer* PDC_Buffer_read_uint8(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint8 *value)
 {
 
 	PDC_uint8 temp_value = 0;
@@ -241,7 +230,7 @@ PDC_Buffer* PDC_Buffer_read_uint8(PDC_Buffer* buffer, PDC_uint8 *value)
 		*value = temp_value;		
 
 	}else{
-		PDC_Exception_error(buffer->exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return buffer;
 	}
 

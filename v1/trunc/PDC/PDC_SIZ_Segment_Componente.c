@@ -26,21 +26,15 @@ START_C
 /*
  * 
  */
-PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_01()
+PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_01(PDC_Exception* exception )
 {
 	PDC_SIZ_Segment_Componente* siz_segment_com = NULL;
 	siz_segment_com = malloc(sizeof(PDC_SIZ_Segment_Componente));
 	if(siz_segment_com == NULL){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	siz_segment_com->exception = NULL;
 
-	siz_segment_com->exception = malloc(sizeof(PDC_SIZ_Segment_Componente));
-	if(siz_segment_com->exception == NULL){
-		delete_PDC_SIZ_Segment_Componente(siz_segment_com);	
-		return NULL;
-	}
-	
 	siz_segment_com->Ssiz	= 0;
 	siz_segment_com->XRsiz	= 0;
 	siz_segment_com->YRsiz	= 0;
@@ -51,14 +45,15 @@ PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_01()
 /*
  * 
  */
-PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_02(PDC_Buffer* buffer)
+PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_02(PDC_Exception* exception, PDC_Buffer* buffer)
 {
 	PDC_SIZ_Segment_Componente* siz_segment_com = NULL;
-	siz_segment_com = new_PDC_SIZ_Segment_Componente_01();
+	siz_segment_com = new_PDC_SIZ_Segment_Componente_01(exception);
 	if(siz_segment_com == NULL){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	PDC_SIZ_Segment_Componente_read_buffer(siz_segment_com, buffer);
+	PDC_SIZ_Segment_Componente_read_buffer(exception, siz_segment_com, buffer);
 
 	return siz_segment_com;
 }
@@ -66,7 +61,7 @@ PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_02(PDC_Buffer* buffer
 /*
  *
  */
-void delete_PDC_SIZ_Segment_Componente(PDC_SIZ_Segment_Componente* siz_segment_com)
+void delete_PDC_SIZ_Segment_Componente(PDC_Exception* exception, PDC_SIZ_Segment_Componente* siz_segment_com)
 {
 	if(siz_segment_com != NULL){
 		delete_PDC_Exception(siz_segment_com->exception);
@@ -77,17 +72,18 @@ void delete_PDC_SIZ_Segment_Componente(PDC_SIZ_Segment_Componente* siz_segment_c
 /*
  *
  */
-PDC_SIZ_Segment_Componente* PDC_SIZ_Segment_Componente_read_buffer(	PDC_SIZ_Segment_Componente* siz_segment_com,
+PDC_SIZ_Segment_Componente* PDC_SIZ_Segment_Componente_read_buffer(	PDC_Exception* exception, 
+																	PDC_SIZ_Segment_Componente* siz_segment_com,
 																	PDC_Buffer* buffer)
 {
 	if(buffer->read_byte_pos + 3 >= buffer->write_byte_pos){
-		PDC_Exception_error(siz_segment_com->exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return siz_segment_com;
 	}
 
-	PDC_Buffer_read_uint8(buffer, &(siz_segment_com->Ssiz));
-	PDC_Buffer_read_uint8(buffer, &(siz_segment_com->XRsiz));
-	PDC_Buffer_read_uint8(buffer, &(siz_segment_com->YRsiz));
+	PDC_Buffer_read_uint8(exception, buffer, &(siz_segment_com->Ssiz));
+	PDC_Buffer_read_uint8(exception, buffer, &(siz_segment_com->XRsiz));
+	PDC_Buffer_read_uint8(exception, buffer, &(siz_segment_com->YRsiz));
 
 	return siz_segment_com;
 }

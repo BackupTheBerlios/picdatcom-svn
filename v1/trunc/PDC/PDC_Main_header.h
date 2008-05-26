@@ -31,7 +31,6 @@ START_C
 
 
 	struct str_PDC_Main_header{
-		PDC_Exception*	exception;
 		PDC_bool		SOC_read;
 		PDC_bool		SIZ_read;
 		PDC_bool		COD_read;

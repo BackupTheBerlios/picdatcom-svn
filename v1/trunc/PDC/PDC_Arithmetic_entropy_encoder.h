@@ -40,7 +40,6 @@ START_C
 	#define RESIZE_BUFFER 10
 
 	struct str_PDC_Arithmetic_entropy_encoder{
-		PDC_Exception*	exception;
 		PDC_uint32		c_register;
 		PDC_uint32		a_register;
 		PDC_uint32		CT;
@@ -51,17 +50,18 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_encoder* new_PDC_Arithmetic_entropy_encoder();
+	PDC_Arithmetic_entropy_encoder* new_PDC_Arithmetic_entropy_encoder(PDC_Exception*	exception);
 
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_encoder* delete_PDC_Arithmetic_entropy_encoder(PDC_Arithmetic_entropy_encoder* encoder);
+	PDC_Arithmetic_entropy_encoder* delete_PDC_Arithmetic_entropy_encoder(PDC_Exception*	exception, PDC_Arithmetic_entropy_encoder* encoder);
 
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Arithmetic_entropy_encoder* in_encoder, 
+	PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Exception*	exception,
+														PDC_Arithmetic_entropy_encoder* in_encoder, 
 														PDC_decision* d,
 														PDC_context* cx,
 														PDC_uint size,
@@ -70,12 +70,14 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Arithmetic_entropy_encoder* in_encoder, 
+	PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Exception*	exception,
+														PDC_Arithmetic_entropy_encoder* in_encoder, 
 														PDC_Buffer* in_buffer);
 	/*
 	 *
 	 */
-	PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Arithmetic_entropy_encoder* in_encoder,
+	PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Exception*	exception,
+														PDC_Arithmetic_entropy_encoder* in_encoder,
 														PDC_decision* default_MPS,
 														PDC_uint32* default_I);		
 

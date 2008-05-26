@@ -41,22 +41,25 @@ START_C
 	/*
 	 * 
 	 */
-	PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_01();
+	PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_01(PDC_Exception* exception);
 
 	/*
 	 * 
 	 */
-	PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_02(PDC_Buffer* buffer);
+	PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_02(	PDC_Exception* exception, 
+																	PDC_Buffer* buffer);
 
 	/*
 	 *
 	 */
-	void delete_PDC_SIZ_Segment_Componente(PDC_SIZ_Segment_Componente* siz_segment_com);
+	void delete_PDC_SIZ_Segment_Componente(	PDC_Exception* exception,
+											PDC_SIZ_Segment_Componente* siz_segment_com);
 
 	/*
 	 *
 	 */
-	PDC_SIZ_Segment_Componente* PDC_SIZ_Segment_Componente_read_buffer(	PDC_SIZ_Segment_Componente* siz_segment,
+	PDC_SIZ_Segment_Componente* PDC_SIZ_Segment_Componente_read_buffer(	PDC_Exception* exception,
+																		PDC_SIZ_Segment_Componente* siz_segment,
 																		PDC_Buffer* buffer);
 
 STOP_C
