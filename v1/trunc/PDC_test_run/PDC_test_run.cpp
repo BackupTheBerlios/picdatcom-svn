@@ -17,6 +17,9 @@ int _tmain(int argc, _TCHAR* argv[])
 	unsigned int	read_byte;
 	int inf;
 
+	PDC_Decoder*	decoder;
+	PDC_Exception*	exception;
+
 	data = (unsigned char*)malloc(data_read_plus);
 	inf = _open(test_file,O_RDONLY);
 	if(inf == -1){
@@ -24,18 +27,18 @@ int _tmain(int argc, _TCHAR* argv[])
 		return 0;
 	}
 
-	PDC_Decoder* decoder;
-
-	decoder = new_PDC_Decoder();
+	
+	exception	= new_PDC_Exception(); 
+	decoder		= new_PDC_Decoder(exception);
 	//print_errors();
 	
 	do{
 		read_byte = _read(inf, data, data_read_plus);
-		PDC_Decoder_add_Data_01( decoder, data, read_byte, PDC_DATA_MORE_DATA);
+		PDC_Decoder_add_Data_01(exception, decoder, data, read_byte, PDC_DATA_MORE_DATA);
 	}while(read_byte == data_read_plus);
 	_close(inf);
 
-	PDC_Decoder_add_Data_01( decoder, NULL, 0, PDC_DATA_END);
+	PDC_Decoder_add_Data_01(exception, decoder, NULL, 0, PDC_DATA_END);
 
 	//print_errors();
 	

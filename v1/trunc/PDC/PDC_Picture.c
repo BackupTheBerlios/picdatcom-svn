@@ -33,7 +33,8 @@ PDC_Picture* new_PDC_Picture(PDC_Exception* exception)
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	picture->siz_segment = NULL;
+	picture->siz_segment	= NULL;
+	picture->cod_segment	= NULL;
 	return picture;
 }
 

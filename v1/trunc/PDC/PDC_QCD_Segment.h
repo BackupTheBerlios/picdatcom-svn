@@ -18,34 +18,53 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifndef __PDC_PICTURE_H__
-#define __PDC_PICTURE_H__
+#ifndef __PDC_QCD_SEGMENT_H__
+#define __PDC_QCD_SEGMENT_H__
 
 #include <stdlib.h>
 #include "PDC_Parameter.h"
 
 START_C
-	struct str_PDC_Picture;
-	typedef struct str_PDC_Picture PDC_Picture;
+	
+	struct str_PDC_QCD_Segment;
+	typedef struct str_PDC_QCD_Segment PDC_QCD_Segment;
 
-	#include "PDC_SIZ_Segment.h"
 	#include "PDC_COD_Segment.h"
 
-	struct str_PDC_Picture{
-		PDC_SIZ_Segment* siz_segment;
-		PDC_COD_Segment* cod_segment;
+	struct str_PDC_QCD_Segment{
+		PDC_bool	succesfull_read;
+		PDC_uint32	read_buffer_pos;
+		PDC_uint16	Lqcd;
+		PDC_uint8	Sqcd;
+		PDC_uint16*	SPqcd;
 	};
 
 	/*
 	 *
 	 */
-	PDC_Picture* new_PDC_Picture(PDC_Exception* exception);
+	PDC_QCD_Segment* new_PDC_QCD_Segment_01(Exception* exception);
 
 	/*
-	 * 
+	 *
 	 */
-	void delete_PDC_Picture(PDC_Exception* exception,
-							PDC_Picture* picture);
-	
+	PDC_QCD_Segment* new_PDC_QCD_Segment_02(Exception* exception,
+											PDC_Buffer* buffer,
+											PDC_COD_Segment* cod_segment);
+
+	/*
+	 *
+	 */
+	PDC_QCD_Segment* delete_PDC_QCD_Segment(PDC_Exception* exception,
+											PDC_QCD_Segment* qcd_segment);
+
+
+	/*
+	 *
+	 */
+	PDC_QCD_Segment* PDC_QCD_Segment_read_buffer(	Exception* exception,
+													PDC_QCD_Segment* qcd_segment,
+													PDC_Buffer* buffer,
+													PDC_COD_Segment* cod_segment);
+
 STOP_C
 #endif

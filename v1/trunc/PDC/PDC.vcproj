@@ -212,6 +212,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_QCD_Segment.c"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_SIZ_Segment.c"
 				>
 			</File>
@@ -271,6 +275,10 @@
 			</File>
 			<File
 				RelativePath=".\PDC_Pointer_Buffer.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_QCD_Segment.h"
 				>
 			</File>
 			<File

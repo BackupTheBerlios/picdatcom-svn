@@ -229,13 +229,15 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_De
  */
 PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decoder* decoder)
 {
-	PDC_uint16		symbol;
-	PDC_Buffer*		buffer;
-	PDC_bool		decode_more;
+	PDC_uint16			symbol;
+	PDC_Buffer*			buffer;
+	PDC_bool			decode_more;
+	PDC_COD_Segment*	cod_segment;
+	
+	buffer		= decoder->in_data;
+	cod_segment	= NULL;
 
-	buffer = decoder->in_data;
-
-	decode_more = PDC_false;
+	decode_more = PDC_true;
 
 	do{
 		buffer = PDC_Buffer_read_uint16(exception, buffer, &symbol);
@@ -253,6 +255,10 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 
 		switch(symbol){
 			case PDC_COD:
+				cod_segment = new_PDC_COD_Segment_02(exception, buffer);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					return decoder;
+				}
 				break;
 			default:
 				PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);

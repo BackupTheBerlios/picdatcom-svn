@@ -35,7 +35,7 @@ pthread_mutex_t exception_mutex =	PTHREAD_MUTEX_INITIALIZER;
 /*
  *
  */
-PDC_Exception* new_PDC_Exception()
+DLL PDC_Exception* new_PDC_Exception()
 {
 	PDC_Exception* exception = NULL;
 	
