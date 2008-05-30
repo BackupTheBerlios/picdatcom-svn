@@ -28,26 +28,37 @@ START_C
 	
 	struct str_PDC_QCD_Segment;
 	typedef struct str_PDC_QCD_Segment PDC_QCD_Segment;
+	typedef enum{PDC_READ_SEGMENT_BYTE_POS, PDC_READ_BUFFER_BYTE_POS} PDC_Segment_read_pos;
 
 	#include "PDC_COD_Segment.h"
-
+	
+#define NO_QUANTIZATION		0x00
+#define SCALAR_DERIVED		0x01
+#define SCALAR_EXPOUNDED	0x02
+#define	MASK_QUANTIZATION	0x1F
+#define MASK_GUARD_BITS		0xE0
+#define MASK_MANTISSA		0x007F
+#define MASK_EXPONENT		0xF800
+#define SHIFT_EXPONENT		11
+	
 	struct str_PDC_QCD_Segment{
-		PDC_bool	succesfull_read;
-		PDC_uint32	read_buffer_pos;
-		PDC_uint16	Lqcd;
-		PDC_uint8	Sqcd;
-		PDC_uint16*	SPqcd;
+		PDC_bool				succesfull_read;
+		PDC_uint32				read_buffer_pos;
+		PDC_uint16				Lqcd;
+		PDC_uint8				Sqcd;
+		PDC_uint16*				SPqcd;
+		PDC_Segment_read_pos	read_pos_from;
 	};
 
 	/*
 	 *
 	 */
-	PDC_QCD_Segment* new_PDC_QCD_Segment_01(Exception* exception);
+	PDC_QCD_Segment* new_PDC_QCD_Segment_01(PDC_Exception* exception);
 
 	/*
 	 *
 	 */
-	PDC_QCD_Segment* new_PDC_QCD_Segment_02(Exception* exception,
+	PDC_QCD_Segment* new_PDC_QCD_Segment_02(PDC_Exception* exception,
 											PDC_Buffer* buffer,
 											PDC_COD_Segment* cod_segment);
 
@@ -61,7 +72,7 @@ START_C
 	/*
 	 *
 	 */
-	PDC_QCD_Segment* PDC_QCD_Segment_read_buffer(	Exception* exception,
+	PDC_QCD_Segment* PDC_QCD_Segment_read_buffer(	PDC_Exception* exception,
 													PDC_QCD_Segment* qcd_segment,
 													PDC_Buffer* buffer,
 													PDC_COD_Segment* cod_segment);

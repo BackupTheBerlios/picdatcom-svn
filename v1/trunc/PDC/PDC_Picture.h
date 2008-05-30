@@ -30,10 +30,12 @@ START_C
 
 	#include "PDC_SIZ_Segment.h"
 	#include "PDC_COD_Segment.h"
+	#include "PDC_QCD_Segment.h"
 
 	struct str_PDC_Picture{
 		PDC_SIZ_Segment* siz_segment;
 		PDC_COD_Segment* cod_segment;
+		PDC_QCD_Segment* qcd_segment;
 	};
 
 	/*

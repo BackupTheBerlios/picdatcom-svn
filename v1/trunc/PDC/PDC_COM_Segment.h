@@ -18,37 +18,13 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#include "PDC_Picture.h"
+#ifndef __PDC_COM_SEGMENT_H__
+#define __PDC_COM_SEGMENT_H__
+
+#include <stdlib.h>
+#include "PDC_Parameter.h"
 
 START_C
 
-/*
- *
- */
-PDC_Picture* new_PDC_Picture(PDC_Exception* exception)
-{
-	PDC_Picture* picture = NULL;
-	picture = malloc(sizeof(PDC_Picture));
-	if(picture == NULL){
-		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-		return NULL;
-	}
-	picture->siz_segment	= NULL;
-	picture->cod_segment	= NULL;
-	picture->qcd_segment	= NULL;
-
-	return picture;
-}
-
-/*
- * 
- */
-void delete_PDC_Picture(PDC_Exception* exception, PDC_Picture* picture)
-{
-	if(picture != NULL){
-		delete_PDC_SIZ_Segment_01(exception, picture->siz_segment);
-		free(picture);
-	}
-}
-
 STOP_C
+#endif
