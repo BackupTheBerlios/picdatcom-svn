@@ -104,6 +104,11 @@ START_C
 	 */
 	PDC_Buffer* PDC_Buffer_read_uint8(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint8 *value);
 
+	/*
+	 *
+	 */
+	PDC_Buffer* PDC_Buffer_read_uint8_02(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint8 *value, PDC_uint32 number);
+
 STOP_C
 
 #endif

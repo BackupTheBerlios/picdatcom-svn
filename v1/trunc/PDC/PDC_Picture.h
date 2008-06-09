@@ -27,15 +27,29 @@
 START_C
 	struct str_PDC_Picture;
 	typedef struct str_PDC_Picture PDC_Picture;
+	typedef enum{PDC_USE_32_BIT, PDC_USE_64_BIT} PDC_use_bits;
 
 	#include "PDC_SIZ_Segment.h"
 	#include "PDC_COD_Segment.h"
 	#include "PDC_QCD_Segment.h"
+	#include "PDC_COM_Segment.h"
 
 	struct str_PDC_Picture{
-		PDC_SIZ_Segment* siz_segment;
-		PDC_COD_Segment* cod_segment;
-		PDC_QCD_Segment* qcd_segment;
+		PDC_SIZ_Segment*	siz_segment;
+		PDC_COD_Segment*	cod_segment;
+		PDC_QCD_Segment*	qcd_segment;
+		PDC_COM_Segment*	com_segment;
+
+		PDC_uint32			sizeX;
+		PDC_uint32			sizeY;
+
+		PDC_uint32			numXtiles;
+		PDC_uint32			numYtiles;
+
+		PDC_Pointer_Buffer*	tiles;
+		PDC_Pointer_Buffer*	componentes;
+
+		PDC_use_bits		use_bits;
 	};
 
 	/*
@@ -49,5 +63,14 @@ START_C
 	void delete_PDC_Picture(PDC_Exception* exception,
 							PDC_Picture* picture);
 	
+
+
+	/*
+	 *
+	 */
+	PDC_Picture* PDC_Picture_set_SIZ_Segment(	PDC_Exception* exception,
+												PDC_Picture* picture, 
+												PDC_SIZ_Segment* siz_segment);
+
 STOP_C
 #endif

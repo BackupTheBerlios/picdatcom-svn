@@ -215,7 +215,10 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_De
 			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 			return decoder;
 		}
-		decoder->picture->siz_segment = siz_segment;
+		decoder->picture = PDC_Picture_set_SIZ_Segment(	exception,
+														decoder->picture, 
+														siz_segment);
+
 		decoder->reading_state = PDC_MAIN_HEADER;
 	}else{
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_FALSE_SYMBOL, __LINE__, __FILE__);
@@ -234,10 +237,12 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 	PDC_bool			decode_more;
 	PDC_COD_Segment*	cod_segment;
 	PDC_QCD_Segment*	qcd_segment;
-	
+	PDC_COM_Segment*	com_segment;
+
 	buffer		= decoder->in_data;
 	cod_segment	= decoder->picture->cod_segment;
 	qcd_segment = decoder->picture->qcd_segment;
+	com_segment = decoder->picture->com_segment;
 
 	decode_more = PDC_true;
 
@@ -280,6 +285,18 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 					return decoder;
 				}
+				break;
+			case PDC_COM:
+				if(com_segment == NULL){
+					com_segment = new_PDC_COM_Segment_02(exception, buffer);
+				}else{
+					PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+					return decoder;
+				}
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					return decoder;
+				}
+
 				break;
 			default:
 				PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);

@@ -58,9 +58,13 @@ START_C
 	typedef int				PDC_int;
 	typedef unsigned short	PDC_uint16;
 	typedef unsigned char	PDC_uint8;
+	typedef float			PDC_float32;
 
 	PDC_int PDC_i_ceiling( PDC_int , PDC_int);
 	PDC_int PDC_i_floor( PDC_int , PDC_int);
+
+	PDC_int PDC_f_ceiling(PDC_float32);
+	PDC_int	PDF_f_floor(PDC_float32);
 
 STOP_C
 

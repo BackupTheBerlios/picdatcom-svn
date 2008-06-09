@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008  Uwe Brünen
- *      Contact Email: 
+ * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
  * 
@@ -18,39 +18,26 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
+#ifndef __PDC_TILE_H__
+#define __PDC_TILE_H__
+
+#include <stdlib.h>
 #include "PDC_Parameter.h"
 
 START_C
+	struct str_PDC_Tile;
+	typedef struct str_PDC_Tile PDC_Tile;
 
-PDC_int PDC_i_ceiling(PDC_int a, PDC_int b)
-{
-	PDC_int i = a/b;
-	if(a%b != 0){
-		i += 1;
-	}
-	return i;	
-}
 
-PDC_int PDC_i_floor( PDC_int a, PDC_int b)
-{
-	PDC_int i = a/b;
-
-	return i;
-}
-
-PDC_int PDC_f_ceiling(PDC_float32 in)
-{
-	PDC_int back = 0;
-	back = (PDC_int)(in + 1.0f)
-	return back;
-}
-
-PDC_int	PDF_f_floor(PDC_float32)
-{
-	PDC_int back = 0;
-	back = (PDC_int)(in + 1.0f)
-	return back;
-}
-
+	struct str_PDC_Tile{
+		PDC_uint32	q;
+		PDC_uint32	p;
+		PDC_uint32	tx0;
+		PDC_uint32	tx1;
+		PDC_uint32	ty0;
+		PDC_uint32	ty1;
+	};
 
 STOP_C
+#endif
+	

@@ -298,6 +298,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_Tile.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_Transformation_97_decoder.h"
 				>
 			</File>
