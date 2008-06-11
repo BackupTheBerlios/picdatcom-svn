@@ -66,6 +66,9 @@ START_C
 	PDC_int PDC_f_ceiling(PDC_float32);
 	PDC_int	PDF_f_floor(PDC_float32);
 
+	PDC_uint32 max_uint32(PDC_uint32 in1, PDC_uint32 in2);
+	PDC_uint32 min_uint32(PDC_uint32 in1, PDC_uint32 in2);
+
 STOP_C
 
 #endif

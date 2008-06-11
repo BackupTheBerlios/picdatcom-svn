@@ -28,15 +28,35 @@ START_C
 	struct str_PDC_Tile;
 	typedef struct str_PDC_Tile PDC_Tile;
 
+	#include "PDC_Pointer_Buffer.h"
+	#include "PDC_Buffer.h"
+	#include "PDC_SIZ_Segment.h"
+	#include "PDC_Picture.h"
 
 	struct str_PDC_Tile{
-		PDC_uint32	q;
-		PDC_uint32	p;
-		PDC_uint32	tx0;
-		PDC_uint32	tx1;
-		PDC_uint32	ty0;
-		PDC_uint32	ty1;
+		PDC_Picture*		picture;
+		PDC_uint32			q;
+		PDC_uint32			p;
+		PDC_uint32			tx0;
+		PDC_uint32			tx1;
+		PDC_uint32			ty0;
+		PDC_uint32			ty1;
+
+		PDC_Pointer_Buffer*	tile_component;
 	};
+
+	/*
+	 * 
+	 */
+	PDC_Tile* new_PDC_Tile_01(PDC_Exception* exception, PDC_uint32 t, PDC_Picture* picture);
+	
+	/*
+	 *
+	 */
+	PDC_Tile* delete_PDC_Tile(	PDC_Exception* exception,
+								PDC_Tile* tile);
+
+
 
 STOP_C
 #endif

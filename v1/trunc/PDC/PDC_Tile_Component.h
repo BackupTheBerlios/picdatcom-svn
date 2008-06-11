@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008  Uwe Brünen
- *      Contact Email: 
+ * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
  * 
@@ -18,53 +18,40 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
+#ifndef __PDC_TILE_COMPONENT_H__
+#define __PDC_TILE_COMPONENT_H__
+
+#include <stdlib.h>
 #include "PDC_Parameter.h"
 
 START_C
 
-PDC_int PDC_i_ceiling(PDC_int a, PDC_int b)
-{
-	PDC_int i = a/b;
-	if(a%b != 0){
-		i += 1;
-	}
-	return i;	
-}
+	struct str_PDC_Tile_Component;
+	typedef struct str_PDC_Tile_Component PDC_Tile_Component;
 
-PDC_int PDC_i_floor( PDC_int a, PDC_int b)
-{
-	PDC_int i = a/b;
+	#include "PDC_Tile.h"
+	#include "PDC_SIZ_Segment.h"
+	#include "PDC_Picture.h"
 
-	return i;
-}
+	struct str_PDC_Tile_Component{
+		PDC_uint32		tcx0;
+		PDC_uint32		tcx1;
+		PDC_uint32		tcy0;
+		PDC_uint32		tcy1;
+		PDC_Tile*		tile;
+		PDC_float32*	memory;
+	};
 
-PDC_int PDC_f_ceiling(PDC_float32 in)
-{
-	PDC_int back = 0;
-	back = (PDC_int)(in + 1.0f);
-	return back;
-}
+	/*
+	 *
+	 */
+	PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile* tile, PDC_uint32 pos);
 
-PDC_int	PDF_f_floor(PDC_float32 in)
-{
-	PDC_int back = 0;
-	back = (PDC_int)(in);
-	return back;
-}
+	/*
+	 *
+	 */
+	PDC_Tile_Component* delete_PDC_Tile_Component(PDC_Exception* exception, PDC_Tile_Component* tile_component);
 
-PDC_uint32 max_uint32(PDC_uint32 in1, PDC_uint32 in2)
-{
-	if(in1 > in2){
-		return in1;
-	}
-	return in2;
-}
-
-PDC_uint32 min_uint32(PDC_uint32 in1, PDC_uint32 in2)
-{
-	if(in1 < in2){
-		return in1;
-	}
-	return in2;
-}
 STOP_C
+
+#endif

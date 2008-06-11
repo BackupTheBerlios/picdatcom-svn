@@ -60,7 +60,7 @@ void delete_PDC_Picture(PDC_Exception* exception, PDC_Picture* picture)
 		delete_PDC_QCD_Segment(exception, picture->qcd_segment);
 		delete_PDC_COM_Segment(exception, picture->com_segment);
 
-		numCompoent = picture->componentes->last_pointer + 1;	
+		numComponent = picture->componentes->last_pointer + 1;	
 		for(posComponent = 0; posComponent < numComponent; posComponent += 1){
 			pointer = PDC_Pointer_Buffer_get_pointer(exception, picture->componentes, posComponent);
 			free(pointer);
