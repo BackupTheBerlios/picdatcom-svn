@@ -27,22 +27,42 @@ START_C
  */
 PDC_Tile* new_PDC_Tile_01(PDC_Exception* exception, PDC_uint32 t, PDC_Picture* picture)
 {
-	PDC_Tile* tile = NULL;
-	PDC_SIZ_Segment* siz_segment = picture->siz_segment;
+	PDC_uint32 numComponentes, posComponent;
+	PDC_Tile* tile						= NULL;
+	PDC_SIZ_Segment* siz_segment		= picture->siz_segment;
+	PDC_Tile_Component* tile_component	= NULL;
 
 	tile = malloc(sizeof(PDC_Tile));
 	if(tile == NULL){
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	tile->p			= PDC_i_ceiling(picture->numYtiles , t);
-	tile->q			= picture->numXtiles % t;
+	tile->tile_component = NULL;
+
+	tile->p			= PDC_i_ceiling(t, picture->numYtiles);
+	tile->q			= t % picture->numXtiles;
 
 	tile->tx0		= max_uint32(siz_segment->XTOsiz + tile->p * siz_segment->XTsiz, siz_segment->XOsiz);
 	tile->tx1		= min_uint32(siz_segment->XTOsiz + (tile->p + 1) * siz_segment->XTsiz, siz_segment->Xsiz);
 	tile->ty0		= max_uint32(siz_segment->YTOsiz + tile->q * siz_segment->YTsiz, siz_segment->YOsiz);
 	tile->ty1		= min_uint32(siz_segment->YTOsiz + (tile->q + 1) * siz_segment->YTsiz, siz_segment->Ysiz);
 	tile->picture	= picture;
+
+	numComponentes = picture->siz_segment->Csiz;
+	
+	tile->tile_component = new_PDC_Pointer_Buffer_01(exception, numComponentes);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Tile(exception, tile);
+		return NULL;
+	}
+	
+	for(posComponent = 0; posComponent < numComponentes; posComponent += 1){
+		tile_component = new_PDC_Tile_Component_01(exception, tile, posComponent);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_Tile(exception, tile);
+			return NULL;
+		}
+	}
 
 	return tile;
 }
@@ -53,9 +73,18 @@ PDC_Tile* new_PDC_Tile_01(PDC_Exception* exception, PDC_uint32 t, PDC_Picture* p
  */
 PDC_Tile* delete_PDC_Tile(	PDC_Exception* exception,
 							PDC_Tile* tile)
-{
-	
+{	
+	PDC_Tile_Component* tile_component;
 	if(tile != NULL){
+		PDC_Pointer_Buffer_set_start(exception, tile->tile_component);
+
+		if((tile_component = PDC_Pointer_Buffer_get_next(exception, tile->tile_component)) != NULL){
+			do{
+				delete_PDC_Tile_Component(exception, tile_component);
+			}while((tile_component = PDC_Pointer_Buffer_get_next(exception, tile->tile_component)) != NULL);
+
+		}
+		delete_PDC_Pointer_Buffer_01(exception, tile->tile_component);
 		tile->picture = NULL;
 		free(tile);
 

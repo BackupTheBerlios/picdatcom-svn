@@ -18,47 +18,49 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifndef __PDC_TILE_H__
-#define __PDC_TILE_H__
+#ifndef __PDC_SOT_SEGMENT_H__
+#define __PDC_SOT_SEGMENT_H__
 
 #include <stdlib.h>
 #include "PDC_Parameter.h"
 
 START_C
-	struct str_PDC_Tile;
-	typedef struct str_PDC_Tile PDC_Tile;
+	
+	struct str_PDC_SOT_Segment;
+	typedef struct str_PDC_SOT_Segment PDC_SOT_Segment;
 
-	#include "PDC_Pointer_Buffer.h"
+	#include "PDC_Tile.h"
 	#include "PDC_Buffer.h"
-	#include "PDC_SIZ_Segment.h"
-	#include "PDC_Picture.h"
-	#include "PDC_Tile_Component.h"
 
-	struct str_PDC_Tile{
-		PDC_Picture*		picture;
-		PDC_uint32			q;
-		PDC_uint32			p;
-		PDC_uint32			tx0;
-		PDC_uint32			tx1;
-		PDC_uint32			ty0;
-		PDC_uint32			ty1;
-
-		PDC_Pointer_Buffer*	tile_component;
+	struct str_PDC_SOT_Segment{
+		PDC_uint32	Psot;
+		PDC_uint16	Lsot;
+		PDC_uint16	Isot;
+		PDC_uint8	TPsot;
+		PDC_uint8	TNsot;
 	};
 
 	/*
-	 * 
+	 *
 	 */
-	PDC_Tile* new_PDC_Tile_01(PDC_Exception* exception, PDC_uint32 t, PDC_Picture* picture);
+	PDC_SOT_Segment* new_PDC_SOT_Segment_01(PDC_Exception* exception);
 	
 	/*
 	 *
 	 */
-	PDC_Tile* delete_PDC_Tile(	PDC_Exception* exception,
-								PDC_Tile* tile);
+	PDC_SOT_Segment* new_PDC_SOT_Segment_02(PDC_Exception* exception, PDC_Buffer* buffer);
 
+	/*
+	 *
+     */
+	void delete_PDC_SOT_Segment(PDC_Exception* exception, PDC_SOT_Segment* sot_segment);
 
+	/*
+	 *
+	 */
+	PDC_SOT_Segment* PDC_SOT_Segment_read_buffer(	PDC_Exception* exception,
+													PDC_SOT_Segment* sot_segment,
+													PDC_Buffer* buffer);
 
 STOP_C
 #endif
-	

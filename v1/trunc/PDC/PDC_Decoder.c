@@ -39,6 +39,7 @@ DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 	decoder->in_data		= NULL;
 	decoder->in_data_save	= NULL;
 	decoder->picture		= NULL;
+	decoder->current_tile	= NULL;
 
 
 	decoder->in_data = new_PDC_Buffer_1( exception, PDC_FIRST_LENGTH);
@@ -132,6 +133,8 @@ PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decoder)
 				break;
 
 			case PDC_TILE_PART_HEADER:
+				PDC_Decoder_decode_tile_part_header(exception, decoder);
+				reading_state	= decoder->reading_state;
 				break;
 		}
 	
@@ -232,12 +235,14 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_De
  */
 PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decoder* decoder)
 {
+	PDC_uint32			t_tile;
 	PDC_uint16			symbol;
 	PDC_Buffer*			buffer;
 	PDC_bool			decode_more;
 	PDC_COD_Segment*	cod_segment;
 	PDC_QCD_Segment*	qcd_segment;
 	PDC_COM_Segment*	com_segment;
+	PDC_SOT_Segment*	sot_segment;
 
 	buffer		= decoder->in_data;
 	cod_segment	= decoder->picture->cod_segment;
@@ -262,7 +267,7 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 
 		switch(symbol){
 			case PDC_COD:
-				if(cod_segment == NULL){
+ 				if(cod_segment == NULL){
 					cod_segment = new_PDC_COD_Segment_02(exception, buffer);
 					if(qcd_segment != NULL){
 						PDC_QCD_Segment_read_buffer(exception, qcd_segment, buffer, cod_segment);
@@ -298,6 +303,19 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 				}
 
 				break;
+			case PDC_SOT:
+				sot_segment = new_PDC_SOT_Segment_02(exception, buffer);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					return decoder;
+				}
+				t_tile = sot_segment->Isot;
+				decoder->current_tile = PDC_Pointer_Buffer_get_pointer(exception, decoder->picture->tiles, t_tile);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					return decoder;
+				}
+				decoder->reading_state = PDC_TILE_PART_HEADER;
+				decode_more = PDC_false;
+				break;
 			default:
 				PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 				return decoder;
@@ -309,4 +327,16 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 
 	return decoder;
 }
+
+
+/*
+ * 
+ */
+PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
+												 PDC_Decoder* decoder)
+{
+	
+	return decoder;
+}
+
 STOP_C

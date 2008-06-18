@@ -65,6 +65,7 @@ START_C
 		PDC_Picture*		picture;
 		PDC_READING_STATE	reading_state;
 		PDC_DATA_SITUATION	data_situation;
+		PDC_Tile*			current_tile;
 	};
 	
 	/*
@@ -110,6 +111,12 @@ START_C
 	 */
 	PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception,
 												PDC_Decoder* decoder);
+
+	/*
+	 * 
+	 */
+	PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
+													 PDC_Decoder* decoder);
 
 STOP_C
 #endif

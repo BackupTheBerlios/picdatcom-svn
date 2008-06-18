@@ -68,6 +68,7 @@ PDC_SIZ_Segment* new_PDC_SIZ_Segment_02(PDC_Exception* exception, PDC_Buffer* bu
 
 	siz_segment = new_PDC_SIZ_Segment_01(exception);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_SIZ_Segment_01(exception, siz_segment);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}

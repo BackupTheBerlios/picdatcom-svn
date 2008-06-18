@@ -33,6 +33,8 @@ START_C
 	#include "PDC_COD_Segment.h"
 	#include "PDC_QCD_Segment.h"
 	#include "PDC_COM_Segment.h"
+	#include "PDC_SOT_Segment.h"
+	#include "PDC_Tile.h"
 
 	struct str_PDC_Picture{
 		PDC_SIZ_Segment*	siz_segment;

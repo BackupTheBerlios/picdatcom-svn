@@ -40,10 +40,6 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return NULL;
 	}
-	tile_component->memory = (PDC_float32*)PDC_Pointer_Buffer_get_pointer(exception, picture->componentes, pos);
-	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
-		return NULL;
-	}
 
 	tile_component = malloc(sizeof(PDC_Tile_Component));
 	if(tile_component == NULL){
@@ -51,12 +47,18 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 		return NULL;
 	}
 
+	tile_component->memory = (PDC_float32*)PDC_Pointer_Buffer_get_pointer(exception, picture->componentes, pos);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return NULL;
+	}
+
+	tile_component->tile	= tile;
+		
 	tile_component->tcx0	= PDC_i_ceiling(tile->tx0, siz_segment_component->XRsiz);
 	tile_component->tcx1	= PDC_i_ceiling(tile->tx1, siz_segment_component->XRsiz);
 	tile_component->tcy0	= PDC_i_ceiling(tile->ty0, siz_segment_component->YRsiz);
 	tile_component->tcy1	= PDC_i_ceiling(tile->ty1, siz_segment_component->YRsiz);
 
-	
 
 	return tile_component;
 }
@@ -66,6 +68,9 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
  */
 PDC_Tile_Component* delete_PDC_Tile_Component(PDC_Exception* exception, PDC_Tile_Component* tile_component)
 {
+	if(tile_component != NULL){
+		free(tile_component);
+	}
 
 	return NULL;
 }

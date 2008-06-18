@@ -75,11 +75,12 @@ void delete_PDC_Picture(PDC_Exception* exception, PDC_Picture* picture)
  *
  */
 PDC_Picture* PDC_Picture_set_SIZ_Segment(	PDC_Exception* exception, 
-								PDC_Picture* picture, 
-								PDC_SIZ_Segment* siz_segment)
+											PDC_Picture* picture, 
+											PDC_SIZ_Segment* siz_segment)
 {
-	PDC_uint32 numPixel, numBytes, numComponentes, posComponent;
-	void* pointer;
+	PDC_uint32	numPixel, numBytes, numComponentes, posComponent, numTile, posTile;
+	void*		pointer;
+	PDC_Tile*	tempTile;
 
 	if(siz_segment->XTOsiz > siz_segment->XOsiz || siz_segment->YTOsiz > siz_segment->YOsiz){
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
@@ -117,6 +118,25 @@ PDC_Picture* PDC_Picture_set_SIZ_Segment(	PDC_Exception* exception,
 
 	picture->numXtiles = PDC_i_ceiling(siz_segment->Xsiz - siz_segment->XTOsiz, siz_segment->XTsiz);
 	picture->numYtiles = PDC_i_ceiling(siz_segment->Ysiz - siz_segment->YTOsiz, siz_segment->YTsiz);
+
+	numTile = picture->numXtiles * picture->numYtiles;
+
+	picture->tiles = new_PDC_Pointer_Buffer_01(exception, numTile);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return picture;
+	}
+
+	for(posTile = 0; posTile < numTile; posTile += 1){
+		tempTile = new_PDC_Tile_01(exception, posTile, picture);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return picture;
+		}
+
+		PDC_Pointer_Buffer_add_pointer(exception, picture->tiles, tempTile);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return picture;
+		}	
+	}
 
 	return picture;
 }

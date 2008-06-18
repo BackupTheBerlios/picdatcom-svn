@@ -38,6 +38,7 @@ START_C
 		PDC_uint		last_pointer;
 		PDC_uint		size;
 		PDC_bool		full;
+		PDC_uint		pos;
 	};
 
 	/*
@@ -64,6 +65,16 @@ START_C
 	 *
 	 */
 	PDC_Pointer_Buffer*  PDC_Pointer_Buffer_add_pointer(PDC_Exception* exception, PDC_Pointer_Buffer* buffer, void* pointer);
+
+	/*
+	 *
+	 */
+	void* PDC_Pointer_Buffer_get_next(PDC_Exception* exception, PDC_Pointer_Buffer* buffer);
+
+	/*
+	 *
+	 */
+	void PDC_Pointer_Buffer_set_start(PDC_Exception* exception, PDC_Pointer_Buffer* buffer);
 
 STOP_C
 #endif

@@ -228,6 +228,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_SOT_Segment.c"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_Tile.c"
 				>
 			</File>
@@ -303,6 +307,10 @@
 			</File>
 			<File
 				RelativePath=".\PDC_SIZ_Segment_Componente.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_SOT_Segment.h"
 				>
 			</File>
 			<File

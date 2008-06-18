@@ -118,6 +118,29 @@ PDC_Pointer_Buffer* PDC_Pointer_Buffer_add_pointer(PDC_Exception* exception, PDC
 	return pointer;
 }
 
+
+/*
+ *
+ */
+void*  PDC_Pointer_Buffer_get_next(PDC_Exception* exception, PDC_Pointer_Buffer* buffer)
+{
+	void* pointer = NULL;
+	if(buffer->pos <= buffer->last_pointer){
+		pointer = buffer->pointer[buffer->pos];
+		buffer->pos += 1;
+	}
+
+	return pointer;
+}
+
+/*
+ *
+ */
+void  PDC_Pointer_Buffer_set_start(PDC_Exception* exception, PDC_Pointer_Buffer* buffer)
+{
+	buffer->pos = 0;
+}
+
 STOP_C
 
 
