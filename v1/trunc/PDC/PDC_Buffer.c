@@ -112,8 +112,21 @@ PDC_Buffer* PDC_Buffer_realloc(PDC_Exception* exception, PDC_Buffer* buffer, PDC
  */
 PDC_Buffer* PDC_Buffer_add_byte_1(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uchar byte)
 {
+	PDC_uint32	plus_length;
 	PDC_Buffer* return_buffer = buffer;
-	
+
+	if(return_buffer->write_byte_pos + 1 > return_buffer->length){
+		plus_length = return_buffer->write_byte_pos + 1 - return_buffer->length;
+		plus_length += 1024;
+
+		return_buffer =  PDC_Buffer_realloc(exception, return_buffer, plus_length);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return return_buffer;
+		}
+	}	
+
+	return_buffer->buffer[return_buffer->write_byte_pos]	= byte;
+	return_buffer->write_byte_pos							+= 1;
 
 	return return_buffer;
 }

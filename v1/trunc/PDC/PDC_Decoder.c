@@ -335,6 +335,55 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
 												 PDC_Decoder* decoder)
 {
+	PDC_uint16			symbol;
+	PDC_Buffer*			buffer;
+	PDC_bool			decode_more;
+	PDC_Tile*			tile;
+	PDC_COD_Segment*	cod_segment;
+	PDC_QCD_Segment*	qcd_segment;
+
+	buffer		= decoder->in_data;
+	tile		= decoder->current_tile;
+	decode_more	= PDC_true;
+	cod_segment	= tile->cod_segment;
+	qcd_segment	= NULL;
+
+
+	do{
+		buffer = PDC_Buffer_read_uint16(exception, buffer, &symbol);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			if(buffer->end_state == END_OF_BUFFER){
+				PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return decoder;
+			}else{
+				PDC_Exception_unset_exception(exception);
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return decoder;
+			}
+		}
+	
+		switch(symbol){
+			case PDC_COD: 
+ 				if(cod_segment == NULL){
+					cod_segment = new_PDC_COD_Segment_02(exception, buffer);
+					if(qcd_segment != NULL){
+						PDC_QCD_Segment_read_buffer(exception, qcd_segment, buffer, cod_segment);
+					}
+				}else{
+					PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+					return decoder;
+				}
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					return decoder;
+				}
+				break;
+			default:
+				PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+				return decoder;
+				break;
+		}
+	}while(symbol != PDC_SOC);
 	
 	return decoder;
 }

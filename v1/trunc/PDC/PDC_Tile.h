@@ -33,6 +33,7 @@ START_C
 	#include "PDC_SIZ_Segment.h"
 	#include "PDC_Picture.h"
 	#include "PDC_Tile_Component.h"
+	#include "PDC_COD_Segment.h"
 
 	struct str_PDC_Tile{
 		PDC_Picture*		picture;
@@ -44,6 +45,7 @@ START_C
 		PDC_uint32			ty1;
 
 		PDC_Pointer_Buffer*	tile_component;
+		PDC_COD_Segment*	cod_segment;
 	};
 
 	/*
