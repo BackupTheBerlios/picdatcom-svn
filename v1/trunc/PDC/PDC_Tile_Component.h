@@ -32,14 +32,16 @@ START_C
 	#include "PDC_Tile.h"
 	#include "PDC_SIZ_Segment.h"
 	#include "PDC_Picture.h"
+	#include "PDC_COD_Segment.h"
 
 	struct str_PDC_Tile_Component{
-		PDC_uint32		tcx0;
-		PDC_uint32		tcx1;
-		PDC_uint32		tcy0;
-		PDC_uint32		tcy1;
-		PDC_Tile*		tile;
-		PDC_float32*	memory;
+		PDC_uint32			tcx0;
+		PDC_uint32			tcx1;
+		PDC_uint32			tcy0;
+		PDC_uint32			tcy1;
+		PDC_Tile*			tile;
+		PDC_float32*		memory;
+		PDC_COD_Segment*	cod_segment;
 	};
 
 	/*
@@ -51,6 +53,13 @@ START_C
 	 *
 	 */
 	PDC_Tile_Component* delete_PDC_Tile_Component(PDC_Exception* exception, PDC_Tile_Component* tile_component);
+
+	/*
+	 *
+	 */
+	PDC_Tile_Component* PDC_Tile_Component_set_COD_Segment(	PDC_Exception* exception, 
+															PDC_Tile_Component* tile_component,
+															PDC_COD_Segment* cod_segment);
 
 STOP_C
 

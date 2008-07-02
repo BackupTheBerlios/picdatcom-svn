@@ -93,4 +93,68 @@ PDC_Tile* delete_PDC_Tile(	PDC_Exception* exception,
 	return NULL;
 }
 
+/*
+ *
+ */
+PDC_Tile* PDC_Tile_read_SOD_01(	PDC_Exception* exception,
+								PDC_Tile* tile, 
+								PDC_Buffer* buffer)
+{
+
+	PDC_Tile_read_Packageheader( exception, tile, tile->cod_segment, buffer);
+	return tile;
+}
+
+/*
+ *
+ */
+PDC_Tile* PDC_Tile_set_COD_Segment(	PDC_Exception* exception,
+									PDC_Tile* tile,
+									PDC_COD_Segment* cod_segment)
+{
+	tile->cod_segment = cod_segment;
+
+	return tile;
+}
+
+
+/*
+ *
+ */
+PDC_Tile* PDC_Tile_read_Packageheader(	PDC_Exception* exception,
+										PDC_Tile* tile,
+										PDC_COD_Segment* cod_segment,
+										PDC_Buffer* buffer)
+{
+	PDC_uint r, Nmax, l, L, i, Csiz, k, numprecincts;
+
+	Nmax			= cod_segment->number_of_decompostion_levels;
+	L				= cod_segment->number_of_layer;
+	Csiz			= tile->picture->siz_segment->Csiz;
+
+	switch(cod_segment->progression_order){
+		case LAYER_RESOLUTION_LEVEL_COMPONENT_POSITION:
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+			break;
+		case RESOLUTION_LEVEL_LAYER_COMPONENT_POSITION:
+			
+			
+
+			break;
+		case RESOLUTION_LEVEL_POSITION_COMPONENT_LAYER:
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+			break;
+		case POSITION_COMPONENT_RESOLUTION_LEVEL_LAYER:
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+			break;
+		case COMPONENT_POSITION_RESOLUTION_LEVEL_LAYER:
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+			break;
+		default:
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+			break;
+	}
+	return tile;
+}
+
 STOP_C

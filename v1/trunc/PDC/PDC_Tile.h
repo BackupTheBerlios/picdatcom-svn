@@ -61,6 +61,28 @@ START_C
 
 
 
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_set_COD_Segment(	PDC_Exception* exception,
+										PDC_Tile* tile,
+										PDC_COD_Segment* cod_segment);
+
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_read_Packageheader(	PDC_Exception* exception,
+											PDC_Tile* tile,
+											PDC_COD_Segment* cod_segment,
+											PDC_Buffer* buffer);
+
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_read_SOD_01(	PDC_Exception* exception,
+									PDC_Tile* tile,
+									PDC_Buffer* buffer);
+
 STOP_C
 #endif
 	

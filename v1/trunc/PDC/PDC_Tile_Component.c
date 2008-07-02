@@ -74,4 +74,15 @@ PDC_Tile_Component* delete_PDC_Tile_Component(PDC_Exception* exception, PDC_Tile
 	return NULL;
 }
 
+/*
+ *
+ */
+PDC_Tile_Component* PDC_Tile_Component_set_COD_Segment(	PDC_Exception* exception, 
+														PDC_Tile_Component* tile_component,
+														PDC_COD_Segment* cod_segment)
+{
+	tile_component->cod_segment = cod_segment;
+	return tile_component;
+}
+
 STOP_C

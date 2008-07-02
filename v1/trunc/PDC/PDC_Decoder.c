@@ -377,6 +377,10 @@ PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 					return decoder;
 				}
+				PDC_Tile_set_COD_Segment(exception, tile, cod_segment);
+				break;
+			case PDC_SOD:
+				PDC_Tile_read_SOD_01(exception, tile, buffer);
 				break;
 			default:
 				PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);

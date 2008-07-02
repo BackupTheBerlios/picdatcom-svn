@@ -216,7 +216,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_Precinct.c"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_QCD_Segment.c"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_Resolution.c"
 				>
 			</File>
 			<File
@@ -229,6 +237,10 @@
 			</File>
 			<File
 				RelativePath=".\PDC_SOT_Segment.c"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_Subband.c"
 				>
 			</File>
 			<File
@@ -298,7 +310,15 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_Precinct.h"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_QCD_Segment.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_Resolution.h"
 				>
 			</File>
 			<File
@@ -311,6 +331,10 @@
 			</File>
 			<File
 				RelativePath=".\PDC_SOT_Segment.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_Subband.h"
 				>
 			</File>
 			<File
