@@ -24,6 +24,39 @@
 #include "PDC_Parameter.h"
 
 START_C
+	
+	struct str_PDC_Subband;
+	typedef struct str_PDC_Subband PDC_Subband;
+	typedef enum{SUBBAND_LL, SUBBAND_HL, SUBBAND_LH, SUBBAND_HH, SUBBAND_UNKNOW} SUBBAND_TYPE;
+
+	#include "PDC_Resolution.h"
+	
+
+	struct str_PDC_Subband{
+		PDC_Resolution* resolution;
+		SUBBAND_TYPE	type;
+
+		PDC_uint		tbx0;
+		PDC_uint		tbx1;
+		PDC_uint		tby0;
+		PDC_uint		tby1;
+	};
+	
+	/*
+	 *
+	 */
+	PDC_Subband* new_PDC_Subband_01(PDC_Exception* exception);
+
+	/*
+	 *
+	 */
+	PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC_Resolution* resolution);
+
+	/*
+	 *
+	 */
+	PDC_Subband* delete_PDC_Subband(PDC_Exception* exception, PDC_Subband* subband);
+
 
 STOP_C
 #endif

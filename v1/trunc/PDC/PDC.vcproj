@@ -192,6 +192,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_Codeblock.c"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_COM_Segment.c"
 				>
 			</File>
@@ -279,6 +283,10 @@
 			</File>
 			<File
 				RelativePath=".\PDC_COD_Segment.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_Codeblock.h"
 				>
 			</File>
 			<File

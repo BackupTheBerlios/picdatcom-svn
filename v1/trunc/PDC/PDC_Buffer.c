@@ -277,6 +277,23 @@ PDC_Buffer* PDC_Buffer_read_uint8_02(PDC_Exception* exception,
 }
 
 
+/*
+ *
+ */
+PDC_Buffer* PDC_Buffer_read_uint8_03(	PDC_Exception* exception, 
+										PDC_Buffer* buffer, 
+										PDC_uint8 *value, 
+										PDC_uint32 position)
+{
+	if(position > buffer->write_byte_pos){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+		return buffer;
+	}	
+	*value = buffer->buffer[position];
+
+	return buffer;
+}
+
 #ifdef __cplusplus     
 }       
 #endif

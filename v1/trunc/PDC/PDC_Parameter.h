@@ -69,6 +69,8 @@ START_C
 	PDC_uint32 max_uint32(PDC_uint32 in1, PDC_uint32 in2);
 	PDC_uint32 min_uint32(PDC_uint32 in1, PDC_uint32 in2);
 
+	PDC_int min_int(PDC_int in1, PDC_int in2);
+
 STOP_C
 
 #endif

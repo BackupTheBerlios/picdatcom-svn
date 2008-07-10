@@ -22,5 +22,91 @@
 
 START_C
 
+
+/*
+ *
+ */
+PDC_Subband* new_PDC_Subband_01(PDC_Exception* exception)
+{
+	PDC_Subband* subband = NULL;
+	subband = malloc(sizeof(PDC_Subband));
+	if(subband == NULL){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	}
+
+	subband->resolution	= NULL;
+	subband->tbx0		= 0;
+	subband->tbx1		= 0;
+	subband->tby0		= 0;
+	subband->tby1		= 0;
+	subband->type		= SUBBAND_UNKNOW;
+	return subband;
+}
+
+/*
+ *
+ */
+PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC_Resolution* resolution)
+{
+	PDC_Tile_Component* tile_component;
+	PDC_uint			twohighnb;
+	PDC_uint			twohighnbminone;
+	PDC_uint			tcx0, tcx1, tcy0, tcy1;
+
+
+	PDC_Subband* subband = NULL;
+	subband = new_PDC_Subband_01(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Subband(exception, subband);
+		return NULL;
+	}
+	subband->type		= type;
+	subband->resolution	= resolution;
+
+	tile_component	= resolution->tile_component;
+	twohighnb		= 2 << subband->resolution->n;
+	twohighnbminone	= 2 << (subband->resolution->n - 1);
+
+	tcx0 = tile_component->tcx0;
+	tcx1 = tile_component->tcx1;
+	tcy0 = tile_component->tcy0;
+	tcy1 = tile_component->tcy1;
+
+	switch(subband->type){
+		case SUBBAND_HL:
+			tcx0 -= twohighnbminone;
+			tcx1 -= twohighnbminone;
+			break;
+		case SUBBAND_LH:
+			tcy0 -= twohighnbminone;
+			tcy1 -= twohighnbminone;
+			break;
+		case SUBBAND_HH:
+			tcx0 -= twohighnbminone;
+			tcx1 -= twohighnbminone;
+			tcy0 -= twohighnbminone;
+			tcy1 -= twohighnbminone;
+			break;
+		default:
+			break;
+	}
+
+	subband->tbx0	= PDC_i_ceiling(tcx0, twohighnb);
+	subband->tbx1	= PDC_i_ceiling(tcx1, twohighnb);
+	subband->tby0	= PDC_i_ceiling(tcy0, twohighnb);
+	subband->tby1	= PDC_i_ceiling(tcy1, twohighnb);
+
+	return subband;
+}
+
+/*
+ *
+ */
+PDC_Subband* delete_PDC_Subband(PDC_Exception* exception, PDC_Subband* subband)
+{
+	return NULL;
+}
+
 STOP_C
 

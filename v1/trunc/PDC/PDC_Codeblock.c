@@ -18,28 +18,9 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifndef __PDC_PRECINCT_H__
-#define __PDC_PRECINCT_H__
-
-#include "PDC_Parameter.h"
+#include "PDC_Codeblock.h"
 
 START_C
 
-	struct str_PDC_Precinct;
-	typedef struct str_PDC_Precinct PDC_Precinct;
-
-	#include "PDC_Subband.h"
-	#include "PDC_Resolution.h"
-
-	struct str_PDC_Precinct{
-		PDC_Subband*	subband;
-		PDC_Resolution*	resolution;
-
-		PDC_uint codeblock_x0;
-		PDC_uint codeblock_x1;
-		PDC_uint codeblock_y0;
-		PDC_uint codeblock_y1;
-	};
-
 STOP_C
-#endif
+

@@ -1,6 +1,6 @@
 /*
  * Copyright (C) 2008  Uwe Brünen
- *      Contact Email: 
+ * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
  * 
@@ -18,61 +18,40 @@
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
+#ifndef __PDC_CODEBLOCK_H__
+#define __PDC_CODEBLOCK_H__
+
+#include <stdlib.h>
 #include "PDC_Parameter.h"
 
 START_C
+	
+	struct str_PDC_Codeblock;
+	typedef struct str_PDC_Codeblock PDC_Codeblock;
 
-PDC_int PDC_i_ceiling(PDC_int a, PDC_int b)
-{
-	PDC_int i = a/b;
-	if(a%b != 0){
-		i += 1;
-	}
-	return i;	
-}
+	#include "PDC_Subband.h"
+	#include "PDC_Resolution.h"
 
-PDC_int PDC_i_floor( PDC_int a, PDC_int b)
-{
-	PDC_int i = a/b;
+	struct str_PDC_Codeblock{
+		PDC_Subband*	subband;
 
-	return i;
-}
+		PDC_uin32		cx0;	
+		PDC_uin32		cx1;
+		PDC_uin32		cy0;
+		PDC_uin32		cy1;
+	};
+	
+	/*
+	 *
+	 */
+	PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception);
 
-PDC_int PDC_f_ceiling(PDC_float32 in)
-{
-	PDC_int back = 0;
-	back = (PDC_int)(in + 1.0f);
-	return back;
-}
+	/*
+	 *
+	 */
+	PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subband, PDC_uint pos_x, PDC_uint pos_y);
 
-PDC_int	PDF_f_floor(PDC_float32 in)
-{
-	PDC_int back = 0;
-	back = (PDC_int)(in);
-	return back;
-}
+	
 
-PDC_uint32 max_uint32(PDC_uint32 in1, PDC_uint32 in2)
-{
-	if(in1 > in2){
-		return in1;
-	}
-	return in2;
-}
-
-PDC_uint32 min_uint32(PDC_uint32 in1, PDC_uint32 in2)
-{
-	if(in1 < in2){
-		return in1;
-	}
-	return in2;
-}
-
-PDC_int min_int(PDC_int in1, PDC_int in2)
-{
-	if(in1 < in2){
-		return in1;
-	}
-	return in2;
-}
 STOP_C
+#endif
