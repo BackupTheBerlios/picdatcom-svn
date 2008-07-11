@@ -35,10 +35,10 @@ START_C
 	struct str_PDC_Codeblock{
 		PDC_Subband*	subband;
 
-		PDC_uin32		cx0;	
-		PDC_uin32		cx1;
-		PDC_uin32		cy0;
-		PDC_uin32		cy1;
+		PDC_uint32		cx0;	
+		PDC_uint32		cx1;
+		PDC_uint32		cy0;
+		PDC_uint32		cy1;
 	};
 	
 	/*
@@ -52,6 +52,10 @@ START_C
 	PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subband, PDC_uint pos_x, PDC_uint pos_y);
 
 	
+	/*
+	 *
+	 */
+	PDC_Codeblock* delete_PDC_Codeblock(PDC_Exception* exception, PDC_Codeblock* codeblock);
 
 STOP_C
 #endif

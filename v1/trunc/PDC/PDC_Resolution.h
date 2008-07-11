@@ -31,7 +31,7 @@ START_C
 	#include "PDC_Tile_Component.h"
 	#include "PDC_Subband.h"
 	#include "PDC_COD_Segment.h"
-	#include "PDC_Precint.h"
+	#include "PDC_Precinct.h"
 
 	struct str_PDC_Resolution
 	{

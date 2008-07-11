@@ -53,7 +53,9 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
 	PDC_uint			twohighnb;
 	PDC_uint			twohighnbminone;
 	PDC_uint			tcx0, tcx1, tcy0, tcy1;
-
+	PDC_uint			pos_x, pos_y, pos;
+	PDC_uint			number_codeblocks_x, number_codeblocks_y;
+	PDC_Codeblock**		codeblocks;
 
 	PDC_Subband* subband = NULL;
 	subband = new_PDC_Subband_01(exception);
@@ -96,6 +98,32 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
 	subband->tbx1	= PDC_i_ceiling(tcx1, twohighnb);
 	subband->tby0	= PDC_i_ceiling(tcy0, twohighnb);
 	subband->tby1	= PDC_i_ceiling(tcy1, twohighnb);
+
+	number_codeblocks_x	= resolution->codeblock_x1 - resolution->codeblock_x0;
+	number_codeblocks_y = resolution->codeblock_y1 - resolution->codeblock_y0;
+	subband->number_codeblocks	=  number_codeblocks_x * number_codeblocks_y;
+	subband->codeblocks	= malloc(sizeof(PDC_Codeblock*) * subband->number_codeblocks);
+	if(subband->codeblocks == NULL){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		delete_PDC_Subband(exception, subband);
+		return NULL;
+	}
+	codeblocks = subband->codeblocks;
+
+	for(pos = 0; pos < subband->number_codeblocks; pos += 1){
+		codeblocks[pos] = NULL;
+	}
+
+	for(pos_y = resolution->codeblock_y0, pos = 0; pos_y < resolution->codeblock_y1; pos_y += 1){
+		for(pos_x = resolution->codeblock_x0; pos_x < resolution->codeblock_x1; pos_x += 1){
+			subband->codeblocks[pos] = new_PDC_Codeblock_02(exception, subband, pos_x, pos_y);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				delete_PDC_Subband(exception, subband);
+				return NULL;
+			}
+			pos += 1;
+		}
+	}
 
 	return subband;
 }

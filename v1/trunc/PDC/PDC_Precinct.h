@@ -30,9 +30,9 @@ START_C
 
 	#include "PDC_Subband.h"
 	#include "PDC_Resolution.h"
+	#include "PDC_Codeblock.h"
 
 	struct str_PDC_Precinct{
-		PDC_Subband*	subband;
 		PDC_Resolution*	resolution;
 
 		PDC_uint codeblock_x0;
@@ -40,6 +40,18 @@ START_C
 		PDC_uint codeblock_y0;
 		PDC_uint codeblock_y1;
 	};
+
+	/*
+	 *
+	 */
+	PDC_Precinct* new_PDC_Precinct_01(PDC_Exception* exception);
+
+	/*
+	 *
+	 */
+	PDC_Precinct* new_PDC_Precinct_02(PDC_Exception* exception, PDC_Resolution* resolution);
+	
+
 
 STOP_C
 #endif

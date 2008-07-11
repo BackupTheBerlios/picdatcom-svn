@@ -30,10 +30,13 @@ START_C
 	typedef enum{SUBBAND_LL, SUBBAND_HL, SUBBAND_LH, SUBBAND_HH, SUBBAND_UNKNOW} SUBBAND_TYPE;
 
 	#include "PDC_Resolution.h"
+	#include "PDC_Codeblock.h"
 	
 
 	struct str_PDC_Subband{
 		PDC_Resolution* resolution;
+		PDC_Codeblock**	codeblocks;
+		PDC_uint		number_codeblocks;
 		SUBBAND_TYPE	type;
 
 		PDC_uint		tbx0;
