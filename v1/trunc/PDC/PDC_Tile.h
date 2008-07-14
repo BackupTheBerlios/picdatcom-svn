@@ -43,6 +43,7 @@ START_C
 		PDC_uint32			tx1;
 		PDC_uint32			ty0;
 		PDC_uint32			ty1;
+		PDC_uint32			tile_part_counter;			
 
 		PDC_Pointer_Buffer*	tile_component;
 		PDC_COD_Segment*	cod_segment;

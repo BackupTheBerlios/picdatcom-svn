@@ -38,7 +38,7 @@ START_C
 		PDC_Tile_Component* tile_component;
 		PDC_Resolution*		resolution_big;
 		PDC_Resolution*		resolution_small;
-		PDC_Precinct*		precinct;
+		PDC_Precinct**		precinct;
 		
 		PDC_Subband*		subband_ll;
 		PDC_Subband*		subband_hl;

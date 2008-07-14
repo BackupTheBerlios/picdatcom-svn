@@ -79,7 +79,11 @@ PDC_Resolution* new_PDC_Resolution_02(	PDC_Exception* exception,
 			return NULL;
 		}
 	}
-
+	PDC_Resolution_init_01( exception, resolution);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Resolution(exception, resolution);
+		return NULL;
+	}
 	return resolution;
 }
 
@@ -98,7 +102,7 @@ PDC_Resolution* new_PDC_Resolution_03(	PDC_Exception* exception,
 	}
 	resolution->resolution_big	= in_resolution;
 	resolution->r				= in_resolution->r - 1;
-	resolution->tile_component	= resolution->tile_component;
+	resolution->tile_component	= in_resolution->tile_component;
 
 	if(resolution->r != 0){
 		resolution->n	= in_resolution->n + 1;
@@ -110,8 +114,12 @@ PDC_Resolution* new_PDC_Resolution_03(	PDC_Exception* exception,
 	}else{
 		resolution->n	= in_resolution->n;
 	}
-
-	return NULL;
+	PDC_Resolution_init_01( exception, resolution);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Resolution(exception, resolution);
+		return NULL;
+	}		
+	return resolution;
 }
 
 /*
@@ -130,17 +138,20 @@ PDC_Resolution* delete_PDC_Resolution(	PDC_Exception* exception,
 PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 										PDC_Resolution* in_resolution)
 {
-	PDC_uint	PPx;
-	PDC_uint	PPy;
-	PDC_uint	xcb;
-	PDC_uint	ycb;
-	PDC_uint8	precinct_size;
-	PDC_uint32	codeblock_size_x;
-	PDC_uint32	codeblock_size_y;
+	PDC_uint		PPx;
+	PDC_uint		PPy;
+	PDC_uint		xcb;
+	PDC_uint		ycb;
+	PDC_uint8		precinct_size;
+	PDC_uint32		codeblock_size_x;
+	PDC_uint32		codeblock_size_y;
 
-	PDC_uint32	precinct_size_x;
-	PDC_uint32	precinct_size_y;
-	PDC_uint32	precinct_size_xy;
+	PDC_uint32		precinct_size_x;
+	PDC_uint32		precinct_size_y;
+	PDC_uint32		precinct_size_xy;
+	PDC_uint32		precinct_pos_x;
+	PDC_uint32		precinct_pos_y;
+	PDC_uint32		pos;
 
 	PDC_Tile_Component* tile_component	= in_resolution->tile_component;
 	PDC_COD_Segment*	cod_segment		= in_resolution->tile_component->cod_segment;
@@ -193,6 +204,12 @@ PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 	precinct_size_y		= in_resolution->precinct_y1 - in_resolution->precinct_y0;
 	precinct_size_xy	= precinct_size_x * precinct_size_y;
 	
+	in_resolution->precinct = malloc(sizeof(PDC_Precinct*) * precinct_size_xy);
+	if(in_resolution->precinct == NULL){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return in_resolution;
+	}
+
 	if(in_resolution->r == 0){
 		in_resolution->subband_ll = new_PDC_Subband_02(exception, SUBBAND_LL, in_resolution);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
@@ -215,6 +232,15 @@ PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 		}
 	}
 
+	for(precinct_pos_y = in_resolution->precinct_y0, pos = 0; precinct_pos_y < in_resolution->precinct_y1; precinct_pos_y += 1){
+		for(precinct_pos_x = in_resolution->precinct_x0; precinct_pos_x < in_resolution->precinct_y1; precinct_pos_x += 1){
+			in_resolution->precinct[pos] = new_PDC_Precinct_02(exception, in_resolution, precinct_pos_x, precinct_pos_y);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return in_resolution;
+			}
+			pos += 1;
+		}
+	}
 	
 
 	return in_resolution;

@@ -39,6 +39,7 @@ PDC_Tile* new_PDC_Tile_01(PDC_Exception* exception, PDC_uint32 t, PDC_Picture* p
 	}
 	tile->tile_component	= NULL;
 	tile->cod_segment		= NULL;
+	tile->tile_part_counter	= 0;
 
 	tile->p			= PDC_i_ceiling(t, picture->numYtiles);
 	tile->q			= t % picture->numXtiles;
@@ -59,6 +60,13 @@ PDC_Tile* new_PDC_Tile_01(PDC_Exception* exception, PDC_uint32 t, PDC_Picture* p
 	
 	for(posComponent = 0; posComponent < numComponentes; posComponent += 1){
 		tile_component = new_PDC_Tile_Component_01(exception, tile, posComponent);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_Tile(exception, tile);
+			return NULL;
+		}
+		tile->tile_component = PDC_Pointer_Buffer_add_pointer(	exception,
+																tile->tile_component,
+																tile_component);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			delete_PDC_Tile(exception, tile);
 			return NULL;
@@ -100,7 +108,25 @@ PDC_Tile* PDC_Tile_read_SOD_01(	PDC_Exception* exception,
 								PDC_Tile* tile, 
 								PDC_Buffer* buffer)
 {
-
+	PDC_Tile_Component* tile_component;
+	PDC_uint	number, pos;
+	if(tile->tile_part_counter == 0){
+		number = tile->picture->siz_segment->Csiz;
+		for(pos = 0; pos < number; pos += 1){
+			tile_component = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, pos);	
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				delete_PDC_Tile(exception, tile);
+				return NULL;
+			}
+			
+			PDC_Tile_Component_set_Resolution(	exception, tile_component);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				delete_PDC_Tile(exception, tile);
+				return NULL;
+			}
+		}
+	}
+	tile->tile_part_counter += 1;
 	PDC_Tile_read_Packageheader( exception, tile, tile->cod_segment, buffer);
 	return tile;
 }
@@ -112,7 +138,25 @@ PDC_Tile* PDC_Tile_set_COD_Segment(	PDC_Exception* exception,
 									PDC_Tile* tile,
 									PDC_COD_Segment* cod_segment)
 {
+	PDC_uint	number, pos;
+	PDC_Tile_Component* tile_component;
+
 	tile->cod_segment = cod_segment;
+
+	number = tile->picture->siz_segment->Csiz;
+	for(pos = 0; pos < number; pos += 1){
+		tile_component = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, pos);	
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_Tile(exception, tile);
+			return NULL;
+		}
+
+		PDC_Tile_Component_set_COD_Segment(	exception, tile_component, cod_segment);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_Tile(exception, tile);
+			return NULL;
+		}	
+	}
 
 	return tile;
 }

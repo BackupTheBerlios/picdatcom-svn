@@ -272,6 +272,10 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 					if(qcd_segment != NULL){
 						PDC_QCD_Segment_read_buffer(exception, qcd_segment, buffer, cod_segment);
 					}
+					PDC_Picture_set_COD_Segment(exception, decoder->picture, cod_segment);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						return decoder;
+					}
 				}else{
 					PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 					return decoder;
@@ -365,15 +369,7 @@ PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
 	
 		switch(symbol){
 			case PDC_COD: 
- 				if(cod_segment == NULL){
-					cod_segment = new_PDC_COD_Segment_02(exception, buffer);
-					if(qcd_segment != NULL){
-						PDC_QCD_Segment_read_buffer(exception, qcd_segment, buffer, cod_segment);
-					}
-				}else{
-					PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
-					return decoder;
-				}
+				cod_segment = new_PDC_COD_Segment_02(exception, buffer);
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 					return decoder;
 				}

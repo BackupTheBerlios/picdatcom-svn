@@ -52,12 +52,15 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 		return NULL;
 	}
 
-	tile_component->tile	= tile;
-		
+	tile_component->tile		= tile;
+	tile_component->resolution	= NULL;
+
 	tile_component->tcx0	= PDC_i_ceiling(tile->tx0, siz_segment_component->XRsiz);
 	tile_component->tcx1	= PDC_i_ceiling(tile->tx1, siz_segment_component->XRsiz);
 	tile_component->tcy0	= PDC_i_ceiling(tile->ty0, siz_segment_component->YRsiz);
 	tile_component->tcy1	= PDC_i_ceiling(tile->ty1, siz_segment_component->YRsiz);
+	
+
 
 	return tile_component;
 }
@@ -82,6 +85,24 @@ PDC_Tile_Component* PDC_Tile_Component_set_COD_Segment(	PDC_Exception* exception
 														PDC_COD_Segment* cod_segment)
 {
 	tile_component->cod_segment = cod_segment;
+	return tile_component;
+}
+
+/*
+ *
+ */
+PDC_Tile_Component* PDC_Tile_Component_set_Resolution(	PDC_Exception* exception,
+														PDC_Tile_Component* tile_component)
+{
+	if(tile_component->resolution == NULL){
+		tile_component->resolution = new_PDC_Resolution_02(	exception, tile_component);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return NULL;
+		}
+	}else{
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+	}
+	
 	return tile_component;
 }
 

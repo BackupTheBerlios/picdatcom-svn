@@ -74,5 +74,12 @@ START_C
 												PDC_Picture* picture, 
 												PDC_SIZ_Segment* siz_segment);
 
+	/*
+	 *
+	 */
+	PDC_Picture* PDC_Picture_set_COD_Segment(	PDC_Exception* exception,
+												PDC_Picture* picture,
+												PDC_COD_Segment* cod_segment);
+	
 STOP_C
 #endif

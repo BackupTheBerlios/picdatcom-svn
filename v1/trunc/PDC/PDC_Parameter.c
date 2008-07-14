@@ -75,4 +75,22 @@ PDC_int min_int(PDC_int in1, PDC_int in2)
 	}
 	return in2;
 }
+
+PDC_uint max_uint(PDC_uint in1, PDC_uint in2)
+{
+	if(in1 > in2){
+		return in1;
+	}
+	return in2;
+}
+
+PDC_uint min_uint(PDC_uint in1, PDC_uint in2)
+{
+	if(in1 < in2){
+		return in1;
+	}
+	return in2;
+}
+
+
 STOP_C

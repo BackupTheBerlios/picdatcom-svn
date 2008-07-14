@@ -49,9 +49,15 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Precinct* new_PDC_Precinct_02(PDC_Exception* exception, PDC_Resolution* resolution);
-	
+	PDC_Precinct* new_PDC_Precinct_02(	PDC_Exception* exception, 
+										PDC_Resolution* resolution, 
+										PDC_uint pos_x, 
+										PDC_uint pos_y);
 
-
+	/*
+	 * 
+	 */
+	PDC_Precinct* delete_PDC_Precinct(	PDC_Exception* exception,
+										PDC_Precinct* precinct);
 STOP_C
 #endif

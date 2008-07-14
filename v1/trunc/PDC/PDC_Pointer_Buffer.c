@@ -115,7 +115,7 @@ PDC_Pointer_Buffer* PDC_Pointer_Buffer_add_pointer(PDC_Exception* exception, PDC
 		buffer->full			= PDC_true;
 	}
 
-	return pointer;
+	return buffer;
 }
 
 

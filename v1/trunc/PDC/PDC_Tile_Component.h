@@ -33,6 +33,7 @@ START_C
 	#include "PDC_SIZ_Segment.h"
 	#include "PDC_Picture.h"
 	#include "PDC_COD_Segment.h"
+	#include "PDC_Resolution.h"
 
 	struct str_PDC_Tile_Component{
 		PDC_uint32			tcx0;
@@ -42,6 +43,7 @@ START_C
 		PDC_Tile*			tile;
 		PDC_float32*		memory;
 		PDC_COD_Segment*	cod_segment;
+		PDC_Resolution*		resolution;
 	};
 
 	/*
@@ -61,6 +63,11 @@ START_C
 															PDC_Tile_Component* tile_component,
 															PDC_COD_Segment* cod_segment);
 
+	/*
+	 *
+	 */
+	PDC_Tile_Component* PDC_Tile_Component_set_Resolution(	PDC_Exception* exception,
+															PDC_Tile_Component* tile_component);
 STOP_C
 
 #endif
