@@ -106,4 +106,21 @@ PDC_Tile_Component* PDC_Tile_Component_set_Resolution(	PDC_Exception* exception,
 	return tile_component;
 }
 
+/*
+ *
+ */
+PDC_Resolution* PDC_Tile_Component_get_Resolution(	PDC_Exception* exception,
+													PDC_Tile_Component* tile_component,
+													PDC_uint resolution_pos)
+{
+	PDC_Resolution* resolution = NULL;
+	if(tile_component->resolution == NULL){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	}
+	resolution = PDC_Resolution_get_resolution(exception, tile_component->resolution, resolution_pos);
+
+	return resolution;
+}
+
 STOP_C

@@ -34,6 +34,7 @@ START_C
 	#include "PDC_Picture.h"
 	#include "PDC_Tile_Component.h"
 	#include "PDC_COD_Segment.h"
+	#include "PDC_Resolution.h"
 
 	struct str_PDC_Tile{
 		PDC_Picture*		picture;
@@ -83,6 +84,32 @@ START_C
 	PDC_Tile* PDC_Tile_read_SOD_01(	PDC_Exception* exception,
 									PDC_Tile* tile,
 									PDC_Buffer* buffer);
+
+	/*
+	 *
+	 */
+	PDC_uint PDC_Tile_get_numprecinct(	PDC_Exception* exception,
+										PDC_Tile* tile,
+										PDC_uint componente_pos,
+										PDC_uint resolution_pos);
+
+	/*
+	 *
+	 */
+	PDC_Resolution* PDC_Tile_get_resolution(	PDC_Exception* exception,
+												PDC_Tile* tile,
+												PDC_uint componente_pos,
+												PDC_uint resolution_pos);
+
+	/*
+	 *
+	 */
+	void PDC_Tile_read_package_header(	PDC_Exception* exception,
+										PDC_Tile* tile,
+										PDC_uint component_pos,
+										PDC_uint resolution_pos,
+										PDC_uint precinct_pos,
+										PDC_uint layer_pos);
 
 STOP_C
 #endif

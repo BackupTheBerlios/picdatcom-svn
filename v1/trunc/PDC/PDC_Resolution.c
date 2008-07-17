@@ -246,5 +246,35 @@ PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 	return in_resolution;
 }
 
+/*
+ *
+ */
+PDC_Resolution* PDC_Resolution_get_resolution(	PDC_Exception* exception,
+												PDC_Resolution* resolution,
+												PDC_uint resolution_pos)
+{
+	if(resolution->r == resolution_pos){
+		return resolution;
+	}else if(resolution->r < resolution_pos){
+		return NULL;
+	}else if(resolution->r != 0){
+		return PDC_Resolution_get_resolution(	exception, resolution->resolution_small, resolution_pos);
+	}
+
+	return NULL;
+}
+
+
+/*
+ *
+ */
+PDC_uint PDC_Resolution_get_number_precinct(	PDC_Exception* exception,
+												PDC_Resolution* resolution)
+{
+	PDC_uint back = 0;
+
+	back = (resolution->codeblock_x1 - resolution->codeblock_x0) * (resolution->codeblock_y1 - resolution->codeblock_y0);
+	return back;
+}
 STOP_C
 

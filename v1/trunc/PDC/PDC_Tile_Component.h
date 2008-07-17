@@ -68,6 +68,13 @@ START_C
 	 */
 	PDC_Tile_Component* PDC_Tile_Component_set_Resolution(	PDC_Exception* exception,
 															PDC_Tile_Component* tile_component);
+
+	/*
+	 *
+	 */
+	PDC_Resolution* PDC_Tile_Component_get_Resolution(	PDC_Exception* exception,
+														PDC_Tile_Component* tile_component,
+														PDC_uint resolution_pos);
 STOP_C
 
 #endif

@@ -181,9 +181,19 @@ PDC_Tile* PDC_Tile_read_Packageheader(	PDC_Exception* exception,
 			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 			break;
 		case RESOLUTION_LEVEL_LAYER_COMPONENT_POSITION:
-			
-			
+			for(r = 0; r <= Nmax; r += 1){
+				for(l = 0; l < L; l += 1){
+					for(i = 0; i < Csiz; i += 1){
+						numprecincts = PDC_Tile_get_numprecinct(exception, tile, i, r);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							return 0;
+						}
+						for(k = 0; k < numprecincts; k += 1){
 
+						}
+					}
+				}
+			}
 			break;
 		case RESOLUTION_LEVEL_POSITION_COMPONENT_LAYER:
 			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
@@ -199,6 +209,59 @@ PDC_Tile* PDC_Tile_read_Packageheader(	PDC_Exception* exception,
 			break;
 	}
 	return tile;
+}
+
+/*
+ *
+ */
+PDC_uint PDC_Tile_get_numprecinct(	PDC_Exception* exception,
+									PDC_Tile* tile,
+									PDC_uint componente,
+									PDC_uint resolution)
+{
+	PDC_uint back = 0;
+	PDC_Resolution* resolution = NULL;
+
+	resolution PDC_Tile_get_resolution(exception, tile, compnente, resolution);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return 0;
+	}
+	back = PDC_Resolution_get_number_precinct(exception, resolution);
+	return back;
+}
+
+/*
+ *
+ */
+PDC_Resolution*	PDC_Tile_get_resolution(	PDC_Exception* exception,
+											PDC_Tile* tile,
+											PDC_uint componente_pos,
+											PDC_uint resolution_pos)
+{
+	PDC_Resolution*	resolution = NULL;
+	PDC_uint back = 0;
+	PDC_Tile_Component* tile_component = NULL;
+
+	tile_component = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, componente_pos);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return NULL;
+	}
+	resolution = PDC_Tile_Component_get_Resolution( exception, tile_component, resolution_pos);
+
+	return resolution;
+}
+
+/*
+ *
+ */
+void PDC_Tile_read_package_header(	PDC_Exception* exception,
+									PDC_Tile* tile,
+									PDC_uint component_pos,
+									PDC_uint resolution_pos,
+									PDC_uint precinct_pos,
+									PDC_uint layer_pos)
+{
+
 }
 
 STOP_C

@@ -98,5 +98,20 @@ START_C
 	 */
 	PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 											PDC_Resolution* in_resolution);
+
+
+	/*
+	 *
+	 */
+	PDC_Resolution* PDC_Resolution_get_resolution(	PDC_Exception* exception,
+													PDC_Resolution* resolution,
+													PDC_uint resolution_pos);
+
+	/*
+	 *
+	 */
+	PDC_uint PDC_Resolution_get_number_precinct(	PDC_Exception* exception,
+													PDC_Resolution* resolution);
+	
 STOP_C
 #endif
