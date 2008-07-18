@@ -248,6 +248,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_Tagtree.c"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_Tile.c"
 				>
 			</File>
@@ -343,6 +347,10 @@
 			</File>
 			<File
 				RelativePath=".\PDC_Subband.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_Tagtree.h"
 				>
 			</File>
 			<File

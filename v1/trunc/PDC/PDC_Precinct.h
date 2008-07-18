@@ -60,6 +60,14 @@ START_C
 	PDC_Precinct* delete_PDC_Precinct(	PDC_Exception* exception,
 										PDC_Precinct* precinct);
 
-	PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,)
+	/*
+	 *
+	 */
+	PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
+													PDC_Precinct* precinct,
+													PDC_Buffer*	buffer,
+													PDC_uint layer_pos);
+
+
 STOP_C
 #endif

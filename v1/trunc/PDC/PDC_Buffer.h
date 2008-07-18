@@ -37,6 +37,10 @@ START_C
 		PDC_uint32				length;
 		PDC_uint32				read_byte_pos;
 		PDC_uint32				write_byte_pos;
+		PDC_uint32				read_bit_pos;
+		PDC_uint32				save_read_byte_pos;
+		PDC_uint32				save_write_byte_pos;
+		PDC_uint32				save_read_bit_pos;
 		PDC_buffer_end_state	end_state;
 	};
 
@@ -113,6 +117,24 @@ START_C
 	 *
 	 */
 	PDC_Buffer* PDC_Buffer_read_uint8_03(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint8 *value, PDC_uint32 position);
+
+	/*
+	 *
+	 */
+	PDC_bit PDC_Buffer_get_next_bit(	PDC_Exception* exception,
+										PDC_Buffer* buffer);
+
+	/* 
+	 *
+	 */
+	void PDC_Buffer_push_state(	PDC_Exception* exception,
+								PDC_Buffer* buffer);
+
+	/* 
+	 *
+	 */
+	void PDC_Buffer_pop_state(	PDC_Exception* exception,
+								PDC_Buffer* buffer);
 
 STOP_C
 

@@ -93,5 +93,29 @@ PDC_Precinct* delete_PDC_Precinct(	PDC_Exception* exception,
 	return NULL;
 }
 
+/*
+ *
+ */
+PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
+												PDC_Precinct* precinct,
+												PDC_Buffer*	buffer,
+												PDC_uint layer_pos)
+{
+	PDC_bit		bit;
+	PDC_Buffer_push_state(exception, buffer);
+
+	bit = PDC_Buffer_get_next_bit(exception, buffer);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		PDC_Buffer_pop_state(exception, buffer);
+		return precinct;
+	}
+	if(bit == 1){
+		
+
+	}
+
+	return precinct;
+}
+
 STOP_C
 

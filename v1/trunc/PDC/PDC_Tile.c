@@ -216,13 +216,13 @@ PDC_Tile* PDC_Tile_read_Packageheader(	PDC_Exception* exception,
  */
 PDC_uint PDC_Tile_get_numprecinct(	PDC_Exception* exception,
 									PDC_Tile* tile,
-									PDC_uint componente,
-									PDC_uint resolution)
+									PDC_uint componente_pos,
+									PDC_uint resolution_pos)
 {
 	PDC_uint back = 0;
 	PDC_Resolution* resolution = NULL;
 
-	resolution PDC_Tile_get_resolution(exception, tile, compnente, resolution);
+	resolution = PDC_Tile_get_resolution(exception, tile, componente_pos, resolution_pos);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return 0;
 	}

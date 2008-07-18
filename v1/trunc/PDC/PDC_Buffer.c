@@ -51,6 +51,7 @@ PDC_Buffer* new_PDC_Buffer_1(PDC_Exception* exception, PDC_uint32 length)
 	buffer->read_byte_pos	= 0;
 	buffer->write_byte_pos	= 0;
 	buffer->length			= length;
+	buffer->read_bit_pos	= 0;
 
 	return buffer;
 }
@@ -72,6 +73,7 @@ PDC_Buffer* new_PDC_Buffer_3(PDC_Exception* exception)
 	buffer->length			= 0;
 	buffer->read_byte_pos	= 0;
 	buffer->write_byte_pos	= 0;
+	buffer->read_bit_pos	= 0;
 	buffer->end_state		= MORE_DATA_EXPECTED;
 
 	return buffer;
@@ -293,6 +295,68 @@ PDC_Buffer* PDC_Buffer_read_uint8_03(	PDC_Exception* exception,
 
 	return buffer;
 }
+
+/*
+ *
+ */
+PDC_bit PDC_Buffer_get_next_bit(	PDC_Exception* exception,
+									PDC_Buffer* buffer)
+{
+	PDC_bit back = 0;
+	
+	if(buffer->read_byte_pos < buffer->write_byte_pos){
+		if(buffer->read_bit_pos < 8){
+			back = buffer->buffer[buffer->read_byte_pos];
+			back = (back >> (7 - buffer->read_bit_pos)) & 1;
+			buffer->read_bit_pos += 1;
+		}else{
+			buffer->read_bit_pos = 0;
+			buffer->read_byte_pos += 1;
+			if(buffer->read_byte_pos < buffer->write_byte_pos){
+				back = (buffer->buffer[buffer->read_byte_pos] >> 7) & 1;
+				buffer->read_bit_pos += 1;
+			}else{
+				if(buffer->end_state == MORE_DATA_EXPECTED){
+					back = 0;
+					PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+				}else{
+					back = 0;
+				}
+			}
+		}
+	}else{
+		if(buffer->end_state == MORE_DATA_EXPECTED){
+			back = 0;
+			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+		}else{
+			back = 0;
+		}
+	}
+	return back;
+}
+
+/* 
+ *
+ */
+void PDC_Buffer_push_state(	PDC_Exception* exception,
+							PDC_Buffer* buffer)
+{
+	buffer->save_read_bit_pos	= buffer->read_bit_pos;
+	buffer->save_read_byte_pos	= buffer->read_byte_pos;
+	buffer->save_write_byte_pos	= buffer->write_byte_pos;
+}
+
+/* 
+ *
+ */
+void PDC_Buffer_pop_state(	PDC_Exception* exception,
+							PDC_Buffer* buffer)
+{
+	buffer->read_bit_pos	= buffer->save_read_bit_pos;
+	buffer->read_byte_pos	= buffer->save_read_byte_pos;
+	buffer->write_byte_pos	= buffer->save_write_byte_pos;
+}
+
 
 #ifdef __cplusplus     
 }       
