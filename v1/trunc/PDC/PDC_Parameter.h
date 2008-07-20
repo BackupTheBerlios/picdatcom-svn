@@ -48,7 +48,8 @@
 
 START_C
 
-	
+#define MAX_INT 0x7FFFFFFF	
+
 	typedef enum{PDC_true = 1, PDC_false = 0}PDC_bool;
 	typedef unsigned char	PDC_uchar;
 	typedef unsigned int	PDC_uint;
@@ -63,6 +64,9 @@ START_C
 
 	PDC_int PDC_i_ceiling( PDC_int , PDC_int);
 	PDC_int PDC_i_floor( PDC_int , PDC_int);
+
+	PDC_uint PDC_ui_ceiling( PDC_uint , PDC_uint);
+	PDC_uint PDC_ui_floor( PDC_uint , PDC_uint);
 
 	PDC_int PDC_f_ceiling(PDC_float32);
 	PDC_int	PDF_f_floor(PDC_float32);

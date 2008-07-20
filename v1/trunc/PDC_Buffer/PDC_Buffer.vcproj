@@ -198,6 +198,14 @@
 				RelativePath="..\PDC\PDC_Exception.c"
 				>
 			</File>
+			<File
+				RelativePath="..\PDC\PDC_Parameter.c"
+				>
+			</File>
+			<File
+				RelativePath="..\PDC\PDC_Tagtree.c"
+				>
+			</File>
 		</Filter>
 		<Filter
 			Name="Header Files"
@@ -222,6 +230,10 @@
 			</File>
 			<File
 				RelativePath="..\PDC\PDC_Parameter.h"
+				>
+			</File>
+			<File
+				RelativePath="..\PDC\PDC_Tagtree.h"
 				>
 			</File>
 		</Filter>

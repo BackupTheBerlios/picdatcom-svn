@@ -23,34 +23,37 @@
 
 #include <stdlib.h>
 #include "PDC_Parameter.h"
+#include "PDC_Exception.h"
 
 START_C
 
 	struct str_PDC_Tagtree;
-	typedef struct str_PDC_Tagtree;
+	typedef struct str_PDC_Tagtree PDC_Tagtree;
 
 	struct str_PDC_Tagtree_item;
 	typedef struct str_PDC_Tagtree_item PDC_Tagtree_item;
 
 	
-	struct str_PDC_Tagtree{
-		PDC_uint	size_x;
-		PDC_uint	size_y;
+	struct str_PDC_Tagtree
+	{
+		PDC_uint*	size_x;
+		PDC_uint*	size_y;
 		PDC_uint	level;
-
+		
 		PDC_Tagtree_item***  item;
 		
-	}
+	};
 
-	struct str_PDC_Tagtree_item{
-		PDC_Tagtree_item	child1;
-		PDC_Tagtree_item	child2;
-		PDC_Tagtree_item	child3;
-		PDC_Tagtree_item	child4;
-		PDC_Tagtree_item	parent;
+	struct str_PDC_Tagtree_item
+	{
+		PDC_Tagtree_item*	child1;
+		PDC_Tagtree_item*	child2;
+		PDC_Tagtree_item*	child3;
+		PDC_Tagtree_item*	child4;
+		PDC_Tagtree_item*	parent;
 		PDC_int				value;
 		PDC_bool			decode;
-	}
+	};
 
 	/* 
 	 *
@@ -58,5 +61,47 @@ START_C
 	PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
 									PDC_uint size_x,
 									PDC_uint size_y);
+
+	/*
+	 *
+	 */
+	PDC_Tagtree* delete_PDC_Tagtree_01(	PDC_Exception* exception,
+										PDC_Tagtree* tagtree);
+
+
+	/*
+	 *
+	 */
+	PDC_Tagtree* PDC_Tagtree_set_value(	PDC_Exception* exception,
+										PDC_Tagtree* tagtree, 
+										PDC_uint pos_x,
+										PDC_uint pos_y,
+										PDC_int	value);
+
+	/*
+	 *
+	 */
+	PDC_Tagtree* PDC_Tagtree_create_tree(	PDC_Exception* exception,
+											PDC_Tagtree* tagtree);
+
+	/*
+	 *
+	 */
+	PDC_bool PDC_Tagtree_encode_pos(	PDC_Exception* exception,
+										PDC_Tagtree* tagtree,
+										PDC_Buffer*	buffer,
+										PDC_uint pos_x,
+										PDC_uint pos_y,
+										PDC_int max_value);
+
+	/*
+	 *
+	 */
+	PDC_bool PDC_Tagtree_encode_item(	PDC_Exception* exception,
+										PDC_Tagtree* tagtree,
+										PDC_Buffer*	buffer,
+										PDC_Tagtree_item* item,
+										PDC_int max_value);
+										
 STOP_C
 #endif

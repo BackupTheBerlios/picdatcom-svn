@@ -22,23 +22,28 @@
 #include "PDC_Exception.h"
 #include "PDC_Arithmetic_entropy_encoder.h"
 #include "PDC_Arithmetic_entropy_decoder.h"
+#include "PDC_Parameter.h"
+#include "PDC_Tagtree.h"
 #include <pthread.h>
 
 void *print_minus(void *data);
 void *print_plus(void *data);
 void thread_test();
 void Arithmetic_entropy_test();
+void Tagtree_test();
+void showtagtree(PDC_Tagtree* tagtree);
 
 #define TESTSIZE 4400
 
 int main()
 {
-	Arithmetic_entropy_test();
+	Tagtree_test();
+	//Arithmetic_entropy_test();
 	//thread_test();
 	return 0;
 }
 
-
+/*
 void Arithmetic_entropy_test()
 {
 	
@@ -110,7 +115,7 @@ void Arithmetic_entropy_test()
 
 }
 
-
+*/
 
 void thread_test()
 {
@@ -141,4 +146,46 @@ void *print_plus(void *data)
 		printf("Plus \n");
 	}
 	return NULL;
+}
+
+
+void Tagtree_test()
+{
+	PDC_Exception* exception;
+	PDC_Tagtree* tagtree = NULL;
+	PDC_uint size_x = 5;
+	PDC_uint size_y = 9;
+	PDC_uint pos_x, pos_y;
+
+	exception = new_PDC_Exception();
+	tagtree = new_PDC_Tagtree_01(exception, size_x, size_y);
+	showtagtree(tagtree);
+
+	for(pos_y = 0; pos_y < size_y; pos_y += 1){
+		for(pos_x = 0; pos_x < size_x; pos_x += 1){
+			PDC_Tagtree_set_value(exception, tagtree, pos_x, pos_y, rand() % 77);
+		}
+	}
+		/*
+	 *
+	 */
+	PDC_Tagtree_create_tree(exception, tagtree);
+	showtagtree(tagtree);
+}
+
+void showtagtree(PDC_Tagtree* tagtree)
+{
+	PDC_uint pos, pos_x, pos_y;
+
+	for(pos = 0; pos < tagtree->level; pos += 1){
+		printf("\n\n");
+		for(pos_y = 0; pos_y < tagtree->size_y[pos]; pos_y += 1){
+			for(pos_x = 0; pos_x < tagtree->size_x[pos]; pos_x += 1){
+				printf("  %d", tagtree->item[pos][pos_x][pos_y].value );
+			}
+			printf("\n");
+		}
+	}
+
+
 }

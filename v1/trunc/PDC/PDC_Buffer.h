@@ -25,6 +25,8 @@
 #include "PDC_Parameter.h"
 
 START_C
+	
+	#define INIT_WRITE_BIT_POS 7
 
 	struct str_PDC_Buffer;
 	typedef struct str_PDC_Buffer PDC_Buffer;
@@ -38,6 +40,7 @@ START_C
 		PDC_uint32				read_byte_pos;
 		PDC_uint32				write_byte_pos;
 		PDC_uint32				read_bit_pos;
+		PDC_uint32				write_bit_pos;
 		PDC_uint32				save_read_byte_pos;
 		PDC_uint32				save_write_byte_pos;
 		PDC_uint32				save_read_bit_pos;
@@ -135,6 +138,13 @@ START_C
 	 */
 	void PDC_Buffer_pop_state(	PDC_Exception* exception,
 								PDC_Buffer* buffer);
+
+	/*
+	 *
+	 */
+	PDC_Buffer* PDC_Buffer_add_bit_1(	PDC_Exception* exception,		
+										PDC_Buffer* buffer, 
+										PDC_bit bit);
 
 STOP_C
 

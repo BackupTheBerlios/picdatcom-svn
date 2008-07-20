@@ -38,6 +38,23 @@ PDC_int PDC_i_floor( PDC_int a, PDC_int b)
 	return i;
 }
 
+PDC_uint PDC_ui_ceiling( PDC_uint a, PDC_uint b)
+{
+	PDC_uint i = a/b;
+	if(a%b != 0){
+		i += 1;
+	}
+	return i;	
+}
+
+PDC_uint PDC_ui_floor( PDC_uint a, PDC_uint b)
+{
+	PDC_int i = a/b;
+
+	return i;
+}
+
+
 PDC_int PDC_f_ceiling(PDC_float32 in)
 {
 	PDC_int back = 0;

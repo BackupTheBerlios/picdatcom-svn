@@ -52,6 +52,7 @@ PDC_Buffer* new_PDC_Buffer_1(PDC_Exception* exception, PDC_uint32 length)
 	buffer->write_byte_pos	= 0;
 	buffer->length			= length;
 	buffer->read_bit_pos	= 0;
+	buffer->write_bit_pos	= INIT_WRITE_BIT_POS;
 
 	return buffer;
 }
@@ -75,6 +76,7 @@ PDC_Buffer* new_PDC_Buffer_3(PDC_Exception* exception)
 	buffer->write_byte_pos	= 0;
 	buffer->read_bit_pos	= 0;
 	buffer->end_state		= MORE_DATA_EXPECTED;
+	buffer->write_bit_pos	= INIT_WRITE_BIT_POS;
 
 	return buffer;
 }
@@ -355,6 +357,40 @@ void PDC_Buffer_pop_state(	PDC_Exception* exception,
 	buffer->read_bit_pos	= buffer->save_read_bit_pos;
 	buffer->read_byte_pos	= buffer->save_read_byte_pos;
 	buffer->write_byte_pos	= buffer->save_write_byte_pos;
+}
+
+/*
+ *
+ */
+PDC_Buffer* PDC_Buffer_add_bit_1(	PDC_Exception* exception,		
+									PDC_Buffer* buffer, 
+									PDC_bit bit)
+{
+	PDC_uint plus_length = 10;
+	PDC_uint8 mask = 0xFF;
+	PDC_uint8 byte;
+
+	
+	if(buffer->write_bit_pos > 7){
+		buffer->write_bit_pos	= INIT_WRITE_BIT_POS;
+		buffer->write_byte_pos	+= 1;
+	}
+	
+	if(buffer->write_byte_pos >= buffer->length){
+		buffer =  PDC_Buffer_realloc(exception, return_buffer, plus_length);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return return_buffer;
+		}
+	}
+	byte = buffer->buffer[buffer->write_byte_pos];
+	mask <<= (buffer->write_bit_pos + 1);
+	byte &= mask
+	if(bit != 0){
+		mask = 1 << buffer->write_bit_pos ;
+		byte != mask;
+	}
+	buffer->write_bit_pos -= 1;
+	return buffer;
 }
 
 
