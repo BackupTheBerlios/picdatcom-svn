@@ -33,7 +33,8 @@ START_C
 	struct str_PDC_Tagtree_item;
 	typedef struct str_PDC_Tagtree_item PDC_Tagtree_item;
 
-	
+	#include "PDC_Buffer.h"
+
 	struct str_PDC_Tagtree
 	{
 		PDC_uint*	size_x;
@@ -52,7 +53,11 @@ START_C
 		PDC_Tagtree_item*	child4;
 		PDC_Tagtree_item*	parent;
 		PDC_int				value;
+		PDC_int				value_noted;
 		PDC_bool			decode;
+		PDC_int				save_value;
+		PDC_int				save_value_noted;
+		PDC_bool			save_decode;
 	};
 
 	/* 
@@ -101,7 +106,27 @@ START_C
 										PDC_Tagtree* tagtree,
 										PDC_Buffer*	buffer,
 										PDC_Tagtree_item* item,
+										PDC_Tagtree_item* root_item,
 										PDC_int max_value);
-										
+	
+	/*
+	 *
+	 */
+	PDC_bool PDC_Tagtree_decode_pos(	PDC_Exception* exception,
+										PDC_Tagtree* tagtree,
+										PDC_Buffer*	buffer,
+										PDC_uint pos_x,
+										PDC_uint pos_y,
+										PDC_int max_value);
+
+	/*
+	 *
+	 */
+	PDC_bool PDC_Tagtree_decode_item(	PDC_Exception* exception,
+										PDC_Tagtree* tagtree,
+										PDC_Buffer*	buffer,
+										PDC_Tagtree_item* item,
+										PDC_int max_value);
+
 STOP_C
 #endif

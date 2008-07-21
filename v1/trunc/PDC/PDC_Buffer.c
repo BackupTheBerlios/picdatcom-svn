@@ -318,20 +318,31 @@ PDC_bit PDC_Buffer_get_next_bit(	PDC_Exception* exception,
 				back = (buffer->buffer[buffer->read_byte_pos] >> 7) & 1;
 				buffer->read_bit_pos += 1;
 			}else{
-				if(buffer->end_state == MORE_DATA_EXPECTED){
+				if(buffer->write_bit_pos > buffer->read_bit_pos){
+					back = buffer->buffer[buffer->read_byte_pos];
+					back = (back >> (7 - buffer->read_bit_pos)) & 1;
+					buffer->read_bit_pos += 1;
+				}else if(buffer->end_state == MORE_DATA_EXPECTED){
 					back = 0;
 					PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 				}else{
 					back = 0;
+					PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 				}
 			}
 		}
 	}else{
-		if(buffer->end_state == MORE_DATA_EXPECTED){
+
+		if(buffer->write_bit_pos > buffer->read_bit_pos){
+			back = buffer->buffer[buffer->read_byte_pos];
+			back = (back >> (7 - buffer->read_bit_pos)) & 1;
+			buffer->read_bit_pos += 1;
+		}else if(buffer->end_state == MORE_DATA_EXPECTED){
 			back = 0;
 			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		}else{
 			back = 0;
+			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		}
 	}
 	return back;
@@ -377,19 +388,20 @@ PDC_Buffer* PDC_Buffer_add_bit_1(	PDC_Exception* exception,
 	}
 	
 	if(buffer->write_byte_pos >= buffer->length){
-		buffer =  PDC_Buffer_realloc(exception, return_buffer, plus_length);
+		buffer =  PDC_Buffer_realloc(exception, buffer, plus_length);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
-			return return_buffer;
+			return buffer;
 		}
 	}
 	byte = buffer->buffer[buffer->write_byte_pos];
-	mask <<= (buffer->write_bit_pos + 1);
-	byte &= mask
+	mask <<= (8 - buffer->write_bit_pos);
+	byte &= mask;
 	if(bit != 0){
-		mask = 1 << buffer->write_bit_pos ;
-		byte != mask;
+		mask = 1 << (7 - buffer->write_bit_pos) ;
+		byte |= mask;
 	}
-	buffer->write_bit_pos -= 1;
+	buffer->buffer[buffer->write_byte_pos] = byte;
+	buffer->write_bit_pos += 1;
 	return buffer;
 }
 

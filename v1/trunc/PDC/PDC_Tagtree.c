@@ -131,9 +131,10 @@ PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
 				}	
 			}
 			for(pos_y = 0; pos_y < tagtree->size_y[pos]; pos_y += 1){
-				tagtree->item[pos][pos_x][pos_y].value	= 0;
-				tagtree->item[pos][pos_x][pos_y].decode	= PDC_false;
-				tagtree->item[pos][pos_x][pos_y].parent	= NULL;
+				tagtree->item[pos][pos_x][pos_y].value			= 0;
+				tagtree->item[pos][pos_x][pos_y].decode			= PDC_false;
+				tagtree->item[pos][pos_x][pos_y].parent			= NULL;
+				tagtree->item[pos][pos_x][pos_y].value_noted	= 0;
 			}	
 		}
 	}
@@ -232,6 +233,18 @@ PDC_bool PDC_Tagtree_encode_pos(	PDC_Exception* exception,
 									PDC_int max_value)
 {
 	PDC_bool encode = PDC_false;
+	PDC_Tagtree_item* item;
+
+	if(pos_x < tagtree->size_x[0] && pos_y < tagtree->size_y[0]){
+		item	= &(tagtree->item[0][pos_x][pos_y]);
+		encode	= PDC_Tagtree_encode_item( exception, tagtree, buffer, item, item, max_value);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return PDC_false;
+		}
+	}else{
+		encode = PDC_false;
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+	}
 
 	return encode;
 }
@@ -244,21 +257,130 @@ PDC_bool PDC_Tagtree_encode_item(	PDC_Exception* exception,
 									PDC_Tagtree* tagtree,
 									PDC_Buffer*	buffer,
 									PDC_Tagtree_item* item,
+									PDC_Tagtree_item* root_item,
 									PDC_int max_value)
 {
 	PDC_bool encode = PDC_false;
-	
+	PDC_int min, diff, run;
+
 	if(item->decode == PDC_true){
 		return PDC_true;
 	}
 	if(item->parent != NULL ){
 		if(item->parent->decode == PDC_false){
-			encode = PDC_bool PDC_Tagtree_encode_item(exception, tagtree, buffer,item->parent, max_value)
+			encode = PDC_Tagtree_encode_item(exception, tagtree, buffer,item->parent, root_item, max_value);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return PDC_false;
+			}
+			if(encode == PDC_true){
+				item->value_noted = item->parent->value;
+			}else{
+				return encode;
+			}
+		}
+		if(item->value_noted < item->parent->value){
+			item->value_noted = item->parent->value;
 		}
 	}
-	
 
-	return encode;
+	min = min_uint(max_value, item->value);
+	diff = min - item->value_noted;
+	if(diff < 0){
+		return PDC_false;
+	}
+
+	for(run = 0; run < diff; run += 1){
+		PDC_Buffer_add_bit_1( exception, buffer, 0);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return PDC_false;
+		}
+		item->value_noted += 1;
+	}
+	if(max_value > item->value){
+		PDC_Buffer_add_bit_1( exception, buffer, 1);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return PDC_false;
+		}
+		item->decode = PDC_true;
+		return PDC_true;
+	}
+	return PDC_false;
+}
+
+
+/*
+ *
+ */
+PDC_bool PDC_Tagtree_decode_pos(	PDC_Exception* exception,
+									PDC_Tagtree* tagtree,
+									PDC_Buffer*	buffer,
+									PDC_uint pos_x,
+									PDC_uint pos_y,
+									PDC_int max_value)
+{
+	PDC_bool decode = PDC_false;
+	PDC_Tagtree_item* item;
+
+	if(pos_x < tagtree->size_x[0] && pos_y < tagtree->size_y[0]){
+		item	= &(tagtree->item[0][pos_x][pos_y]);
+		decode	= PDC_Tagtree_decode_item( exception, tagtree, buffer, item, max_value);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return PDC_false;
+		}
+	}else{
+		decode = PDC_false;
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+	}
+	return decode;
+}
+
+/*
+ *
+ */
+PDC_bool PDC_Tagtree_decode_item(	PDC_Exception* exception,
+									PDC_Tagtree* tagtree,
+									PDC_Buffer*	buffer,
+									PDC_Tagtree_item* item,
+									PDC_int max_value)
+{
+	PDC_bool decode = PDC_false;
+	PDC_bit bit;
+	
+	if(item->decode == PDC_true){
+		return PDC_true;
+	}
+
+	if(item->parent != NULL){
+		if(item->parent->decode == PDC_false){
+			decode = PDC_Tagtree_decode_item(	exception, 
+												tagtree, 
+												buffer,	
+												item->parent,
+												max_value);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return PDC_false;
+			}
+			if(decode == PDC_false){
+				return PDC_false;
+			}else{
+				item->value_noted = item->parent->value;
+			}
+		}
+		if(item->value_noted < item->parent->value){
+			item->value_noted = item->parent->value;
+		}
+	}
+	while(max_value > item->value_noted){
+		bit = PDC_Buffer_get_next_bit(exception, buffer);
+		if(bit == 0){
+			item->value_noted += 1;
+		}else{
+			item->value		= item->value_noted;
+			item->decode	= PDC_true;
+			return PDC_true;
+		}
+	}
+	return PDC_false;
 }
 
 STOP_C

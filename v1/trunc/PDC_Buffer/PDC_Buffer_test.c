@@ -152,25 +152,52 @@ void *print_plus(void *data)
 void Tagtree_test()
 {
 	PDC_Exception* exception;
-	PDC_Tagtree* tagtree = NULL;
+	PDC_Tagtree* tagtree1	= NULL;
+	PDC_Tagtree* tagtree2	= NULL;
+	PDC_Buffer* buffer		= NULL;
 	PDC_uint size_x = 5;
 	PDC_uint size_y = 9;
 	PDC_uint pos_x, pos_y;
 
+	PDC_int max, test;
+	
+	max = 0;
 	exception = new_PDC_Exception();
-	tagtree = new_PDC_Tagtree_01(exception, size_x, size_y);
-	showtagtree(tagtree);
+	tagtree1 = new_PDC_Tagtree_01(exception, size_x, size_y);
+	tagtree2 = new_PDC_Tagtree_01(exception, size_x, size_y);
+	buffer = new_PDC_Buffer_1(exception, 50);
+	showtagtree(tagtree1);
 
 	for(pos_y = 0; pos_y < size_y; pos_y += 1){
 		for(pos_x = 0; pos_x < size_x; pos_x += 1){
-			PDC_Tagtree_set_value(exception, tagtree, pos_x, pos_y, rand() % 77);
+			test = rand() % 8;
+			if(test > max){
+				max = test;
+			}
+			PDC_Tagtree_set_value(exception, tagtree1, pos_x, pos_y, test);
 		}
 	}
-		/*
-	 *
-	 */
-	PDC_Tagtree_create_tree(exception, tagtree);
-	showtagtree(tagtree);
+	
+	PDC_Tagtree_create_tree(exception, tagtree1);
+	showtagtree(tagtree1);
+
+	for(test = 0; test <= max ; test += 1){
+		for(pos_y = 0; pos_y < size_y; pos_y += 1){
+			for(pos_x = 0; pos_x < size_x; pos_x += 1){
+				PDC_Tagtree_encode_pos(exception, tagtree1, buffer,pos_x, pos_y, test + 1 ); 
+			}
+		}
+	}
+
+	for(test = 0; test <= max; test += 1){
+		for(pos_y = 0; pos_y < size_y; pos_y += 1){
+			for(pos_x = 0; pos_x < size_x; pos_x += 1){
+				PDC_Tagtree_decode_pos(exception, tagtree2, buffer,pos_x, pos_y, test + 1); 
+			}
+		}
+	}
+	showtagtree(tagtree2);
+
 }
 
 void showtagtree(PDC_Tagtree* tagtree)

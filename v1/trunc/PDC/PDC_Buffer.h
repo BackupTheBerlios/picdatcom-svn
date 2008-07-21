@@ -26,7 +26,7 @@
 
 START_C
 	
-	#define INIT_WRITE_BIT_POS 7
+	#define INIT_WRITE_BIT_POS 0
 
 	struct str_PDC_Buffer;
 	typedef struct str_PDC_Buffer PDC_Buffer;
@@ -126,6 +126,12 @@ START_C
 	 */
 	PDC_bit PDC_Buffer_get_next_bit(	PDC_Exception* exception,
 										PDC_Buffer* buffer);
+
+	/*
+	 * 
+	 */
+	void PDC_Buffer_return_bit(	PDC_Exception* exception,
+								PDC_Buffer* buffer);
 
 	/* 
 	 *
