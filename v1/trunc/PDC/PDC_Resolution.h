@@ -40,11 +40,13 @@ START_C
 		PDC_Resolution*		resolution_small;
 		PDC_Precinct**		precinct;
 		
+		PDC_Subband*		subband[3];
+		/*
 		PDC_Subband*		subband_ll;
 		PDC_Subband*		subband_hl;
 		PDC_Subband*		subband_lh;
 		PDC_Subband*		subband_hh;
-
+		*/
 		PDC_uint			n;
 		PDC_uint			r;
 		PDC_uint			trx0;
@@ -112,6 +114,14 @@ START_C
 	 */
 	PDC_uint PDC_Resolution_get_number_precinct(	PDC_Exception* exception,
 													PDC_Resolution* resolution);
+
+	/*
+	 *
+	 */
+	PDC_uint PDC_Resolution_get_codeblock_position(	PDC_Exception* exception,
+													PDC_Resolution* resolution,		
+													PDC_uint pos_x,
+													PDC_uint pos_y);
 	
 STOP_C
 #endif

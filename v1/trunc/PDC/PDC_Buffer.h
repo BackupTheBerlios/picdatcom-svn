@@ -152,6 +152,12 @@ START_C
 										PDC_Buffer* buffer, 
 										PDC_bit bit);
 
+	/* 
+	 *
+	 */
+	PDC_uint PDC_Buffer_get_number_of_codingpasses(	PDC_Exception* exception,		
+													PDC_Buffer* buffer);
+
 STOP_C
 
 #endif

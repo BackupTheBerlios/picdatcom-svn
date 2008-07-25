@@ -405,6 +405,69 @@ PDC_Buffer* PDC_Buffer_add_bit_1(	PDC_Exception* exception,
 	return buffer;
 }
 
+/* 
+ *
+ */
+PDC_uint PDC_Buffer_get_number_of_codingpasses(	PDC_Exception* exception,		
+												PDC_Buffer* buffer)
+{
+	PDC_uint	value = 0;
+	PDC_bit		bit;
+	PDC_uint	pos;
+		
+	bit = PDC_Buffer_get_next_bit(exception, buffer);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return 0;
+	}
+	if(bit == 0){
+		return 1;
+	}else{
+		value = 1;
+		bit = PDC_Buffer_get_next_bit(exception, buffer);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return 0;
+		}
+		if(bit == 0){
+			return 2;
+		}else{
+			value = 0;
+			for(pos = 0; pos < 2; pos += 1){
+				bit = PDC_Buffer_get_next_bit(exception, buffer);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					return 0;
+				}
+				value |= bit <<( 1 - pos);
+			}
+			if(value != 3){
+				return value + 3;
+			}else{
+				value = 0;
+				for(pos = 0; pos < 5; pos += 1){
+					bit = PDC_Buffer_get_next_bit(exception, buffer);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						return 0;
+					}
+					value |= bit <<( 4 - pos);
+				}
+				if(value != 31){
+					return value + 6;
+				}else{
+					value = 0;
+					for(pos = 0; pos < 8; pos += 1){
+						bit = PDC_Buffer_get_next_bit(exception, buffer);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							return 0;
+						}
+						value |= bit <<( 7 - pos);
+					}
+					return value + 37;
+				}
+			}
+		}
+	}
+}
+
+
 
 #ifdef __cplusplus     
 }       

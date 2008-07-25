@@ -128,5 +128,17 @@ START_C
 										PDC_Tagtree_item* item,
 										PDC_int max_value);
 
+	/*
+	 *
+	 */
+	void PDC_Tagtree_push(	PDC_Exception* exception,
+							PDC_Tagtree* tagtree);
+
+	/*
+	 *
+	 */
+	void PDC_Tagtree_pop(	PDC_Exception* exception,
+							PDC_Tagtree* tagtree);
+
 STOP_C
 #endif

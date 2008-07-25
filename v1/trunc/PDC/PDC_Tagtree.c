@@ -383,4 +383,55 @@ PDC_bool PDC_Tagtree_decode_item(	PDC_Exception* exception,
 	return PDC_false;
 }
 
+/*
+ *
+ */
+void PDC_Tagtree_push(	PDC_Exception* exception,
+						PDC_Tagtree* tagtree)
+{
+	PDC_uint pos, pos_x, pos_y, size_x, size_y, size;
+	PDC_Tagtree_item* item; 
+
+	size = tagtree->level;
+	for(pos = 0; pos < size; pos += 1){
+		size_y = tagtree->size_y[pos];
+		for(pos_y = 0; pos_y < size_y; pos_y += 1){
+			size_x = tagtree->size_x[pos];
+			for(pos_x = 0; pos_x < size_x; pos_x += 1){
+				item = &(tagtree->item[pos][pos_x][pos_y]);
+				
+				item->save_decode		= item->decode;
+				item->save_value		= item->value;
+				item->save_value_noted	= item->value_noted;
+			}
+		}
+	}
+}
+
+/*
+ *
+ */
+void PDC_Tagtree_pop(	PDC_Exception* exception,
+						PDC_Tagtree* tagtree)
+{
+	PDC_uint pos, pos_x, pos_y, size_x, size_y, size;
+	PDC_Tagtree_item* item; 
+
+	size = tagtree->level;
+	for(pos = 0; pos < size; pos += 1){
+		size_y = tagtree->size_y[pos];
+		for(pos_y = 0; pos_y < size_y; pos_y += 1){
+			size_x = tagtree->size_x[pos];
+			for(pos_x = 0; pos_x < size_x; pos_x += 1){
+				item = &(tagtree->item[pos][pos_x][pos_y]);
+				
+				item->decode		= item->save_decode;
+				item->value			= item->save_value;
+				item->value_noted	= item->save_value_noted;
+			}
+		}
+	}
+}
+
+
 STOP_C

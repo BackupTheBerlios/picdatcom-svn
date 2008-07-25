@@ -34,11 +34,22 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	codeblock->cx0		= 0;
-	codeblock->cx1		= 0;
-	codeblock->cy0		= 0;
-	codeblock->cy1		= 0;
-	codeblock->subband	= NULL;
+	
+	codeblock->read_codeword	= new_PDC_Codeword_List_01( exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Codeblock(exception, codeblock);
+		return NULL;
+	}
+	codeblock->write_codeword	= codeblock->read_codeword;
+
+	codeblock->cx0						= 0;
+	codeblock->cx1						= 0;
+	codeblock->cy0						= 0;
+	codeblock->cy1						= 0;
+	codeblock->subband					= NULL;
+	codeblock->codeblock_inclusion		= PDC_false;
+	codeblock->zero_bit_plane_inclusion	= PDC_false;
+	codeblock->Lblock					= 3;
 
 	return codeblock;
 }
@@ -65,6 +76,9 @@ PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subba
 	codeblock->cy0	= max_uint32(size_y * pos_y, subband->tby0);
 	codeblock->cy1	= min_uint32(size_y *(pos_y + 1), subband->tby1);
 
+	codeblock->read_codeword	= NULL;
+	codeblock->write_codeword	= NULL;
+
 	return codeblock;
 }
 
@@ -80,6 +94,85 @@ PDC_Codeblock* delete_PDC_Codeblock(PDC_Exception* exception, PDC_Codeblock* cod
 	return NULL;
 }
 
+/*
+ *
+ */
+PDC_uint PDC_Codeblock_set_number_of_coding_passes(	PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_uint number_of_coding_passes)
+{
+	PDC_COD_Segment* cod_segment = NULL;
+
+	cod_segment = codeblock->subband->resolution->tile_component->cod_segment;
+
+	if(cod_segment->code_block_style & TERMINATION_EACH_CODING == 0){
+		if(cod_segment->code_block_style & SELECTIVE_ARITHMETIC_CODING == 0){
+			codeblock->write_codeword->coding_pass_to += number_of_coding_passes);
+			return 1;
+		}else{
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+		}
+	}else{
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+	}
+
+
+}
+
+/*
+ *
+ */
+PDC_Codeword_List* new_PDC_Codeword_List_01(PDC_Exception* exception)
+{
+	PDC_Codeword_List* codeword_list = NULL;
+	codeword_list = malloc(sizeof(PDC_Codeword_List));
+	if(codeword_list == NULL){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	}
+	codeword_list->codeword			= NULL;
+	codeword_list->first_codedword	= NULL;
+	codeword_list->last_codedword	= NULL;
+	codeword_list->next_codedword	= NULL;
+	codeword_list->coding_pass_from	= 0;
+	codeword_list->coding_pass_to	= 0;
+	codeword_list->coding_pass_next	= 0;
+	
+	return codeword_list;
+}
+
+/*
+ *
+ */
+PDC_Codeword_List* new_PDC_Codeword_List_02(PDC_Exception* exception, PDC_Codeword_List* last_codeword_list)
+{
+	PDC_Codeword_List* codeword_list = NULL;
+	codeword_list = new_PDC_Codeword_List_01(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Codeword_List(exception, codeword_list);
+		return NULL;
+	}
+	
+	codeword_list->last_codedword		= last_codeword_list;
+	last_codeword_list->next_codedword	= codeword_list;
+	codeword_list->coding_pass_from		= last_codeword_list->coding_pass_to;
+	
+	return codeword_list;
+}
+
+/*
+ *
+ */
+PDC_Codeword_List* delete_PDC_Codeword_List(PDC_Exception* exception, PDC_Codeword_List* codeword_list)
+{
+
+	if(codeword_list != NULL){
+		delete_PDC_Codeword_List(exception, codeword_list->next_codedword);
+		delete_PDC_Buffer(exception, codeword_list->codeword);
+
+		free(codeword_list);
+
+	}
+	return NULL;
+}
 
 STOP_C
 

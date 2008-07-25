@@ -31,9 +31,12 @@ START_C
 	#include "PDC_Subband.h"
 	#include "PDC_Resolution.h"
 	#include "PDC_Codeblock.h"
+	#include "PDC_Tagtree.h"
 
 	struct str_PDC_Precinct{
 		PDC_Resolution*	resolution;
+		PDC_Tagtree*	codeblock_inclusion;
+		PDC_Tagtree*	zero_bitplane;
 
 		PDC_uint codeblock_x0;
 		PDC_uint codeblock_x1;
@@ -67,6 +70,7 @@ START_C
 													PDC_Precinct* precinct,
 													PDC_Buffer*	buffer,
 													PDC_uint layer_pos);
+
 
 
 STOP_C

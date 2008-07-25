@@ -42,10 +42,15 @@ PDC_Resolution* new_PDC_Resolution_01(PDC_Exception* exception)
 	resolution->trx1				= 0;
 	resolution->try0				= 0;
 	resolution->try1				= 0;
+	/*
 	resolution->subband_hh			= NULL;
 	resolution->subband_lh			= NULL;
 	resolution->subband_hl			= NULL;
 	resolution->subband_ll			= NULL;
+	*/
+	resolution->subband[0]			= NULL;
+	resolution->subband[1]			= NULL;
+	resolution->subband[2]			= NULL;
 	resolution->codeblock_x0		= 0;
 	resolution->codeblock_x1		= 0;
 	resolution->codeblock_y0		= 0;
@@ -211,22 +216,22 @@ PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 	}
 
 	if(in_resolution->r == 0){
-		in_resolution->subband_ll = new_PDC_Subband_02(exception, SUBBAND_LL, in_resolution);
+		in_resolution->subband[0] = new_PDC_Subband_02(exception, SUBBAND_LL, in_resolution);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return in_resolution;
 		}
 	}else{
-		in_resolution->subband_hl = new_PDC_Subband_02(exception, SUBBAND_HL, in_resolution);
+		in_resolution->subband[0] = new_PDC_Subband_02(exception, SUBBAND_HL, in_resolution);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return in_resolution;
 		}
 
-		in_resolution->subband_lh = new_PDC_Subband_02(exception, SUBBAND_LH, in_resolution);
+		in_resolution->subband[1] = new_PDC_Subband_02(exception, SUBBAND_LH, in_resolution);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return in_resolution;
 		}
 
-		in_resolution->subband_hh = new_PDC_Subband_02(exception, SUBBAND_HH, in_resolution);
+		in_resolution->subband[2] = new_PDC_Subband_02(exception, SUBBAND_HH, in_resolution);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return in_resolution;
 		}
@@ -276,5 +281,30 @@ PDC_uint PDC_Resolution_get_number_precinct(	PDC_Exception* exception,
 	back = (resolution->codeblock_x1 - resolution->codeblock_x0) * (resolution->codeblock_y1 - resolution->codeblock_y0);
 	return back;
 }
+
+
+/*
+ *
+ */
+PDC_uint PDC_Resolution_get_codeblock_position(	PDC_Exception* exception,
+												PDC_Resolution* resolution,		
+												PDC_uint pos_x,
+												PDC_uint pos_y)
+{
+	PDC_uint pos_x1, pos_y1, size, pointer;
+
+	pos_x1 = pos_x - resolution->codeblock_x0;
+	pos_y1 = pos_y - resolution->codeblock_y0;
+	size = resolution->codeblock_x1 - resolution->codeblock_x0;
+
+	if(pos_x1 >= resolution->codeblock_x1 || pos_y1  >= resolution->codeblock_y1){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+	}
+	
+	pointer = pos_y1 * size + pos_x1;
+	return pointer;
+}
+
+
 STOP_C
 
