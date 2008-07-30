@@ -77,7 +77,12 @@ PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subba
 	codeblock->cy1	= min_uint32(size_y *(pos_y + 1), subband->tby1);
 
 	codeblock->read_codeword	= NULL;
-	codeblock->write_codeword	= NULL;
+	codeblock->write_codeword	= new_PDC_Codeword_List_01(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Codeblock(exception, codeblock);
+		return NULL;
+	}
+	codeblock->subband			= subband;
 
 	return codeblock;
 }
@@ -103,15 +108,18 @@ PDC_uint PDC_Codeblock_set_number_of_coding_passes(	PDC_Exception* exception, PD
 
 	cod_segment = codeblock->subband->resolution->tile_component->cod_segment;
 
-	if(cod_segment->code_block_style & TERMINATION_EACH_CODING == 0){
-		if(cod_segment->code_block_style & SELECTIVE_ARITHMETIC_CODING == 0){
-			codeblock->write_codeword->coding_pass_to += number_of_coding_passes);
+	if((cod_segment->code_block_style & TERMINATION_EACH_CODING) == 0){
+		if((cod_segment->code_block_style & SELECTIVE_ARITHMETIC_CODING) == 0){
+			codeblock->write_codeword->coding_pass_to			+= number_of_coding_passes;
+			codeblock->write_codeword->number_of_coding_passes	= number_of_coding_passes;
 			return 1;
 		}else{
 			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+			return 0;
 		}
 	}else{
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+		return 0;
 	}
 
 
@@ -128,14 +136,16 @@ PDC_Codeword_List* new_PDC_Codeword_List_01(PDC_Exception* exception)
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	codeword_list->codeword			= NULL;
-	codeword_list->first_codedword	= NULL;
-	codeword_list->last_codedword	= NULL;
-	codeword_list->next_codedword	= NULL;
-	codeword_list->coding_pass_from	= 0;
-	codeword_list->coding_pass_to	= 0;
-	codeword_list->coding_pass_next	= 0;
-	
+	codeword_list->codeword					= new_PDC_Buffer_1(exception, DEFAULT_RESIZE_CODEWORD);
+	codeword_list->first_codedword			= NULL;
+	codeword_list->last_codedword			= NULL;
+	codeword_list->next_codedword			= NULL;
+	codeword_list->coding_pass_from			= 0;
+	codeword_list->coding_pass_to			= 0;
+	codeword_list->coding_pass_next			= 0;
+	codeword_list->number_of_coding_passes	= 0;
+	codeword_list->number_of_byte			= 0;
+
 	return codeword_list;
 }
 

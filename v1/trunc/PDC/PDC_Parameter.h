@@ -80,6 +80,8 @@ START_C
 
 	PDC_int min_int(PDC_int in1, PDC_int in2);
 
+	PDC_uint PDC_floor_log2( PDC_uint in);
+
 STOP_C
 
 #endif

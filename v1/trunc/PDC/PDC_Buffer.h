@@ -158,6 +158,33 @@ START_C
 	PDC_uint PDC_Buffer_get_number_of_codingpasses(	PDC_Exception* exception,		
 													PDC_Buffer* buffer);
 
+	/* 
+	 *
+	 */
+	PDC_uint PDC_Buffer_get_Lblock_increase(PDC_Exception* exception,
+											PDC_Buffer* buffer);
+
+	/*
+	 *
+	 */
+	PDC_uint PDC_Buffer_read_bits(	PDC_Exception* exception,
+									PDC_Buffer* buffer,
+									PDC_uint number_bits);
+
+	/*
+	 * 
+	 */
+	void PDC_Buffer_padding_read(	PDC_Exception* exception,
+									PDC_Buffer* buffer);
+
+	/*
+	 *
+	 */
+	void PDC_Buffer_copy_bytes_01(	PDC_Exception* exception,
+									PDC_Buffer* buffer_source,
+									PDC_Buffer* buffer_destination,
+									PDC_uint num_bytes);
+
 STOP_C
 
 #endif

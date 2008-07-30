@@ -32,6 +32,8 @@ START_C
 	struct str_PDC_Codeword_List;
 	typedef struct str_PDC_Codeword_List PDC_Codeword_List;
 
+	#define DEFAULT_RESIZE_CODEWORD 5
+
 	#include "PDC_Subband.h"
 	#include "PDC_Resolution.h"
 	#include "PDC_Tile_Component.h"
@@ -62,6 +64,8 @@ START_C
 		PDC_uint	coding_pass_from;
 		PDC_uint	coding_pass_to;
 		PDC_uint	coding_pass_next;
+		PDC_uint	number_of_coding_passes;
+		PDC_uint	number_of_byte;
 	};
 
 
@@ -73,13 +77,14 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subband, PDC_uint pos_x, PDC_uint pos_y, PDC_uint num_codingpasses);
+	PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subband, PDC_uint pos_x, PDC_uint pos_y);
 
 	/*
 	 *
-	 */
+	 
 	PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_uint num_codingpasses);
-	
+	*/
+
 	/*
 	 *
 	 */

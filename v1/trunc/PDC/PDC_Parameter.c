@@ -109,5 +109,15 @@ PDC_uint min_uint(PDC_uint in1, PDC_uint in2)
 	return in2;
 }
 
+PDC_uint PDC_floor_log2( PDC_uint in)
+{
+	PDC_uint back = 0;
+
+	while(in > 1){
+		back += 1;
+		in >>= 1;
+	}
+	return back;
+}
 
 STOP_C

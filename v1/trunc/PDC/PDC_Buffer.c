@@ -467,7 +467,103 @@ PDC_uint PDC_Buffer_get_number_of_codingpasses(	PDC_Exception* exception,
 	}
 }
 
+/* 
+ *
+ */
+PDC_uint PDC_Buffer_get_Lblock_increase(PDC_Exception* exception,
+										PDC_Buffer* buffer)
+{
+	PDC_uint	back = 0;
+	PDC_bit		bit;
 
+	do{
+		bit = PDC_Buffer_get_next_bit(exception, buffer);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return 0;
+		}	
+		if(bit != 0){
+			back += 1;
+		}
+	}while(bit != 0);
+
+	return back;
+}
+
+/*
+ *
+ */
+PDC_uint PDC_Buffer_read_bits(	PDC_Exception* exception,
+								PDC_Buffer* buffer,
+								PDC_uint number_bits)
+{
+	PDC_uint number_of_bits = number_bits;
+	PDC_uint bit_pos;
+	PDC_bit bit;
+
+	PDC_uint result = 0;
+	if(number_bits > 32){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_FALSE_SYMBOL, __LINE__, __FILE__);
+		return 0;
+	}
+
+	for(bit_pos = 0; bit_pos < number_bits; bit_pos += 1){
+		bit = PDC_Buffer_get_next_bit(exception, buffer);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){		
+			return 0;
+		}
+		result <<= 1;
+		if(bit != 0){
+			result |= 1;
+		}
+	}
+
+	return result;
+}
+
+/*
+ * 
+ */
+void PDC_Buffer_padding_read(	PDC_Exception* exception,
+								PDC_Buffer* buffer)
+{
+	if(buffer->read_bit_pos != 0){
+		buffer->read_byte_pos	+= 1;
+		buffer->read_bit_pos	= 0;
+	}
+}
+
+/*
+ *
+ */
+void PDC_Buffer_copy_bytes_01(	PDC_Exception* exception,
+								PDC_Buffer* buffer_source,
+								PDC_Buffer* buffer_destination,
+								PDC_uint num_bytes)
+{
+	PDC_uint	length_add, read_pos, write_pos, read_end;
+	PDC_uchar*	source, *destination;
+	if(buffer_source->read_byte_pos + num_bytes < buffer_source->write_byte_pos){
+		if(buffer_destination->write_byte_pos + num_bytes >= buffer_destination->length){
+			length_add = buffer_destination->write_byte_pos + num_bytes + 5 - buffer_destination->length;
+			PDC_Buffer_realloc(exception, buffer_destination, length_add);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){		
+				return;
+			}
+		}
+		source		= buffer_source->buffer;
+		destination	= buffer_destination->buffer;
+		read_end = buffer_source->read_byte_pos + num_bytes;
+		for(read_pos = buffer_source->read_byte_pos, write_pos = buffer_destination->write_byte_pos; read_pos < read_end; read_pos += 1, write_pos += 1){
+			destination[write_pos] = source[read_pos];
+		}
+		buffer_source->read_byte_pos		= read_pos;
+		buffer_destination->write_byte_pos	= write_pos;
+	}else{
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return;
+	}
+
+}
 
 #ifdef __cplusplus     
 }       

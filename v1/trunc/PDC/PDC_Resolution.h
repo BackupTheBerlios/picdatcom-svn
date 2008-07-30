@@ -123,5 +123,11 @@ START_C
 													PDC_uint pos_x,
 													PDC_uint pos_y);
 	
+	/*
+	 *
+	 */
+	PDC_Precinct* PDC_Resolution_get_precinct(	PDC_Exception*	exception,
+												PDC_Resolution*	resolution,
+												PDC_uint		precinct_pos);
 STOP_C
 #endif

@@ -189,7 +189,16 @@ PDC_Tile* PDC_Tile_read_Packageheader(	PDC_Exception* exception,
 							return 0;
 						}
 						for(k = 0; k < numprecincts; k += 1){
-
+							PDC_Tile_read_package_header(	exception,
+															tile,
+															buffer,
+															i,
+															r,
+															k,
+															l);
+							if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+								return 0;
+							}
 						}
 					}
 				}
@@ -256,12 +265,43 @@ PDC_Resolution*	PDC_Tile_get_resolution(	PDC_Exception* exception,
  */
 void PDC_Tile_read_package_header(	PDC_Exception* exception,
 									PDC_Tile* tile,
+									PDC_Buffer* buffer,
 									PDC_uint component_pos,
 									PDC_uint resolution_pos,
 									PDC_uint precinct_pos,
 									PDC_uint layer_pos)
 {
+	PDC_Tile_Component*	component;
+	PDC_Resolution*		resolution;
+	PDC_Precinct*		precinct;
+	component = (PDC_Tile_Component*)PDC_Pointer_Buffer_get_pointer(exception, 
+																	tile->tile_component, 
+																	component_pos);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return;
+	}
+	resolution = PDC_Tile_Component_get_Resolution(	exception,
+													component,
+													resolution_pos);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return;
+	}
 
+	precinct = PDC_Resolution_get_precinct(	exception,
+											resolution,
+											precinct_pos);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return;
+	}
+
+	PDC_Precinct_read_package_header(	exception,
+										precinct,
+										buffer,
+										layer_pos);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return;
+	}
 }
+
 
 STOP_C

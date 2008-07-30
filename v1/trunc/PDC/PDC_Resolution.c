@@ -305,6 +305,26 @@ PDC_uint PDC_Resolution_get_codeblock_position(	PDC_Exception* exception,
 	return pointer;
 }
 
+/*
+ *
+ */
+PDC_Precinct* PDC_Resolution_get_precinct(	PDC_Exception*	exception,
+											PDC_Resolution*	resolution,
+											PDC_uint		precinct_pos)
+{
+	PDC_uint	size_x, size_y, size;
+
+	size_x = resolution->precinct_x1 - resolution->precinct_x0;
+	size_y = resolution->precinct_y1 - resolution->precinct_y0;
+	
+	size = size_x * size_y;
+	if(precinct_pos >= size){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+		return NULL;
+	}
+	return resolution->precinct[precinct_pos];
+}
+
 
 STOP_C
 

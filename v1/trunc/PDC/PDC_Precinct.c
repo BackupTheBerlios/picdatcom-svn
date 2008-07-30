@@ -118,13 +118,14 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 												PDC_Buffer*	buffer,
 												PDC_uint layer_pos)
 {
-	PDC_bit			bit;
-	PDC_uint		pos_subband, size_subband, pos_codeblock, pos_codeblock_x, pos_codeblock_y, size_codeblock_x, size_codeblock_y;
-	PDC_uint		pos_x, pos_y, size_x;
-	PDC_Subband*	subband;
-	PDC_Codeblock*	codeblock;
-	PDC_uint		number_of_codingpasses, number_of_codeword_segment, codeword_segment_pos;
-	
+	PDC_bit				bit;
+	PDC_uint			pos_subband, size_subband, pos_codeblock, pos_codeblock_x, pos_codeblock_y, size_codeblock_x, size_codeblock_y;
+	PDC_uint			pos_x, pos_y, size_x;
+	PDC_Subband*		subband;
+	PDC_Codeblock*		codeblock;
+	PDC_uint			number_of_codingpasses, number_of_codeword_segment, codeword_segment_pos;
+	PDC_Codeword_List*	codeword_list;
+	PDC_uint			num_bits, codewordlength;
 
 	PDC_Buffer_push_state(exception, buffer);
 	PDC_Tagtree_push(exception, precinct->codeblock_inclusion);
@@ -211,10 +212,74 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 							PDC_Tagtree_pop(exception, precinct->zero_bitplane);
 							return precinct;
 						}	
-
-						for(codeword_segment_pos = 0; codeword_segment_pos < number_of_codeword_segment; codeword_segment_pos++){
 						
-			
+						codeblock->Lblock += PDC_Buffer_get_Lblock_increase(	exception,
+																				buffer);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							PDC_Buffer_pop_state(exception, buffer);
+							PDC_Tagtree_pop(exception, precinct->codeblock_inclusion);
+							PDC_Tagtree_pop(exception, precinct->zero_bitplane);
+							return precinct;
+						}
+						for(codeword_segment_pos = 0; codeword_segment_pos < number_of_codeword_segment; codeword_segment_pos++){
+							codeword_list = codeblock->write_codeword;
+							number_of_codingpasses = codeword_list->number_of_coding_passes;
+							num_bits = PDC_floor_log2( number_of_codingpasses);
+
+							num_bits += codeblock->Lblock;
+							codewordlength = PDC_Buffer_read_bits(	exception,
+																	buffer,
+																	num_bits);
+							if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+								PDC_Buffer_pop_state(exception, buffer);
+								PDC_Tagtree_pop(exception, precinct->codeblock_inclusion);
+								PDC_Tagtree_pop(exception, precinct->zero_bitplane);
+								return precinct;
+							}
+							codeword_list->number_of_byte = codewordlength;
+							if(codeword_list->next_codedword != NULL){
+								codeword_list = codeword_list->next_codedword;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		PDC_Buffer_padding_read(exception, buffer);
+		/* Start reading codewordsegments. */
+
+		for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
+			for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
+				for(pos_codeblock_x = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_x; pos_codeblock_x += 1){
+					pos_x	= pos_codeblock_x - precinct->codeblock_x0;
+					pos_y	= pos_codeblock_y - precinct->codeblock_y0;
+					size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
+					pos_codeblock = PDC_Resolution_get_codeblock_position(exception, precinct->resolution, pos_codeblock_x, pos_codeblock_y);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						PDC_Buffer_pop_state(exception, buffer);
+						PDC_Tagtree_pop(exception, precinct->codeblock_inclusion);
+						PDC_Tagtree_pop(exception, precinct->zero_bitplane);
+						return precinct;
+					}
+					codeblock = subband->codeblocks[pos_codeblock];
+					if(codeblock->codeblock_inclusion == PDC_true){
+						codeword_list = codeblock->read_codeword;
+
+						while(codeword_list != NULL){
+							if(codeword_list->number_of_byte != 0){
+								PDC_Buffer_copy_bytes_01(	exception,
+															buffer,
+															codeword_list->codeword,
+															codeword_list->number_of_byte);
+								codeword_list->number_of_byte = 0;
+								if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+									PDC_Buffer_pop_state(exception, buffer);
+									PDC_Tagtree_pop(exception, precinct->codeblock_inclusion);
+									PDC_Tagtree_pop(exception, precinct->zero_bitplane);
+									return precinct;
+								}
+							}
 						}
 					}
 				}
