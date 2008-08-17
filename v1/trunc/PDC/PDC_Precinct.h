@@ -22,9 +22,9 @@
 #define __PDC_PRECINCT_H__
 
 #include "PDC_Parameter.h"
+#include <stdio.h>
 
 START_C
-
 	struct str_PDC_Precinct;
 	typedef struct str_PDC_Precinct PDC_Precinct;
 

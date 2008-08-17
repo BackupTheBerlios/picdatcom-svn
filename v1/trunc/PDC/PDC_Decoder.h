@@ -21,6 +21,7 @@
 #ifndef __PDC_DECODER_H__
 #define __PDC_DECODER_H__
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "PDC_Parameter.h"
 
@@ -91,7 +92,7 @@ START_C
 	/*
 	 * 
 	 */
-	PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception,
+	DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception,
 									PDC_Decoder* decoder);
 
 	/*

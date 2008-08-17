@@ -80,8 +80,12 @@ DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
 			decoder->in_data->end_state = END_OF_BUFFER;
 		}
 		decoder->data_situation	= PDC_HAS_DATA;
-		PDC_Decoder_decode(exception, decoder);
+		//PDC_Decoder_decode(exception, decoder);
 
+	}else if(length == 0){
+		if(end == PDC_DATA_END){
+			decoder->in_data->end_state = END_OF_BUFFER;
+		}
 	}else{
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return NULL;
@@ -104,15 +108,16 @@ DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception, PDC_Decoder* decod
 	return NULL;
 }
 
-
+FILE* DEBUG_FILE;
 /*
  * 
  */
-PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decoder)
+DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decoder)
 {
-
+	
 	PDC_READING_STATE	reading_state;
 
+	DEBUG_FILE = fopen("debug_file.txt", "w");
 	reading_state	= decoder->reading_state;
 	
 	do{
@@ -144,6 +149,7 @@ PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decoder)
 
 	}while(decoder->data_situation == PDC_HAS_DATA);
 
+	fclose(DEBUG_FILE);
 	return decoder;
 }
 

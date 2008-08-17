@@ -22,6 +22,8 @@
 
 START_C
 
+extern FILE* DEBUG_FILE;
+
 /*
  *
  */
@@ -151,7 +153,7 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 			size_codeblock_x = precinct->codeblock_x1;
 			size_codeblock_y = precinct->codeblock_y1;
 			for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
-				for(pos_codeblock_x = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_x; pos_codeblock_x += 1){
+				for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
 					pos_x	= pos_codeblock_x - precinct->codeblock_x0;
 					pos_y	= pos_codeblock_y - precinct->codeblock_y0;
 					size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
@@ -236,6 +238,7 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 								PDC_Tagtree_pop(exception, precinct->zero_bitplane);
 								return precinct;
 							}
+							fprintf(DEBUG_FILE," %d \n", codewordlength);
 							codeword_list->number_of_byte = codewordlength;
 							if(codeword_list->next_codedword != NULL){
 								codeword_list = codeword_list->next_codedword;
@@ -251,7 +254,7 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 
 		for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
 			for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
-				for(pos_codeblock_x = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_x; pos_codeblock_x += 1){
+				for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
 					pos_x	= pos_codeblock_x - precinct->codeblock_x0;
 					pos_y	= pos_codeblock_y - precinct->codeblock_y0;
 					size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
@@ -264,7 +267,7 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 					}
 					codeblock = subband->codeblocks[pos_codeblock];
 					if(codeblock->codeblock_inclusion == PDC_true){
-						codeword_list = codeblock->read_codeword;
+						codeword_list = codeblock->write_codeword;
 
 						while(codeword_list != NULL){
 							if(codeword_list->number_of_byte != 0){
@@ -280,6 +283,7 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 									return precinct;
 								}
 							}
+							codeword_list = codeword_list->next_codedword;
 						}
 					}
 				}
