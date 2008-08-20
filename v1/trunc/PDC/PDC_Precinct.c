@@ -112,6 +112,8 @@ PDC_Precinct* delete_PDC_Precinct(	PDC_Exception* exception,
 	return NULL;
 }
 
+
+int count = 0;
 /*
  *
  */
@@ -128,16 +130,20 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 	PDC_uint			number_of_codingpasses, number_of_codeword_segment, codeword_segment_pos;
 	PDC_Codeword_List*	codeword_list;
 	PDC_uint			num_bits, codewordlength;
+	PDC_bool			layer_inclusion;
 
 	PDC_Buffer_push_state(exception, buffer);
 	PDC_Tagtree_push(exception, precinct->codeblock_inclusion);
 	PDC_Tagtree_push(exception, precinct->zero_bitplane);
+
+	count += 1;
 
 	if(precinct->resolution->r == 0){
 		size_subband = 1;
 	}else{
 		size_subband = 3;
 	}
+
 
 	bit = PDC_Buffer_get_next_bit(exception, buffer);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
@@ -165,7 +171,9 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 						return precinct;
 					}
 					codeblock = subband->codeblocks[pos_codeblock];
-
+					layer_inclusion = PDC_false;
+					
+				
 					if(codeblock->codeblock_inclusion == PDC_false){
 						codeblock->codeblock_inclusion = PDC_Tagtree_decode_pos(exception,
 																				precinct->codeblock_inclusion,
@@ -179,9 +187,26 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 							PDC_Tagtree_pop(exception, precinct->zero_bitplane);
 							return precinct;
 						}
+						if(codeblock->codeblock_inclusion == PDC_true){
+							layer_inclusion = PDC_true;
+						}
+
+					}else{
+						bit = PDC_Buffer_get_next_bit(exception, buffer);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							PDC_Buffer_pop_state(exception, buffer);
+							PDC_Tagtree_pop(exception, precinct->codeblock_inclusion);
+							PDC_Tagtree_pop(exception, precinct->zero_bitplane);
+							return precinct;
+						}
+
+						if(bit != 0){
+							layer_inclusion = PDC_true;
+						}
+
 					}
 
-					if(codeblock->codeblock_inclusion == PDC_true){
+					if(layer_inclusion == PDC_true){
 						if(codeblock->zero_bit_plane_inclusion	!= PDC_true){
 							codeblock->codeblock_inclusion = PDC_Tagtree_decode_pos(exception,
 																					precinct->zero_bitplane,
@@ -238,7 +263,7 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 								PDC_Tagtree_pop(exception, precinct->zero_bitplane);
 								return precinct;
 							}
-							fprintf(DEBUG_FILE," %d \n", codewordlength);
+							fprintf(DEBUG_FILE,"%d  %d \n",count, codewordlength);
 							codeword_list->number_of_byte = codewordlength;
 							if(codeword_list->next_codedword != NULL){
 								codeword_list = codeword_list->next_codedword;
