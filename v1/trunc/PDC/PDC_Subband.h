@@ -38,6 +38,7 @@ START_C
 		PDC_Codeblock**	codeblocks;
 		PDC_uint		number_codeblocks;
 		SUBBAND_TYPE	type;
+		
 
 		PDC_uint		tbx0;
 		PDC_uint		tbx1;

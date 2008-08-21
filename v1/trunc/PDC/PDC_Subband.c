@@ -35,12 +35,12 @@ PDC_Subband* new_PDC_Subband_01(PDC_Exception* exception)
 		return NULL;
 	}
 
-	subband->resolution	= NULL;
-	subband->tbx0		= 0;
-	subband->tbx1		= 0;
-	subband->tby0		= 0;
-	subband->tby1		= 0;
-	subband->type		= SUBBAND_UNKNOW;
+	subband->resolution		= NULL;
+	subband->tbx0			= 0;
+	subband->tbx1			= 0;
+	subband->tby0			= 0;
+	subband->tby1			= 0;
+	subband->type			= SUBBAND_UNKNOW;
 	return subband;
 }
 
