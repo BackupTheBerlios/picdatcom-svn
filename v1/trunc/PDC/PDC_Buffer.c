@@ -308,14 +308,17 @@ PDC_bit PDC_Buffer_get_next_bit(	PDC_Exception* exception,
 	
 	if(buffer->read_byte_pos < buffer->write_byte_pos){
 		if(buffer->read_bit_pos < 8){
-			back = buffer->buffer[buffer->read_byte_pos];
-			back = (back >> (7 - buffer->read_bit_pos)) & 1;
+			back = (buffer->buffer[buffer->read_byte_pos] >> (7 - buffer->read_bit_pos)) & 1;
 			buffer->read_bit_pos += 1;
 		}else{
-			buffer->read_bit_pos = 0;
+			if(buffer->buffer[buffer->read_byte_pos] == 0xFF){
+				buffer->read_bit_pos = 1;
+			}else{
+				buffer->read_bit_pos = 0;
+			}
 			buffer->read_byte_pos += 1;
 			if(buffer->read_byte_pos < buffer->write_byte_pos){
-				back = (buffer->buffer[buffer->read_byte_pos] >> 7) & 1;
+				back = (buffer->buffer[buffer->read_byte_pos] >> (7 - buffer->read_bit_pos)) & 1;
 				buffer->read_bit_pos += 1;
 			}else{
 				if(buffer->write_bit_pos > buffer->read_bit_pos){

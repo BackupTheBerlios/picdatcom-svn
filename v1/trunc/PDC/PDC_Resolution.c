@@ -160,7 +160,7 @@ PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 
 	PDC_Tile_Component* tile_component	= in_resolution->tile_component;
 	PDC_COD_Segment*	cod_segment		= in_resolution->tile_component->cod_segment;
-	PDC_int factor	= 2 << (cod_segment->number_of_decompostion_levels - in_resolution->r);
+	PDC_int factor	= 1 << (cod_segment->number_of_decompostion_levels - in_resolution->r);
 
 	xcb = in_resolution->xcb	= cod_segment->code_block_width		+ 2;
 	ycb = in_resolution->ycb	= cod_segment->code_block_height	+ 2;
@@ -278,7 +278,7 @@ PDC_uint PDC_Resolution_get_number_precinct(	PDC_Exception* exception,
 {
 	PDC_uint back = 0;
 
-	back = (resolution->codeblock_x1 - resolution->codeblock_x0) * (resolution->codeblock_y1 - resolution->codeblock_y0);
+	back = (resolution->precinct_x1 - resolution->precinct_x0) * (resolution->precinct_y1 - resolution->precinct_y0);
 	return back;
 }
 

@@ -35,7 +35,7 @@ START_C
 
 	struct str_PDC_Precinct{
 		PDC_Resolution*	resolution;
-		PDC_Tagtree*	codeblock_inclusion;
+		PDC_Tagtree*	codeblock_inclusion[3];
 		PDC_Tagtree*	zero_bitplane[3];
 
 		PDC_uint codeblock_x0;

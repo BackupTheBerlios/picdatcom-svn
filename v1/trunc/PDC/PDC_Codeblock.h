@@ -32,6 +32,8 @@ START_C
 	struct str_PDC_Codeword_List;
 	typedef struct str_PDC_Codeword_List PDC_Codeword_List;
 
+	typedef enum{ STATE_BIT_8, STATE_BIT_16, STATE_BIT_32}PDC_STATE_BIT;
+
 	#define DEFAULT_RESIZE_CODEWORD 5
 
 	#include "PDC_Subband.h"
@@ -53,6 +55,30 @@ START_C
 
 		PDC_bool		codeblock_inclusion;
 		PDC_bool		zero_bit_plane_inclusion;
+
+		/*
+		 * Coefficient bit modeling variable
+		 */
+	
+		PDC_STATE_BIT	state_bit;
+		PDC_uint32		street;
+		PDC_uint32		num_street;
+		PDC_uint32*		is_coded;
+		PDC_uint32*		sign;
+		PDC_uint32*		significant;
+		PDC_uint8*		significante_context_delete;
+		PDC_uint8*		significante_context;
+		PDC_uint8*		sign_context_delete;
+		PDC_uint8*		sign_context;
+		PDC_uint32		significante_context_size_x;
+		PDC_uint32		significante_context_size_y;
+		PDC_uint32		sign_context_size_x;
+		PDC_uint32		sign_context_size_y;
+		PDC_uint8*		value8;
+		PDC_uint16*		value16;
+		PDC_uint32*		value32;
+		PDC_uint32		bit_plane;
+
 	};
 	
 	struct str_PDC_Codeword_List{
@@ -78,6 +104,11 @@ START_C
 	 *
 	 */
 	PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subband, PDC_uint pos_x, PDC_uint pos_y);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_init_bit_modeling_variable(PDC_Exception* exception, PDC_Codeblock* codeblock);
 
 	/*
 	 *
@@ -111,6 +142,21 @@ START_C
 	 *
 	 */
 	PDC_Codeword_List* delete_PDC_Codeword_List(PDC_Exception* exception, PDC_Codeword_List* codeoword_list);
+
+	/*
+	 *
+	 */
+	PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* buffer);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* buffer);
 
 STOP_C
 #endif

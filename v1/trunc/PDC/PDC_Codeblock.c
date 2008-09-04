@@ -1,4 +1,4 @@
-/*
+           /*
  * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  * 
@@ -22,6 +22,8 @@
 
 START_C
 
+
+PDC_uint32	context_label_significant[256];
 	
 /*
  *
@@ -34,7 +36,26 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	
+	codeblock->cx0							= 0;
+	codeblock->cx1							= 0;
+	codeblock->cy0							= 0;
+	codeblock->cy1							= 0;
+	codeblock->subband						= NULL;
+	codeblock->codeblock_inclusion			= PDC_false;
+	codeblock->zero_bit_plane_inclusion		= PDC_false;
+	codeblock->Lblock						= 3;
+	codeblock->is_coded						= NULL;
+	codeblock->sign							= NULL;
+	codeblock->significant					= NULL;
+	codeblock->significante_context			= NULL;
+	codeblock->significante_context_delete	= NULL;
+	codeblock->value8						= NULL;
+	codeblock->value16						= NULL;
+	codeblock->value32						= NULL;
+	codeblock->sign_context					= NULL;
+	codeblock->sign_context_delete			= NULL;
+
+
 	codeblock->read_codeword	= new_PDC_Codeword_List_01( exception);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		delete_PDC_Codeblock(exception, codeblock);
@@ -42,14 +63,7 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 	}
 	codeblock->write_codeword	= codeblock->read_codeword;
 
-	codeblock->cx0						= 0;
-	codeblock->cx1						= 0;
-	codeblock->cy0						= 0;
-	codeblock->cy1						= 0;
-	codeblock->subband					= NULL;
-	codeblock->codeblock_inclusion		= PDC_false;
-	codeblock->zero_bit_plane_inclusion	= PDC_false;
-	codeblock->Lblock					= 3;
+
 
 	return codeblock;
 }
@@ -84,9 +98,78 @@ PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subba
 	}
 	codeblock->subband			= subband;
 
+	codeblock = PDC_Codeblock_init_bit_modeling_variable(exception, codeblock);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Codeblock(exception, codeblock);
+		return NULL;
+	}
 	return codeblock;
 }
 
+
+/*
+ *
+ */
+PDC_Codeblock* PDC_Codeblock_init_bit_modeling_variable(PDC_Exception* exception, PDC_Codeblock* codeblock)
+{
+	PDC_uint32 size_x, size_y, size_x_bit, size1;
+
+	size_x		= codeblock->cx1 - codeblock->cx0;
+	size_y		= codeblock->cy1 - codeblock->cy0;
+
+	size_x_bit				= PDC_ui_ceiling(size_x, 8);
+	codeblock->street		= 0;
+	codeblock->num_street	= PDC_ui_ceiling(size_y, 4);
+	codeblock->state_bit	= STATE_BIT_8;
+	codeblock->bit_plane	= 0;
+
+	size1 = size_x_bit * codeblock->num_street;
+
+	codeblock->is_coded = malloc(sizeof(PDC_uint32) * size1);
+	if(codeblock->is_coded == NULL){
+		delete_PDC_Codeblock(exception, codeblock);
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	};
+	codeblock->sign = malloc(sizeof(PDC_uint32) * size1);
+	if(codeblock->sign  == NULL){
+		delete_PDC_Codeblock(exception, codeblock);
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	};
+	codeblock->significant = malloc(sizeof(PDC_uint32) * size1);
+	if(codeblock->significant == NULL){
+		delete_PDC_Codeblock(exception, codeblock);
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	};
+
+
+	codeblock->significante_context_size_x = size_x + 2;
+	codeblock->significante_context_size_y = size_y + 3;
+	size1 = codeblock->significante_context_size_x * codeblock->significante_context_size_y;
+	codeblock->significante_context_delete = malloc(sizeof(PDC_uint8) * size1);
+	if(codeblock->is_coded == NULL){
+		delete_PDC_Codeblock(exception, codeblock);
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	};
+	codeblock->significante_context = codeblock->significante_context_delete + codeblock->significante_context_size_y + 1;
+
+	codeblock->sign_context_size_x = size_x + 2;
+	codeblock->sign_context_size_y = PDC_ui_ceiling(size_y, 2) + 4;
+
+
+	size1 = size_x * size_y;
+	codeblock->value8 = malloc(sizeof(PDC_uint8) * size1);
+	if(codeblock->value8 == NULL){
+		delete_PDC_Codeblock(exception, codeblock);
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	};
+
+	return codeblock;
+}
 
 /*
  *
@@ -182,6 +265,27 @@ PDC_Codeword_List* delete_PDC_Codeword_List(PDC_Exception* exception, PDC_Codewo
 
 	}
 	return NULL;
+}
+
+/*
+ *
+ */
+PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword)
+{
+	PDC_bool back = PDC_true;
+	PDC_uint32 pos_street, max_street, size_x;
+
+	max_street	= codeblock->num_street;
+	pos_street	= codeblock->street;
+	size_x		= codeblock->cx1 - codeblock->cx0;
+
+	while(pos_street < max_street){
+		
+
+
+	}
+
+	return back;
 }
 
 STOP_C
