@@ -23,7 +23,7 @@
 
 #include <stdlib.h>
 #include "PDC_Parameter.h"
-
+#include "PDC_Arithmetic_entropy_decoder.h"
 START_C
 	
 	struct str_PDC_Codeblock;
@@ -78,6 +78,10 @@ START_C
 		PDC_uint16*		value16;
 		PDC_uint32*		value32;
 		PDC_uint32		bit_plane;
+		PDC_uint8		*BDK_context_states;
+		PDC_uint32		pos_x;
+		PDC_STATE_BIT	value_size;
+		PDC_Arithmetic_entropy_decoder *decoder;
 
 	};
 	

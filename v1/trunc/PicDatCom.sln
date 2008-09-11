@@ -11,6 +11,8 @@ Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PDC_Transformation", "PDC_T
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "PDC_test_run", "PDC_test_run\PDC_test_run.vcproj", "{2EA0D8B8-4136-4275-A104-344D2F8BE4B3}"
 EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "state_create", "state_create\state_create.vcproj", "{A34FA70D-81A8-489A-A77A-CFFC4A4ADDBE}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Win32 = Debug|Win32
@@ -37,6 +39,10 @@ Global
 		{2EA0D8B8-4136-4275-A104-344D2F8BE4B3}.Debug|Win32.Build.0 = Debug|Win32
 		{2EA0D8B8-4136-4275-A104-344D2F8BE4B3}.Release|Win32.ActiveCfg = Release|Win32
 		{2EA0D8B8-4136-4275-A104-344D2F8BE4B3}.Release|Win32.Build.0 = Release|Win32
+		{A34FA70D-81A8-489A-A77A-CFFC4A4ADDBE}.Debug|Win32.ActiveCfg = Debug|Win32
+		{A34FA70D-81A8-489A-A77A-CFFC4A4ADDBE}.Debug|Win32.Build.0 = Debug|Win32
+		{A34FA70D-81A8-489A-A77A-CFFC4A4ADDBE}.Release|Win32.ActiveCfg = Release|Win32
+		{A34FA70D-81A8-489A-A77A-CFFC4A4ADDBE}.Release|Win32.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
