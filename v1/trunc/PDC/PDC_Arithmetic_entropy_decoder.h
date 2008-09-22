@@ -31,6 +31,8 @@ START_C
 	typedef struct str_PDC_Arithmetic_entropy_decoder PDC_Arithmetic_entropy_decoder;
 	typedef enum { DECODE_SUCCESFULL, DECODE_BUFFER_EMPTY, INIT_DECODER, INIT_DECODER_BUFFER_EMPTY} PDC_decode_state;
 
+	#define RUNLENGTHCONTEXT 17
+	
 	#include "PDC_Buffer.h"
 	#include "PDC_Arithmetic_entropy_encoder.h"
 

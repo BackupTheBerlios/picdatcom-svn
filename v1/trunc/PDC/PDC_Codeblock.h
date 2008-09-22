@@ -24,8 +24,34 @@
 #include <stdlib.h>
 #include "PDC_Parameter.h"
 #include "PDC_Arithmetic_entropy_decoder.h"
+
 START_C
-	
+
+	#define	SET_SIGN_CONTEXT_A1 0x0200
+	#define	SET_SIGN_CONTEXT_A2 0x4080 
+	#define	SET_SIGN_CONTEXT_A3 0x0100
+
+
+	#define	SET_SIGN_CONTEXT_B1 0x02000
+	#define	SET_SIGN_CONTEXT_B2 0x40800 
+	#define	SET_SIGN_CONTEXT_B3 0x01000
+
+
+	#define	SET_SIGN_CONTEXT_C1 0x020000
+	#define	SET_SIGN_CONTEXT_C2 0x408000 
+	#define	SET_SIGN_CONTEXT_C3 0x010000
+
+
+	#define	SET_SIGN_CONTEXT_D1 0x0200000
+	#define	SET_SIGN_CONTEXT_D2 0x4080000 
+	#define	SET_SIGN_CONTEXT_D3 0x0100000
+
+
+	#define SET_CONTEXT_1 0x028001
+	#define	SET_CONTEXT_2 0x800040
+	#define SET_CONTEXT_3 0x012004
+
+
 	struct str_PDC_Codeblock;
 	typedef struct str_PDC_Codeblock PDC_Codeblock;
 
@@ -58,7 +84,10 @@ START_C
 
 		/*
 		 * Coefficient bit modeling variable
+		 * Sign is FF | Y - 1 | Y |
 		 */
+
+
 	
 		PDC_STATE_BIT	state_bit;
 		PDC_uint32		street;
