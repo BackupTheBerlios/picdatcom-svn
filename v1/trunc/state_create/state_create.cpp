@@ -109,7 +109,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	fprintf(file,"	PDC_uint8 XORbit[256] = {	");
 	for( t = 0; t < 256; ){
 		for( g = 0; g < 16; g++){
-			fprintf(file," %d",XORbit[t]);
+			fprintf(file," 0x%02X",XORbit[t]);
 			if(t != 255){
 				fprintf(file,",");
 			}else{
@@ -375,13 +375,13 @@ int xorbit_state(int H_contri, int V_contri)
 	}else if(H_contri == 0 && V_contri == 0){
 		xorbit = 0;
 	}else if(H_contri == 0 && V_contri == -1){
-		xorbit = 1;
+		xorbit = 255;
 	}else if(H_contri == -1 && V_contri == 1){
-		xorbit = 1;
+		xorbit = 255;
 	}else if(H_contri == -1 && V_contri == 0){
-		xorbit = 1;
+		xorbit = 255;
 	}else if(H_contri == -1 && V_contri == -1){
-		xorbit = 1;
+		xorbit = 255;
 	}
 
 	if(xorbit == 88){
