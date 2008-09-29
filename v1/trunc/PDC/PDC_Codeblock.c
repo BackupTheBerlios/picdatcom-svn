@@ -2099,7 +2099,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 					sign_context_value;
 	PDC_uint16		*value16;
 	PDC_uint8		*value8, *context_base_address1, *context_base_address2, *context, *sign_context,
-					*sign_context_address1, *sign_context_address2, *sign_context_address3;
+					*sign_context_address1, *sign_context_address2, *sign_context_address3, *BDK_context_states;
 	PDC_STATE_BIT	value_size;
 
 	PDC_Arithmetic_entropy_decoder *decoder;
@@ -2122,6 +2122,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 	size_x					= codeblock->cx1 - codeblock->cx0;
 	sign_context			= codeblock->sign_context;
 	value_size				= codeblock->value_size;
+	BDK_context_states		= codeblock->BDK_context_states;
+
 
 	if(value_size == STATE_BIT_8){
 		bit_plane = 7 - bit_plane;
@@ -2228,7 +2230,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 							*context_address3 |= SET_CONTEXT_3;
 
 							/* decode sign */
-							sign_context_value = (context_value & 0xF0) | ((sign_context_value2 >> 8) & 0x0F);
+							sign_context_value = ((context_value >> 8) & 0xF0) | ((sign_context_value2 >> 12) & 0x0F);
 							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
 							if(decoder->D != 0){
 								sign_value_temp |= (0x02 ^ (0x2 & XORbit[sign_context_value]));
@@ -2255,7 +2257,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 							*context_address2 |= SET_CONTEXT_2;
 							*context_address3 |= SET_CONTEXT_3;
 							/* decode sign */
-							sign_context_value = (context_value & 0xF0) | ((sign_context_value2 >> 8) & 0x0F);
+							sign_context_value = ((context_value >> 16) & 0xF0) | ((sign_context_value2 >> 16) & 0x0F);
 							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
 							if(decoder->D != 0){
 								sign_value_temp |= (0x04 ^ (0x4 & XORbit[sign_context_value]));
@@ -2282,13 +2284,13 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 							*context_address2 |= SET_CONTEXT_2;
 							*context_address3 |= SET_CONTEXT_3;
 							/* decode sign */
-							sign_context_value = (context_value & 0xF0) | ((sign_context_value2 >> 8) & 0x0F);
+							sign_context_value = ((context_value >> 24) & 0xF0) | ((sign_context_value2 >> 20) & 0x0F);
 							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
 							if(decoder->D != 0){
 								sign_value_temp |= (0x08 ^ (0x8 & XORbit[sign_context_value]));
-								sign_context1 |= SET_SIGN_CONTEXT_B1;
-								sign_context2 |= SET_SIGN_CONTEXT_B2;
-								sign_context3 |= SET_SIGN_CONTEXT_B3;
+								sign_context1 |= SET_SIGN_CONTEXT_D1;
+								sign_context2 |= SET_SIGN_CONTEXT_D2;
+								sign_context3 |= SET_SIGN_CONTEXT_D3;
 							}
 							break;
 					}
@@ -2300,14 +2302,147 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 			}	
 
 			while(pos_y < 4){
+				switch(pos_y){
+					case 0:
+						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[context_value & 0xFF], codeword);
+						if(decoder->D != 0){
+							pos_value = (size_x * (pos_y_base)) + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+							context_address2 = (PDC_uint32*)(context + (pos_x * context_size_y + pos_y_base - 1));
+							context_address1 = (PDC_uint32*)((PDC_uint8*)context_address2 - context_size_y);
+							context_address3 = (PDC_uint32*)((PDC_uint8*)context_address2 + context_size_y);
 
+							*context_address1 |= SET_CONTEXT_1;
+							*context_address2 |= SET_CONTEXT_2;
+							*context_address3 |= SET_CONTEXT_3;
+							/* decode sign */
+							sign_context_value = ((context_value) & 0xF0) | ((sign_context_value2 >> 12) & 0x0F);
+							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
+							if(decoder->D != 0){
+								sign_value_temp |= (0x08 ^ (0x8 & XORbit[sign_context_value]));
+								sign_context1 |= SET_SIGN_CONTEXT_A1;
+								sign_context2 |= SET_SIGN_CONTEXT_A2;
+								sign_context3 |= SET_SIGN_CONTEXT_A3;
+							}
+						}
+					case 1:
+						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[(context_value >> 8) & 0xFF], codeword);
+						if(decoder->D != 0){
+							pos_value = (size_x * (pos_y_base + 1)) + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+							context_address2 = (PDC_uint32*)(context + (pos_x * context_size_y + pos_y_base));
+							context_address1 = (PDC_uint32*)((PDC_uint8*)context_address2 - context_size_y);
+							context_address3 = (PDC_uint32*)((PDC_uint8*)context_address2 + context_size_y);
+
+							*context_address1 |= SET_CONTEXT_1;
+							*context_address2 |= SET_CONTEXT_2;
+							*context_address3 |= SET_CONTEXT_3;
+							/* decode sign */
+							sign_context_value = ((context_value >> 8) & 0xF0) | ((sign_context_value2 >> 12) & 0x0F);
+							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
+							if(decoder->D != 0){
+								sign_value_temp |= (0x08 ^ (0x8 & XORbit[sign_context_value]));
+								sign_context1 |= SET_SIGN_CONTEXT_B1;
+								sign_context2 |= SET_SIGN_CONTEXT_B2;
+								sign_context3 |= SET_SIGN_CONTEXT_B3;
+							}
+						}
+
+					case 2:
+						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[(context_value >> 16) & 0xFF], codeword);
+						if(decoder->D != 0){
+							pos_value = (size_x * (pos_y_base + 2)) + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+							context_address2 = (PDC_uint32*)(context + (pos_x * context_size_y + pos_y_base + 1));
+							context_address1 = (PDC_uint32*)((PDC_uint8*)context_address2 - context_size_y);
+							context_address3 = (PDC_uint32*)((PDC_uint8*)context_address2 + context_size_y);
+
+							*context_address1 |= SET_CONTEXT_1;
+							*context_address2 |= SET_CONTEXT_2;
+							*context_address3 |= SET_CONTEXT_3;
+							/* decode sign */
+							sign_context_value = ((context_value >> 16) & 0xF0) | ((sign_context_value2 >> 16) & 0x0F);
+							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
+							if(decoder->D != 0){
+								sign_value_temp |= (0x08 ^ (0x8 & XORbit[sign_context_value]));
+								sign_context1 |= SET_SIGN_CONTEXT_C1;
+								sign_context2 |= SET_SIGN_CONTEXT_C2;
+								sign_context3 |= SET_SIGN_CONTEXT_C3;
+							}
+						}
+					case 3:
+						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[(context_value >> 24) & 0xFF], codeword);
+						if(decoder->D != 0){
+							pos_value = (size_x * (pos_y_base + 3)) + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+							context_address2 = (PDC_uint32*)(context + (pos_x * context_size_y + pos_y_base + 2));
+							context_address1 = (PDC_uint32*)((PDC_uint8*)context_address2 - context_size_y);
+							context_address3 = (PDC_uint32*)((PDC_uint8*)context_address2 + context_size_y);
+
+							*context_address1 |= SET_CONTEXT_1;
+							*context_address2 |= SET_CONTEXT_2;
+							*context_address3 |= SET_CONTEXT_3;
+							/* decode sign */
+							sign_context_value = ((context_value >> 24) & 0xF0) | ((sign_context_value2 >> 16) & 0x0F);
+							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
+							if(decoder->D != 0){
+								sign_value_temp |= (0x08 ^ (0x8 & XORbit[sign_context_value]));
+								sign_context1 |= SET_SIGN_CONTEXT_D1;
+								sign_context2 |= SET_SIGN_CONTEXT_D2;
+								sign_context3 |= SET_SIGN_CONTEXT_D3;
+							}
+						}
+				}
 			}
 
+			significant_value	|= (significant_value_temp << significant_pos_shift);
+			sign_value			|= (sign_value_temp << significant_pos_shift) ;
+			is_coded_value		|= (is_coded_value_temp << significant_pos_shift);
+
+			(PDC_uint32*)sign_context_address1 = sign_context_value1;
 			significant_pos_shift += 4;
 			if(significant_pos_shift >= 32){
-				
+				sign[significant_pos + significant_pos_x]			= sign_value;
+				significant[significant_pos + significant_pos_x]	= significant_value;
+				is_coded[significant_pos + significant_pos_x]		= is_coded_value;
+
+				significant_pos_x		+= 1;
+				sign_value				= sign[significant_pos + significant_pos_x];
+				significant_value		= significant[significant_pos + significant_pos_x];
+				is_coded_value			= is_coded[significant_pos + significant_pos_x];				
 			}
 		}
+		significant_value	|= (significant_value_temp << significant_pos_shift);
+		sign_value			|= (sign_value_temp << significant_pos_shift) ;
+		is_coded_value		|= (is_coded_value_temp << significant_pos_shift);
+
+		sign[significant_pos + significant_pos_x]			= sign_value;
+		significant[significant_pos + significant_pos_x]	= significant_value;
+		is_coded[significant_pos + significant_pos_x]		= is_coded_value;
 	}
 }	
 
