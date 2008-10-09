@@ -227,7 +227,7 @@ PDC_Arithmetic_entropy_decoder* new_PDC_Arithmetic_entropy_decoder(PDC_Exception
 	PDC_Arithmetic_entropy_decoder* return_decoder = NULL;
 
 	return_decoder = malloc(sizeof(PDC_Arithmetic_entropy_decoder));
-	if(return_decoder != NULL){
+	if(return_decoder == NULL){
 		PDC_Exception_error(exception,NULL, PDC_EXCEPTION_OUT_OF_MEMORY	,__LINE__, __FILE__);
 		return_decoder->decode_state = INIT_DECODER;
 	}

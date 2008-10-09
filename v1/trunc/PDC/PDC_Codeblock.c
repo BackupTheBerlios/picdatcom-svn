@@ -144,6 +144,8 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 	codeblock->sign_context					= NULL;
 	codeblock->sign_context_delete			= NULL;
 	codeblock->decoder						= NULL;
+	codeblock->coding_passes_per_layer		= NULL;
+	codeblock->pass_state					= CLEANUP_PASS;
 
 
 	codeblock->read_codeword	= new_PDC_Codeword_List_01( exception);
@@ -168,9 +170,16 @@ PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subba
 	PDC_Resolution* resolution	= subband->resolution;
 	PDC_uint		size_x		= 1 << resolution->xcb;
 	PDC_uint		size_y		= 1 << resolution->ycb;
+	PDC_uint		num_layer	= subband->resolution->tile_component->cod_segment->number_of_layer;
 
 	codeblock = new_PDC_Codeblock_01(exception);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Codeblock(exception, codeblock);
+		return NULL;
+	}
+
+	codeblock->coding_passes_per_layer = (PDC_uint*) malloc(sizeof(PDC_uint) * num_layer);
+	if(codeblock->coding_passes_per_layer == NULL){
 		delete_PDC_Codeblock(exception, codeblock);
 		return NULL;
 	}
@@ -179,6 +188,14 @@ PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subba
 	codeblock->cx1	= min_uint32(size_x *(pos_x + 1), subband->tbx1);
 	codeblock->cy0	= max_uint32(size_y * pos_y, subband->tby0);
 	codeblock->cy1	= min_uint32(size_y *(pos_y + 1), subband->tby1);
+
+	if(codeblock->cx0 > codeblock->cx1){
+		codeblock->cx0 = codeblock->cx1;
+	}
+
+	if(codeblock->cy0 > codeblock->cy1){
+		codeblock->cy0 = codeblock->cy1;
+	}
 
 	codeblock->read_codeword	= NULL;
 	codeblock->write_codeword	= new_PDC_Codeword_List_01(exception);
@@ -304,11 +321,17 @@ PDC_Codeblock* delete_PDC_Codeblock(PDC_Exception* exception, PDC_Codeblock* cod
 /*
  *
  */
-PDC_uint PDC_Codeblock_set_number_of_coding_passes(	PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_uint number_of_coding_passes)
+PDC_uint PDC_Codeblock_set_number_of_coding_passes(	PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_uint number_of_coding_passes, PDC_uint layer_pos)
 {
 	PDC_COD_Segment* cod_segment = NULL;
 
 	cod_segment = codeblock->subband->resolution->tile_component->cod_segment;
+
+	if(layer_pos >= codeblock->subband->resolution->tile_component->cod_segment->number_of_layer){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+		return 0;
+	}
+	codeblock->coding_passes_per_layer[layer_pos] = number_of_coding_passes;
 
 	if((cod_segment->code_block_style & TERMINATION_EACH_CODING) == 0){
 		if((cod_segment->code_block_style & SELECTIVE_ARITHMETIC_CODING) == 0){
@@ -323,8 +346,6 @@ PDC_uint PDC_Codeblock_set_number_of_coding_passes(	PDC_Exception* exception, PD
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 		return 0;
 	}
-
-
 }
 
 /*
@@ -347,6 +368,7 @@ PDC_Codeword_List* new_PDC_Codeword_List_01(PDC_Exception* exception)
 	codeword_list->coding_pass_next			= 0;
 	codeword_list->number_of_coding_passes	= 0;
 	codeword_list->number_of_byte			= 0;
+	
 
 	return codeword_list;
 }
@@ -385,6 +407,38 @@ PDC_Codeword_List* delete_PDC_Codeword_List(PDC_Exception* exception, PDC_Codewo
 	}
 	return NULL;
 }
+
+
+
+/*
+ *
+ */
+PDC_Codeblock PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *exception, PDC_Codeblock *codeblock, PDC_uint layer_pos){
+
+	PDC_Codeword_List *codeword_list;
+	PDC_uint number_of_codingpasses , done_codingpasses;
+
+	codeword_list			= codeblock->read_codeword;
+	number_of_codingpasses	= codeblock->coding_passes_per_layer[layer_pos];
+
+	for(done_codingpasses = 0; done_codingpasses < number_of_codingpasses; done_codingpasses += 1){
+		while(codeword_list->coding_pass_next >= codeword_list->coding_pass_to){
+			codeword_list = codeword_list->next_codedword;
+		}
+		switch(codeblock->pass_state){
+			case CLEANUP_PASS:
+				codeblock->pass_state	= SIGNIFICANCE_PASS;
+				break;
+			case SIGNIFICANCE_PASS:
+				codeblock->pass_state	= MAGNITUDE_PASS;
+				break;
+			case MAGNITUDE_PASS:
+				codeblock->pass_state	= CLEANUP_PASS;
+				break;
+		}
+	}
+}
+
 
 /*
  *

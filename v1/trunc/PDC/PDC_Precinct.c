@@ -290,7 +290,8 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 
 						number_of_codeword_segment = PDC_Codeblock_set_number_of_coding_passes(	exception, 
 																								codeblock, 
-																								number_of_codingpasses);
+																								number_of_codingpasses,
+																								layer_pos);
 						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 							PDC_Buffer_pop_state(exception, buffer);
 							PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[0]);

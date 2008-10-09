@@ -67,8 +67,8 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
 	subband->resolution	= resolution;
 
 	tile_component	= resolution->tile_component;
-	twohighnb		= 2 << subband->resolution->n;
-	twohighnbminone	= 2 << (subband->resolution->n - 1);
+	twohighnb		= 1 << subband->resolution->n;
+	twohighnbminone	= 1 << (subband->resolution->n - 1);
 
 	tcx0 = tile_component->tcx0;
 	tcx1 = tile_component->tcx1;

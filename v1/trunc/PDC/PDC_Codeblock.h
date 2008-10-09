@@ -59,6 +59,7 @@ START_C
 	typedef struct str_PDC_Codeword_List PDC_Codeword_List;
 
 	typedef enum{ STATE_BIT_8, STATE_BIT_16, STATE_BIT_32}PDC_STATE_BIT;
+	typedef enum{ CLEANUP_PASS, SIGNIFICANCE_PASS,MAGNITUDE_PASS} PDC_PASS_STATE;
 
 	#define DEFAULT_RESIZE_CODEWORD 5
 
@@ -71,6 +72,7 @@ START_C
 		PDC_Subband*		subband;
 		PDC_Codeword_List*	read_codeword;
 		PDC_Codeword_List*	write_codeword;
+		PDC_uint*			coding_passes_per_layer;
 		
 		PDC_uint		Lblock;
 
@@ -87,8 +89,6 @@ START_C
 		 * Sign is FF | Y - 1 | Y |
 		 */
 
-
-	
 		PDC_STATE_BIT	state_bit;
 		PDC_uint32		street;
 		PDC_uint32		num_street;
@@ -111,14 +111,16 @@ START_C
 		PDC_uint32		pos_x;
 		PDC_STATE_BIT	value_size;
 		PDC_Arithmetic_entropy_decoder *decoder;
+		PDC_PASS_STATE	pass_state;
 
 	};
 	
 	struct str_PDC_Codeword_List{
-		PDC_Codeword_List* first_codedword;
-		PDC_Codeword_List* last_codedword;
-		PDC_Codeword_List* next_codedword;
-		
+		PDC_Codeword_List*	first_codedword;
+		PDC_Codeword_List*	last_codedword;
+		PDC_Codeword_List*  next_codedword;
+		PDC_uint*			coding_passes_per_layer;
+
 		PDC_Buffer* codeword;
 		PDC_uint	coding_pass_from;
 		PDC_uint	coding_pass_to;
@@ -159,7 +161,8 @@ START_C
 	 */
 	PDC_uint PDC_Codeblock_set_number_of_coding_passes(	PDC_Exception* exception, 
 														PDC_Codeblock* codeblock, 
-														PDC_uint number_of_coding_passes);
+														PDC_uint number_of_coding_passes,
+														PDC_uint layer_pos);
 
 	/*
 	 *
@@ -176,6 +179,12 @@ START_C
 	 */
 	PDC_Codeword_List* delete_PDC_Codeword_List(PDC_Exception* exception, PDC_Codeword_List* codeoword_list);
 
+
+	/*
+	 *
+	 */
+	PDC_Codeblock PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *exception, PDC_Codeblock *codeblock);
+
 	/*
 	 *
 	 */
@@ -184,12 +193,12 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* buffer);
+	PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword);
 
 	/*
 	 *
 	 */
-	PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* buffer);
+	PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword);
 
 STOP_C
 #endif
