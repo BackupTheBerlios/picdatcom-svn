@@ -71,6 +71,14 @@ START_C
 													PDC_Buffer*	buffer,
 													PDC_uint layer_pos);
 
+	/*
+	 *
+	 */
+	PDC_Precinct* PDC_Precinct_decode_package_01(	PDC_Exception *exception,
+													PDC_Precinct *precinct,
+													PDC_uint layer_pos);
+
+
 
 
 STOP_C

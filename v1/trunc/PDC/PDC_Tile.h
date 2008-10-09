@@ -80,6 +80,23 @@ START_C
 											PDC_COD_Segment* cod_segment,
 											PDC_Buffer* buffer);
 
+
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_decode_Package_01(	PDC_Exception* exception,
+											PDC_Tile* tile,
+											PDC_COD_Segment* cod_segment);
+
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_decode_package_02(	PDC_Exception* exception,
+											PDC_Tile* tile,
+											PDC_uint component_pos,
+											PDC_uint resolution_pos,
+											PDC_uint precinct_pos,
+											PDC_uint layer_pos);
 	/*
 	 *
 	 */

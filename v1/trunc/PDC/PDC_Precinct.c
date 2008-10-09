@@ -400,5 +400,51 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 	return precinct;
 }
 
+
+/*
+ *
+ */
+PDC_Precinct* PDC_Precinct_decode_package_01(	PDC_Exception *exception,
+												PDC_Precinct *precinct,
+												PDC_uint layer_pos)
+{
+	PDC_uint		pos_subband, size_subband, pos_codeblock, pos_codeblock_x, pos_codeblock_y, size_codeblock_x, size_codeblock_y;
+	PDC_uint		pos_x, pos_y, size_x;
+	PDC_Subband*	subband;
+	PDC_Codeblock*	codeblock;
+	
+	if(precinct->resolution->r == 0){
+		size_subband = 1;
+	}else{
+		size_subband = 3;
+	}
+
+	for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
+		subband = precinct->resolution->subband[pos_subband];
+		pos_codeblock = 0;
+		size_codeblock_x = precinct->codeblock_x1;
+		size_codeblock_y = precinct->codeblock_y1;
+		for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
+			for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
+				pos_x	= pos_codeblock_x - precinct->codeblock_x0;
+				pos_y	= pos_codeblock_y - precinct->codeblock_y0;
+				size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
+				pos_codeblock = PDC_Resolution_get_codeblock_position(exception, precinct->resolution, pos_codeblock_x, pos_codeblock_y);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					return precinct;
+				}
+				codeblock = subband->codeblocks[pos_codeblock];
+
+				codeblock = PDC_Codeblock_coefficient_bit_moddeling_decode(	exception,
+																			codeblock,
+																			layer_pos);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					return precinct;
+				}
+			}
+		}
+	}
+	return precinct;
+}
 STOP_C
 

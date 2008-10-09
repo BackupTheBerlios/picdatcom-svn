@@ -183,7 +183,7 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Codeblock PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *exception, PDC_Codeblock *codeblock);
+	PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *exception, PDC_Codeblock *codeblock, PDC_uint layer_pos);
 
 	/*
 	 *

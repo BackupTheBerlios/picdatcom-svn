@@ -165,7 +165,8 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
  */
 PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subband, PDC_uint pos_x, PDC_uint pos_y)
 {
-	PDC_Codeblock* codeblock;
+	PDC_Codeblock*	codeblock;
+	PDC_uint		work;
 
 	PDC_Resolution* resolution	= subband->resolution;
 	PDC_uint		size_x		= 1 << resolution->xcb;
@@ -182,6 +183,10 @@ PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subba
 	if(codeblock->coding_passes_per_layer == NULL){
 		delete_PDC_Codeblock(exception, codeblock);
 		return NULL;
+	}
+
+	for(work = 0; work < num_layer; work += 1){
+		codeblock->coding_passes_per_layer[work] = 0;
 	}
 
 	codeblock->cx0	= max_uint32(size_x * pos_x, subband->tbx0);
@@ -413,7 +418,7 @@ PDC_Codeword_List* delete_PDC_Codeword_List(PDC_Exception* exception, PDC_Codewo
 /*
  *
  */
-PDC_Codeblock PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *exception, PDC_Codeblock *codeblock, PDC_uint layer_pos){
+PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *exception, PDC_Codeblock *codeblock, PDC_uint layer_pos){
 
 	PDC_Codeword_List *codeword_list;
 	PDC_uint number_of_codingpasses , done_codingpasses;
@@ -437,6 +442,7 @@ PDC_Codeblock PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *exc
 				break;
 		}
 	}
+	return codeblock;
 }
 
 
@@ -2158,11 +2164,14 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 
 	PDC_Arithmetic_entropy_decoder *decoder;
 
+	pos_x					= codeblock->pos_x;
+	size_x					= codeblock->cx1 - codeblock->cx0;
 	max_street				= codeblock->num_street;
 	pos_street				= codeblock->street;
 	pos_x_end				= size_x;
 	significant_size		= PDC_i_ceiling(size_x, 8);
 	sign_context_size_y		= codeblock->sign_context_size_y;
+	sign_context_size_x		= codeblock->sign_context_size_x;
 	sign					= codeblock->sign;
 	significant				= codeblock->significant;
 	context					= codeblock->significante_context;			
@@ -2203,6 +2212,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 
 		sign_context_value2		= *((PDC_uint32*)sign_context_address2);		
 		sign_context_value3		= *((PDC_uint32*)sign_context_address3);
+
+		context_base_address1	= codeblock->BDK_context_states + pos_y_base;
 
 		while(pos_x < pos_x_end){
 			significant_value_temp	= (significant_value >> significant_pos_shift)& 0x0F;
@@ -2477,7 +2488,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 			sign_value			|= (sign_value_temp << significant_pos_shift) ;
 			is_coded_value		|= (is_coded_value_temp << significant_pos_shift);
 
-			(PDC_uint32*)sign_context_address1 = sign_context_value1;
+			*((PDC_uint32*)sign_context_address1) = sign_context_value1;
 			significant_pos_shift += 4;
 			if(significant_pos_shift >= 32){
 				sign[significant_pos + significant_pos_x]			= sign_value;
@@ -2498,6 +2509,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 		significant[significant_pos + significant_pos_x]	= significant_value;
 		is_coded[significant_pos + significant_pos_x]		= is_coded_value;
 	}
+
+	return codeblock;
 }	
 
 
