@@ -21,6 +21,7 @@
 #ifndef __PDC_ARITHMETIC_ENTROPY_DECODER_H__
 #define __PDC_ARITHMETIC_ENTROPY_DECODER_H__
 
+#include <stdio.h>
 #include <stdlib.h>
 #include "PDC_Parameter.h"
 #include "PDC_Exception.h"

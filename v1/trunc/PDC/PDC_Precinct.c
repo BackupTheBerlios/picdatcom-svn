@@ -143,7 +143,7 @@ PDC_Precinct* delete_PDC_Precinct(	PDC_Exception* exception,
 }
 
 
-int count = 0;
+
 /*
  *
  */
@@ -334,8 +334,7 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 								PDC_Tagtree_pop(exception, precinct->zero_bitplane[2]);
 								return precinct;
 							}
-							count += 1;
-							fprintf(DEBUG_FILE,"%5d  %7d \n",count, codewordlength);
+							
 							codeword_list->number_of_byte = codewordlength;
 							if(codeword_list->next_codedword != NULL){
 								codeword_list = codeword_list->next_codedword;

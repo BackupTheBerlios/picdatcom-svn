@@ -111,6 +111,7 @@ START_C
 		PDC_uint32		pos_x;
 		PDC_STATE_BIT	value_size;
 		PDC_Arithmetic_entropy_decoder *decoder;
+		PDC_bool		init_decoder;
 		PDC_PASS_STATE	pass_state;
 
 	};

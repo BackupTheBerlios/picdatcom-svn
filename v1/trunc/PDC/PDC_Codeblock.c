@@ -145,7 +145,10 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 	codeblock->sign_context_delete			= NULL;
 	codeblock->decoder						= NULL;
 	codeblock->coding_passes_per_layer		= NULL;
+	codeblock->BDK_context_states			= NULL;
 	codeblock->pass_state					= CLEANUP_PASS;
+	codeblock->pos_x						= 0;
+	codeblock->init_decoder					= PDC_false;
 
 
 	codeblock->read_codeword	= new_PDC_Codeword_List_01( exception);
@@ -224,7 +227,7 @@ PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subba
  */
 PDC_Codeblock* PDC_Codeblock_init_bit_modeling_variable(PDC_Exception* exception, PDC_Codeblock* codeblock)
 {
-	PDC_uint32 size_x, size_y, size_x_bit, size1;
+	PDC_uint32 size_x, size_y, size_x_bit, size1, size_pos, size2;
 
 	size_x		= codeblock->cx1 - codeblock->cx0;
 	size_y		= codeblock->cy1 - codeblock->cy0;
@@ -237,12 +240,17 @@ PDC_Codeblock* PDC_Codeblock_init_bit_modeling_variable(PDC_Exception* exception
 
 	size1 = size_x_bit * codeblock->num_street;
 
-	codeblock->value8		= malloc(size_x * size_y);
+	size2 = size_x * size_y;
+	codeblock->value8		= malloc(size2);
 	if(codeblock->value8 == NULL){
 		delete_PDC_Codeblock(exception, codeblock);
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	};
+	for(size_pos = 0; size_pos < size2; size_pos += 1){
+		codeblock->value8[size_pos] = 0;
+	}
+	codeblock->value_size = STATE_BIT_8;
 
 	codeblock->is_coded = malloc(sizeof(PDC_uint32) * size1);
 	if(codeblock->is_coded == NULL){
@@ -262,32 +270,46 @@ PDC_Codeblock* PDC_Codeblock_init_bit_modeling_variable(PDC_Exception* exception
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	};
-
+	for(size_pos = 0; size_pos < size1; size_pos += 1){
+		codeblock->is_coded[size_pos]		= 0;
+		codeblock->sign[size_pos]			= 0;
+		codeblock->significant[size_pos]	= 0;
+	}
 
 	codeblock->significante_context_size_x = size_x + 2;
 	codeblock->significante_context_size_y = size_y + 4;
 	size1 = codeblock->significante_context_size_x * codeblock->significante_context_size_y;
 	codeblock->significante_context_delete = malloc(sizeof(PDC_uint8) * size1);
-	if(codeblock->is_coded == NULL){
+	if(codeblock->significante_context_delete == NULL){
 		delete_PDC_Codeblock(exception, codeblock);
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	};
+	for(size_pos = 0; size_pos < size1; size_pos += 1){
+		codeblock->significante_context_delete[size_pos] = 0;
+	}
 	codeblock->significante_context = codeblock->significante_context_delete + codeblock->significante_context_size_y + 1;
 
 	codeblock->sign_context_size_x = size_x + 2;
 	codeblock->sign_context_size_y = PDC_ui_ceiling(size_y, 2) + 4;
-
-
-	size1 = size_x * size_y;
-	codeblock->value8 = malloc(sizeof(PDC_uint8) * size1);
-	if(codeblock->value8 == NULL){
+	size1 = codeblock->significante_context_size_y * codeblock->sign_context_size_x;
+	codeblock->sign_context_delete = malloc(sizeof(PDC_uint8) * size1);
+	if(codeblock->sign_context_delete == NULL){
 		delete_PDC_Codeblock(exception, codeblock);
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
-	};
+	}
+	for(size_pos = 0; size_pos < size1; size_pos += 1){
+		codeblock->sign_context_delete[size_pos] = 0;
+	}
+	codeblock->sign_context = codeblock->sign_context_delete + codeblock->sign_context_size_y + 1;
 
 	codeblock->decoder = new_PDC_Arithmetic_entropy_decoder(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Codeblock(exception, codeblock);
+		return NULL;
+	}
+	PDC_Aed_set_I_MPS_01(exception, codeblock->decoder, PDC_A_Encoder__mps, PDC_A_Encoder__index);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		delete_PDC_Codeblock(exception, codeblock);
 		return NULL;
@@ -423,22 +445,30 @@ PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *ex
 	PDC_Codeword_List *codeword_list;
 	PDC_uint number_of_codingpasses , done_codingpasses;
 
-	codeword_list			= codeblock->read_codeword;
+	codeword_list			= codeblock->write_codeword;
 	number_of_codingpasses	= codeblock->coding_passes_per_layer[layer_pos];
 
 	for(done_codingpasses = 0; done_codingpasses < number_of_codingpasses; done_codingpasses += 1){
 		while(codeword_list->coding_pass_next >= codeword_list->coding_pass_to){
 			codeword_list = codeword_list->next_codedword;
 		}
+		if(codeblock->init_decoder == PDC_false){
+			codeblock->init_decoder = PDC_true;
+			codeblock->decoder = PDC_Aed_initdec_01(	exception,
+														codeblock->decoder,
+														codeword_list->codeword);
+		}
+	
 		switch(codeblock->pass_state){
 			case CLEANUP_PASS:
+				codeblock = PDC_Codeblock_cleanup_decoding_pass(exception, codeblock, codeword_list->codeword);
 				codeblock->pass_state	= SIGNIFICANCE_PASS;
 				break;
 			case SIGNIFICANCE_PASS:
 				codeblock->pass_state	= MAGNITUDE_PASS;
 				break;
 			case MAGNITUDE_PASS:
-				codeblock->pass_state	= CLEANUP_PASS;
+				// codeblock->pass_state	= CLEANUP_PASS;
 				break;
 		}
 	}
@@ -2213,9 +2243,9 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 		sign_context_value2		= *((PDC_uint32*)sign_context_address2);		
 		sign_context_value3		= *((PDC_uint32*)sign_context_address3);
 
-		context_base_address1	= codeblock->BDK_context_states + pos_y_base;
+		context_base_address1	= codeblock->significante_context + pos_y_base;
 
-		while(pos_x < pos_x_end){
+		for(;pos_x < pos_x_end; pos_x += 1){
 			significant_value_temp	= (significant_value >> significant_pos_shift)& 0x0F;
 			sign_value_temp			= (sign_value >> significant_pos_shift) & 0x0F;
 			is_coded_value_temp		= (is_coded_value >> significant_pos_shift) & 0x0F;
@@ -2366,7 +2396,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 				pos_y = 0;
 			}	
 
-			while(pos_y < 4){
+			for(;pos_y < 4; pos_y += 1){
 				switch(pos_y){
 					case 0:
 						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[context_value & 0xFF], codeword);
@@ -2498,9 +2528,11 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 				significant_pos_x		+= 1;
 				sign_value				= sign[significant_pos + significant_pos_x];
 				significant_value		= significant[significant_pos + significant_pos_x];
-				is_coded_value			= is_coded[significant_pos + significant_pos_x];				
+				is_coded_value			= is_coded[significant_pos + significant_pos_x];
+				significant_pos_shift	= 0;
 			}
 		}
+		
 		significant_value	|= (significant_value_temp << significant_pos_shift);
 		sign_value			|= (sign_value_temp << significant_pos_shift) ;
 		is_coded_value		|= (is_coded_value_temp << significant_pos_shift);
@@ -2508,6 +2540,10 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 		sign[significant_pos + significant_pos_x]			= sign_value;
 		significant[significant_pos + significant_pos_x]	= significant_value;
 		is_coded[significant_pos + significant_pos_x]		= is_coded_value;
+		
+		pos_x		= 0;
+		pos_street	+= 1;
+
 	}
 
 	return codeblock;

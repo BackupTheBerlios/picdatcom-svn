@@ -25,6 +25,9 @@ START_C
 #define MPS_I_LENGTH 19
 #define RESIZE_BUFFER 10
 
+extern FILE* DEBUG_FILE;
+unsigned int count = 0;
+
 extern PDC_uint32 PDC_A_Encoder_qe[];
 extern PDC_uint32 PDC_A_Encoder_switcher[];
 extern PDC_uint32 PDC_A_Encoder_nlps[];
@@ -215,6 +218,10 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 		return_decoder->B			= B;
 		return_decoder->D			= D;
 	}
+
+	count += 1;
+	fprintf(DEBUG_FILE,"%10d  %7d %4d\n",count, context, D);
+	
 	return return_decoder;
 }
 
