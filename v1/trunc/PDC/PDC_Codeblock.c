@@ -27,56 +27,56 @@ START_C
  * 87654321
  */
 
-PDC_uint8 BDK_context_states[3][256] = {{	 0, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2,
-												 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-												 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-												 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-												 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8	},
+	PDC_uint8 BDK_context_states[3][256] = {{	  2,  3,  3,  4,  3,  4,  4,  4,  3,  4,  4,  4,  4,  4,  4,  4,
+												  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,
+												  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,
+												  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,
+												  7,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  7,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10	},
 									{	
-												 0, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2,
-												 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-												 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-												 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-												 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-												 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8	},
+												  2,  3,  3,  4,  3,  4,  4,  4,  3,  4,  4,  4,  4,  4,  4,  4,
+												  7,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,
+												  7,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+												  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+												  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+												  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10	},
 									{	
-												 0, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2, 2, 2, 2,
-												 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-												 5, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6, 6,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-												 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-												 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3, 3,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8,
-												 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4, 4,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7, 7,
-												 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8, 8	}};
+												  2,  3,  3,  4,  3,  4,  4,  4,  3,  4,  4,  4,  4,  4,  4,  4,
+												  7,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,
+												  7,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,  8,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+												  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+												  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,  5,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
+												  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,  6,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
+												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10	}};
 
 												
 	PDC_uint8 XORbit[256] = {	 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00,
@@ -97,22 +97,22 @@ PDC_uint8 BDK_context_states[3][256] = {{	 0, 1, 1, 2, 1, 2, 2, 2, 1, 2, 2, 2, 2
 								 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x00, 0x00, 0x00, 0xFF, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00	};
 
 								
-	PDC_uint8 PDC_context_signstates[256] = {	  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,  9,
-												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-												 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10, 10,
-												 10,  9,  9, 10, 10,  9,  9, 10, 10,  9,  9, 10, 10,  9,  9, 10,
+	PDC_uint8 PDC_context_signstates[256] = {	 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11, 11,
 												 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
-												 13, 13, 11, 11, 13, 13, 11, 11, 11, 11, 13, 13, 11, 11, 13, 13,
-												 13, 11, 13, 11, 13, 11, 13, 11, 11, 13, 11, 13, 11, 13, 11, 13,
-												 13, 12, 12, 11, 13, 12, 12, 11, 11, 12, 12, 13, 11, 12, 12, 13,
 												 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12, 12,
-												 13, 13, 11, 11, 11, 11, 13, 13, 13, 13, 11, 11, 11, 11, 13, 13,
-												 13, 11, 13, 11, 11, 13, 11, 13, 13, 11, 13, 11, 11, 13, 11, 13,
-												 13, 12, 12, 11, 11, 12, 12, 13, 13, 12, 12, 11, 11, 12, 12, 13,
-												 12, 12, 12, 12,  9,  9,  9,  9,  9,  9,  9,  9, 12, 12, 12, 12,
-												 13, 13, 11, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 11, 13, 13,
-												 13, 11, 13, 11, 10, 10, 10, 10, 10, 10, 10, 10, 11, 13, 11, 13,
-												 13, 12, 12, 11, 10,  9,  9, 10, 10,  9,  9, 10, 11, 12, 12, 13	};
+												 12, 11, 11, 12, 12, 11, 11, 12, 12, 11, 11, 12, 12, 11, 11, 12,
+												 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
+												 15, 15, 13, 13, 15, 15, 13, 13, 13, 13, 15, 15, 13, 13, 15, 15,
+												 15, 13, 15, 13, 15, 13, 15, 13, 13, 15, 13, 15, 13, 15, 13, 15,
+												 15, 14, 14, 13, 15, 14, 14, 13, 13, 14, 14, 15, 13, 14, 14, 15,
+												 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14, 14,
+												 15, 15, 13, 13, 13, 13, 15, 15, 15, 15, 13, 13, 13, 13, 15, 15,
+												 15, 13, 15, 13, 13, 15, 13, 15, 15, 13, 15, 13, 13, 15, 13, 15,
+												 15, 14, 14, 13, 13, 14, 14, 15, 15, 14, 14, 13, 13, 14, 14, 15,
+												 14, 14, 14, 14, 11, 11, 11, 11, 11, 11, 11, 11, 14, 14, 14, 14,
+												 15, 15, 13, 13, 12, 12, 12, 12, 12, 12, 12, 12, 13, 13, 15, 15,
+												 15, 13, 15, 13, 12, 12, 12, 12, 12, 12, 12, 12, 13, 15, 13, 15,
+												 15, 14, 14, 13, 12, 11, 11, 12, 12, 11, 11, 12, 13, 14, 14, 15	};
 	
 /*
  *
@@ -2177,12 +2177,12 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
  */
 PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword)
 {
-	PDC_uint32		max_street, pos_street, pos_x, pos_x_end, pos_y_base, pos_y,
+	PDC_uint32		max_street, max_street_rest, pos_street, pos_x, pos_x_end, pos_y_base, pos_y,
 					significant_size, significant_pos, significant_pos_base, sign_context_size_x,
 					significant_pos_x, siginficant_pos_shift, *sign, sign_value,
 					sign_value_temp, *significant, significant_value, significant_value_temp,
 					context_size_y, *context1, *context2, *context3, *is_coded, is_coded_value,
-					is_coded_value_temp, runlengthpos, bit_plane, *value32, size_x, sign_context1, sign_context2,
+					is_coded_value_temp, runlengthpos, bit_plane, *value32, size_x, size_y, size_y_rest, sign_context1, sign_context2,
 					sign_context3, context_value, *context_address, *context_address1, *context_address2, 
 					*context_address3, sign_pos_base, sign_context_value1, sign_context_value2, 
 					sign_context_value3, sign_context_size_y, significant_pos_shift, pos_value,
@@ -2196,6 +2196,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 
 	pos_x					= codeblock->pos_x;
 	size_x					= codeblock->cx1 - codeblock->cx0;
+	size_y					= codeblock->cy1 - codeblock->cy0;
 	max_street				= codeblock->num_street;
 	pos_street				= codeblock->street;
 	pos_x_end				= size_x;
@@ -2212,7 +2213,6 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 	value8					= codeblock->value8;
 	value16					= codeblock->value16;
 	value32					= codeblock->value32;
-	size_x					= codeblock->cx1 - codeblock->cx0;
 	sign_context			= codeblock->sign_context;
 	value_size				= codeblock->value_size;
 	BDK_context_states		= codeblock->BDK_context_states;
@@ -2226,10 +2226,17 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 		bit_plane = 31 - bit_plane;
 	}
 
+	max_street_rest = max_street;
+	size_y_rest = size_y % 4;
+	if(size_y_rest != 0){	
+		max_street -= 1;
+	}
+
+
 	while(pos_street < max_street){
 		pos_y_base				= 4 * pos_street;
 		sign_pos_base			= 2 * pos_street - 1;
-		significant_pos			= pos_street * sign_context_size_x;
+		significant_pos			= pos_street * significant_size;
 		significant_pos_x		= 0;
 		significant_pos_shift	= 0;
 
@@ -2265,7 +2272,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 			/*
 			 *	Run-length decoder
 			 */
-			if((context_value | is_coded_value_temp)	  == 0){
+			if((context_value | is_coded_value_temp) == 0){
 				decoder = PDC_Aed_decode_01(exception, decoder, RUNLENGTHCONTEXT, codeword);
 				if(decoder->D != 0){
 					runlengthpos = 0;
@@ -2427,6 +2434,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 							}
 						}
 					case 1:
+						context_value = *context_address;
 						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[(context_value >> 8) & 0xFF], codeword);
 						if(decoder->D != 0){
 							pos_value = (size_x * (pos_y_base + 1)) + pos_x;
@@ -2456,6 +2464,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 						}
 
 					case 2:
+						context_value = *context_address;
 						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[(context_value >> 16) & 0xFF], codeword);
 						if(decoder->D != 0){
 							pos_value = (size_x * (pos_y_base + 2)) + pos_x;
@@ -2484,6 +2493,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 							}
 						}
 					case 3:
+						context_value = *context_address;
+						pos_y = 4;
 						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[(context_value >> 24) & 0xFF], codeword);
 						if(decoder->D != 0){
 							pos_value = (size_x * (pos_y_base + 3)) + pos_x;
@@ -2544,6 +2555,196 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 		pos_x		= 0;
 		pos_street	+= 1;
 
+	}
+
+	while(pos_street < max_street_rest){
+		pos_y_base				= 4 * pos_street;
+		sign_pos_base			= 2 * pos_street - 1;
+		significant_pos			= pos_street * significant_size;
+		significant_pos_x		= 0;
+		significant_pos_shift	= 0;
+
+		sign_value				= sign[significant_pos + significant_pos_x];
+		significant_value		= significant[significant_pos + significant_pos_x];
+		is_coded_value			= is_coded[significant_pos + significant_pos_x];
+
+		sign_context_address2	= sign_context + (pos_y_base + (pos_x - 1) * sign_context_size_y);
+		sign_context_address3	= sign_context_address2 + sign_context_size_y;
+
+		sign_context_value2		= *((PDC_uint32*)sign_context_address2);		
+		sign_context_value3		= *((PDC_uint32*)sign_context_address3);
+
+		context_base_address1	= codeblock->significante_context + pos_y_base;
+
+		for(;pos_x < pos_x_end; pos_x += 1){
+			significant_value_temp	= (significant_value >> significant_pos_shift)& 0x0F;
+			sign_value_temp			= (sign_value >> significant_pos_shift) & 0x0F;
+			is_coded_value_temp		= (is_coded_value >> significant_pos_shift) & 0x0F;
+			context_address			= (PDC_uint32*)(context_base_address1 + pos_x * context_size_y);
+			context_value			= *context_address;
+
+			
+			sign_context_address1	= sign_context_address2;
+			sign_context_address2	= sign_context_address3;
+			sign_context_address3	= sign_context_address2 + sign_context_size_y;
+
+			sign_context_value1		= sign_context_value2;
+			sign_context_value2		= sign_context_value3;
+			sign_context_value3		= *((PDC_uint32*)sign_context_address3);
+
+			pos_y = 0;
+			for(;pos_y < size_y_rest; pos_y += 1){
+				switch(pos_y){
+					case 0:
+						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[context_value & 0xFF], codeword);
+						if(decoder->D != 0){
+							pos_value = (size_x * (pos_y_base)) + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+							context_address2 = (PDC_uint32*)(context + (pos_x * context_size_y + pos_y_base - 1));
+							context_address1 = (PDC_uint32*)((PDC_uint8*)context_address2 - context_size_y);
+							context_address3 = (PDC_uint32*)((PDC_uint8*)context_address2 + context_size_y);
+
+							*context_address1 |= SET_CONTEXT_1;
+							*context_address2 |= SET_CONTEXT_2;
+							*context_address3 |= SET_CONTEXT_3;
+							/* decode sign */
+							sign_context_value = ((context_value) & 0xF0) | ((sign_context_value2 >> 12) & 0x0F);
+							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
+							if(decoder->D != 0){
+								sign_value_temp |= (0x08 ^ (0x8 & XORbit[sign_context_value]));
+								sign_context1 |= SET_SIGN_CONTEXT_A1;
+								sign_context2 |= SET_SIGN_CONTEXT_A2;
+								sign_context3 |= SET_SIGN_CONTEXT_A3;
+							}
+						}
+						pos_y += 1;
+						break;
+					case 1:
+						context_value = *context_address;
+						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[(context_value >> 8) & 0xFF], codeword);
+						if(decoder->D != 0){
+							pos_value = (size_x * (pos_y_base + 1)) + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+							context_address2 = (PDC_uint32*)(context + (pos_x * context_size_y + pos_y_base));
+							context_address1 = (PDC_uint32*)((PDC_uint8*)context_address2 - context_size_y);
+							context_address3 = (PDC_uint32*)((PDC_uint8*)context_address2 + context_size_y);
+
+							*context_address1 |= SET_CONTEXT_1;
+							*context_address2 |= SET_CONTEXT_2;
+							*context_address3 |= SET_CONTEXT_3;
+							/* decode sign */
+							sign_context_value = ((context_value >> 8) & 0xF0) | ((sign_context_value2 >> 12) & 0x0F);
+							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
+							if(decoder->D != 0){
+								sign_value_temp |= (0x08 ^ (0x8 & XORbit[sign_context_value]));
+								sign_context1 |= SET_SIGN_CONTEXT_B1;
+								sign_context2 |= SET_SIGN_CONTEXT_B2;
+								sign_context3 |= SET_SIGN_CONTEXT_B3;
+							}
+						}
+						pos_y += 1;
+						break;
+					case 2:
+						context_value = *context_address;
+						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[(context_value >> 16) & 0xFF], codeword);
+						if(decoder->D != 0){
+							pos_value = (size_x * (pos_y_base + 2)) + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+							context_address2 = (PDC_uint32*)(context + (pos_x * context_size_y + pos_y_base + 1));
+							context_address1 = (PDC_uint32*)((PDC_uint8*)context_address2 - context_size_y);
+							context_address3 = (PDC_uint32*)((PDC_uint8*)context_address2 + context_size_y);
+
+							*context_address1 |= SET_CONTEXT_1;
+							*context_address2 |= SET_CONTEXT_2;
+							*context_address3 |= SET_CONTEXT_3;
+							/* decode sign */
+							sign_context_value = ((context_value >> 16) & 0xF0) | ((sign_context_value2 >> 16) & 0x0F);
+							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
+							if(decoder->D != 0){
+								sign_value_temp |= (0x08 ^ (0x8 & XORbit[sign_context_value]));
+								sign_context1 |= SET_SIGN_CONTEXT_C1;
+								sign_context2 |= SET_SIGN_CONTEXT_C2;
+								sign_context3 |= SET_SIGN_CONTEXT_C3;
+							}
+						}
+						pos_y += 1;
+						break;
+					case 3:
+						context_value = *context_address;
+						pos_y = 4;
+						decoder = PDC_Aed_decode_01(exception, decoder, BDK_context_states[(context_value >> 24) & 0xFF], codeword);
+						if(decoder->D != 0){
+							pos_value = (size_x * (pos_y_base + 3)) + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+							context_address2 = (PDC_uint32*)(context + (pos_x * context_size_y + pos_y_base + 2));
+							context_address1 = (PDC_uint32*)((PDC_uint8*)context_address2 - context_size_y);
+							context_address3 = (PDC_uint32*)((PDC_uint8*)context_address2 + context_size_y);
+
+							*context_address1 |= SET_CONTEXT_1;
+							*context_address2 |= SET_CONTEXT_2;
+							*context_address3 |= SET_CONTEXT_3;
+							/* decode sign */
+							sign_context_value = ((context_value >> 24) & 0xF0) | ((sign_context_value2 >> 16) & 0x0F);
+							decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
+							if(decoder->D != 0){
+								sign_value_temp |= (0x08 ^ (0x8 & XORbit[sign_context_value]));
+								sign_context1 |= SET_SIGN_CONTEXT_D1;
+								sign_context2 |= SET_SIGN_CONTEXT_D2;
+								sign_context3 |= SET_SIGN_CONTEXT_D3;
+							}
+						}
+						pos_y += 1;
+						break;
+				}
+			}
+
+			significant_value	|= (significant_value_temp << significant_pos_shift);
+			sign_value			|= (sign_value_temp << significant_pos_shift) ;
+			is_coded_value		|= (is_coded_value_temp << significant_pos_shift);
+
+			*((PDC_uint32*)sign_context_address1) = sign_context_value1;
+			significant_pos_shift += 4;
+			if(significant_pos_shift >= 32){
+				sign[significant_pos + significant_pos_x]			= sign_value;
+				significant[significant_pos + significant_pos_x]	= significant_value;
+				is_coded[significant_pos + significant_pos_x]		= is_coded_value;
+
+				significant_pos_x		+= 1;
+				sign_value				= sign[significant_pos + significant_pos_x];
+				significant_value		= significant[significant_pos + significant_pos_x];
+				is_coded_value			= is_coded[significant_pos + significant_pos_x];
+				significant_pos_shift	= 0;
+			}
+		}
+		significant_value	|= (significant_value_temp << significant_pos_shift);
+		sign_value			|= (sign_value_temp << significant_pos_shift) ;
+		is_coded_value		|= (is_coded_value_temp << significant_pos_shift);
+
+		pos_street += 1;
 	}
 
 	return codeblock;

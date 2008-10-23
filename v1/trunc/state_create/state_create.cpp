@@ -54,6 +54,8 @@ int XORbit[256];
 void genratestate();
 void genratesignstate();
 
+int offset = 2;
+
 int _tmain(int argc, _TCHAR* argv[])
 {
 	int t, g, z;
@@ -67,7 +69,7 @@ int _tmain(int argc, _TCHAR* argv[])
 	fprintf(file,"	PDC_uint8 BDK_context_states[3][256] = {{	");
 	for( t = 0; t < 256; ){
 		for( g = 0; g < 16; g++){
-			fprintf(file," %d",states[0][t]);
+			fprintf(file," %2d",states[0][t] + offset);
 			if(t != 255){
 				fprintf(file,",");
 			}else{
@@ -80,7 +82,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	for( t = 0; t < 256; ){
 		for( g = 0; g < 16; g++){
-			fprintf(file," %d",states[1][t]);
+			fprintf(file," %2d",states[1][t]  + offset);
 			if(t != 255){
 				fprintf(file,",");
 			}else{
@@ -94,7 +96,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	for( t = 0; t < 256; ){
 		for( g = 0; g < 16; g++){
-			fprintf(file," %d",states[1][t]);
+			fprintf(file," %2d",states[1][t]  + offset);
 			if(t != 255){
 				fprintf(file,",");
 			}else{
@@ -122,10 +124,10 @@ int _tmain(int argc, _TCHAR* argv[])
 	
 
 	fprintf(file,"\n");
-	fprintf(file,"	PDC_uint8 BDK_context_signstates[256] = {	");
+	fprintf(file,"	PDC_uint8 PDC_context_signstates[256] = {	");
 	for( t = 0; t < 256; ){
 		for( g = 0; g < 16; g++){
-			fprintf(file," %2d",sign_states[t]);
+			fprintf(file," %2d",sign_states[t]  + offset);
 			if(t != 255){
 				fprintf(file,",");
 			}else{

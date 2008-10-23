@@ -46,10 +46,14 @@ START_C
 	#define	SET_SIGN_CONTEXT_D2 0x4080000 
 	#define	SET_SIGN_CONTEXT_D3 0x0100000
 
-
+/*
 	#define SET_CONTEXT_1 0x028001
 	#define	SET_CONTEXT_2 0x800040
 	#define SET_CONTEXT_3 0x012004
+*/
+	#define SET_CONTEXT_1 0x044001
+	#define	SET_CONTEXT_2 0x200010
+	#define SET_CONTEXT_3 0x088002
 
 
 	struct str_PDC_Codeblock;

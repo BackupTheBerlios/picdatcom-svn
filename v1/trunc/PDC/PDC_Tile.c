@@ -237,6 +237,10 @@ PDC_Tile* PDC_Tile_decode_Package_01(	PDC_Exception* exception,
 	L				= cod_segment->number_of_layer;
 	Csiz			= tile->picture->siz_segment->Csiz;
 
+	Nmax	= 0;
+	L		= 1;
+	Csiz	= 1;
+
 	switch(cod_segment->progression_order){
 		case LAYER_RESOLUTION_LEVEL_COMPONENT_POSITION:
 			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
