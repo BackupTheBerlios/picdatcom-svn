@@ -34,7 +34,10 @@ START_C
 
 	#define RUNLENGTHCONTEXT	1
 	#define	UNIFORMCONTEXT		0
-	
+	#define MAGNITUDE_CONTEXT_0	18
+	#define MAGNITUDE_CONTEXT_1	17
+	#define MAGNITUDE_CONTEXT_2	16
+
 	#include "PDC_Buffer.h"
 	#include "PDC_Arithmetic_entropy_encoder.h"
 

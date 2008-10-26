@@ -99,6 +99,7 @@ START_C
 		PDC_uint32*		is_coded;
 		PDC_uint32*		sign;
 		PDC_uint32*		significant;
+		PDC_uint32*		first_refinement;
 		PDC_uint8*		significante_context_delete;
 		PDC_uint8*		significante_context;
 		PDC_uint8*		sign_context_delete;

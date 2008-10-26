@@ -136,6 +136,7 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 	codeblock->is_coded						= NULL;
 	codeblock->sign							= NULL;
 	codeblock->significant					= NULL;
+	codeblock->first_refinement				= NULL;
 	codeblock->significante_context			= NULL;
 	codeblock->significante_context_delete	= NULL;
 	codeblock->value8						= NULL;
@@ -270,10 +271,17 @@ PDC_Codeblock* PDC_Codeblock_init_bit_modeling_variable(PDC_Exception* exception
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	};
+	codeblock->first_refinement	= malloc(sizeof(PDC_uint) * size1);
+	if(codeblock->first_refinement == NULL){
+		delete_PDC_Codeblock(exception, codeblock);
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	}
 	for(size_pos = 0; size_pos < size1; size_pos += 1){
-		codeblock->is_coded[size_pos]		= 0;
-		codeblock->sign[size_pos]			= 0;
-		codeblock->significant[size_pos]	= 0;
+		codeblock->is_coded[size_pos]			= 0;
+		codeblock->sign[size_pos]				= 0;
+		codeblock->significant[size_pos]		= 0;
+		codeblock->first_refinement[size_pos]	= 0;
 	}
 
 	codeblock->significante_context_size_x = size_x + 2;
@@ -2749,6 +2757,145 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 
 	return codeblock;
 }	
+
+
+/*
+ *
+ */
+PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword)
+{
+	PDC_uint32		max_street, max_street_rest, bit_plane, size_y, size_x size_y_rest, pos_y_base, sign_pos_base,
+					significant_pos, significant_pos_x, significant_pos_x_max, significant_pos_x_rest, 
+					sign_value, significant_value, is_coded_value, first_refinement_value, *sign, *significant, 
+					*is_coded, *first_refinement, need_coded, current_bit, significant_size, 
+					significant_context_size_x, significant_context_size_y, pos_y_base;
+					significant_context_offset0, significant_context_offset1, significant_context_offset2,
+					significant_context_offset3, significant_context_offset4, significant_context_offset5,
+					significant_context_offset6, significant_context_offset7,
+	PDC_STATE_BIT	value_size;
+	PDC_uint8		*significant_context_base_address, *significant_context;
+	PDC_Arithmetic_entropy_decoder *decoder;
+
+	value_size					= codeblock->value_size;
+	size_y						= codeblock->cy1 - codeblock->cy0;
+	size_x						= codeblock->cx1 - codeblock->cx0;
+	max_street					= codeblock->num_street;
+	sign						= codeblock->sign;
+	significant					= codeblock->significant;
+	is_coded					= codeblock->is_coded;
+	first_refinement			= codeblock->first_refinement;
+	significant_context_size_x	= codeblock->significante_context_size_x;
+	significant_context_size_y	= codeblock->significante_context_size_y;
+	significant_context			= codeblock->significante_context;
+	decoder						= codeblock->decoder;
+
+	significant_context_offset0	= 0;
+	significant_context_offset1	= significant_context_offset0 + significant_context_size_y;
+	significant_context_offset2	= significant_context_offset1 + significant_context_size_y;
+	significant_context_offset3	= significant_context_offset2 + significant_context_size_y;
+	significant_context_offset4	= significant_context_offset3 + significant_context_size_y;
+	significant_context_offset5	= significant_context_offset4 + significant_context_size_y;
+	significant_context_offset6	= significant_context_offset5 + significant_context_size_y;
+	significant_context_offset7	= significant_context_offset6 + significant_context_size_y;
+
+	significant_pos_x_max = significant_pos_x_rest = PDC_ui_ceiling(size_x, 8);
+	if(size_x % 8 != 0){
+		significant_pos_x_max -= 1;
+	}
+
+	if(value_size == STATE_BIT_8){
+		bit_plane = 7 - bit_plane;
+	}else if(value_size == STATE_BIT_16){
+		bit_plane = 15 - bit_plane;
+	}else if(value_size == STATE_BIT_32){
+		bit_plane = 31 - bit_plane;
+	}
+
+	max_street_rest = max_street;
+	size_y_rest = size_y % 4;
+	if(size_y_rest != 0){	
+		max_street -= 1;
+	}
+
+	while(pos_street < max_street){
+		pos_y_base				= 4 * pos_street;
+		sign_pos_base			= 2 * pos_street - 1;
+		significant_pos			= pos_street * significant_size;
+		significant_pos_x		= 0;
+		significant_pos_shift	= 0;
+
+		for(;significant_pos_x < significant_pos_x_max; significant_pos_x += 1){
+			sign_value							= sign[significant_pos + significant_pos_x];
+			significant_value					= significant[significant_pos + significant_pos_x];
+			is_coded_value						= is_coded[significant_pos + significant_pos_x];
+			first_refinement_value				= first_refinement[significant_pos + significant_pos_x];
+			need_coded							= (significant_value ^ 0xFFFFFFFF) | is_coded_value;
+
+			if(need_coded != 0xFFFFFFFF){
+				significant_context_base_address	= significant_context + (significant_pos_x * 8 * significant_context_size_y + pos_y_base);
+				if((need_coded & 0xFFFF) != 0xFFFF){
+					if((need_coded & 0x00FF) != 0x00FF){
+						if((need_coded & 0x0F) != 0x0F){
+							current_bit = 0x1;
+							if((need_coded & current_bit) == 0){
+								if((first_refinement_value & current_bit) != 0){
+									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
+									if(decoder->D != 0){
+
+									}
+								}else{
+
+								}
+							}
+
+							current_bit = 0x2;
+							if((need_coded & current_bit) == 0){
+							}
+
+							current_bit = 0x4;
+							if((need_coded & current_bit) == 0){
+							}
+
+							current_bit = 0x8;
+							if((need_coded & current_bit) == 0){
+							}
+
+						}
+						if((need_coded & 0xF0) != 0xF0){
+
+						}
+					}
+					if((need_coded & 0xFF00) != 0xFF00){
+						if((need_coded & 0x0F00) != 0x0F00){
+
+						}
+						if((need_coded & 0xF000) != 0xF000){
+
+						}
+					}
+				}
+				if((need_coded & 0xFFFF0000) != 0xFFFF0000){
+					if((need_coded & 0x00FF0000) != 0x00FF0000){
+						if((need_coded & 0x0F0000) != 0x0F0000){
+
+						}
+						if((need_coded & 0xF00000) != 0xF00000){
+
+						}
+					}
+					if((need_coded & 0xFF000000) != 0xFF000000){
+						if((need_coded & 0x0F000000) != 0x0F000000){
+
+						}
+						if((need_coded & 0xF0000000) != 0xF0000000){
+
+						}
+					}
+				}
+			}
+		}
+	}
+}
 
 
 
