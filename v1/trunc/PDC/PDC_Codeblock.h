@@ -27,24 +27,24 @@
 
 START_C
 
-	#define	SET_SIGN_CONTEXT_A1 0x0200
-	#define	SET_SIGN_CONTEXT_A2 0x4080 
-	#define	SET_SIGN_CONTEXT_A3 0x0100
+	#define	SET_SIGN_CONTEXT_A1 0x0800
+	#define	SET_SIGN_CONTEXT_A2 0x1020 
+	#define	SET_SIGN_CONTEXT_A3 0x0400
 
 
-	#define	SET_SIGN_CONTEXT_B1 0x02000
-	#define	SET_SIGN_CONTEXT_B2 0x40800 
-	#define	SET_SIGN_CONTEXT_B3 0x01000
+	#define	SET_SIGN_CONTEXT_B1 0x08000
+	#define	SET_SIGN_CONTEXT_B2 0x10200 
+	#define	SET_SIGN_CONTEXT_B3 0x04000
 
 
-	#define	SET_SIGN_CONTEXT_C1 0x020000
-	#define	SET_SIGN_CONTEXT_C2 0x408000 
-	#define	SET_SIGN_CONTEXT_C3 0x010000
+	#define	SET_SIGN_CONTEXT_C1 0x080000
+	#define	SET_SIGN_CONTEXT_C2 0x102000 
+	#define	SET_SIGN_CONTEXT_C3 0x040000
 
 
-	#define	SET_SIGN_CONTEXT_D1 0x0200000
-	#define	SET_SIGN_CONTEXT_D2 0x4080000 
-	#define	SET_SIGN_CONTEXT_D3 0x0100000
+	#define	SET_SIGN_CONTEXT_D1 0x0800000
+	#define	SET_SIGN_CONTEXT_D2 0x1020000 
+	#define	SET_SIGN_CONTEXT_D3 0x0400000
 
 /*
 	#define SET_CONTEXT_1 0x028001
@@ -205,6 +205,11 @@ START_C
 	 *
 	 */
 	PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_reset_is_coded(PDC_Exception* exception, PDC_Codeblock *codeblock);
 
 STOP_C
 #endif

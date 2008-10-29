@@ -304,6 +304,7 @@ void genratestate()
 int contribution(unsigned int signi0, unsigned int sign0, unsigned int signi1, unsigned int sign1)
 {
 	int contri = 88;
+	/*
 	if(signi0 != 0 && sign0 != 0 && signi1 != 0 && sign1 != 0){
 		contri = 1;
 	}else if(signi0 != 0 && sign0 == 0 && signi1 != 0 && sign1 != 0){
@@ -323,7 +324,27 @@ int contribution(unsigned int signi0, unsigned int sign0, unsigned int signi1, u
 	}else if(signi0 == 0 && signi1 == 0){
 		contri = 0;
 	}
+	*/
 
+	if(signi0 != 0 && sign0 == 0 && signi1 != 0 && sign1 == 0){
+		contri = 1;
+	}else if(signi0 != 0 && sign0 != 0 && signi1 != 0 && sign1 == 0){
+		contri = 0;
+	}else if(signi0 == 0 && signi1 != 0 && sign1 == 0){
+		contri = 1;
+	}else if(signi0 != 0 && sign0 == 0 && signi1 != 0 && sign1 != 0){
+		contri = 0;
+	}else if(signi0 != 0 && sign0 != 0 && signi1 != 0 && sign1 != 0){
+		contri = -1;
+	}else if(signi0 == 0 && signi1 != 0 && sign1 != 0){
+		contri = -1;
+	}else if(signi0 != 0 && sign0 == 0 && signi1 == 0){
+		contri = 1;
+	}else if(signi0 != 0 && sign0 != 0 && signi1 == 0){
+		contri = -1;
+	}else if(signi0 == 0 && signi1 == 0){
+		contri = 0;
+	}
 	if(contri == 88){
 		printf("Fehler \n");
 	}
