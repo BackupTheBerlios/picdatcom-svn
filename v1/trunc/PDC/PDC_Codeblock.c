@@ -2932,10 +2932,11 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 					significant_context_size_x, significant_context_size_y, pos_street, significant_pos_shift,
 					significant_context_offset0, significant_context_offset1, significant_context_offset2,
 					significant_context_offset3, significant_context_offset4, significant_context_offset5,
-					significant_context_offset6, significant_context_offset7;
+					significant_context_offset6, significant_context_offset7, significant_context_value;
 	PDC_STATE_BIT	value_size;
 	PDC_uint8		*significant_context_base_address, *significant_context;
 	PDC_Arithmetic_entropy_decoder *decoder;
+	PDC_STATE_BIT	value_size;
 
 	value_size					= codeblock->value_size;
 	size_y						= codeblock->cy1 - codeblock->cy0;
@@ -2952,6 +2953,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 	pos_street					= codeblock->street;
 	bit_plane					= codeblock->bit_plane;
 	significant_size			= PDC_i_ceiling(size_x, 8);
+	value_size					= codeblock->value_size;
 
 	significant_context_offset0	= 0;
 	significant_context_offset1	= significant_context_offset0 + significant_context_size_y;
@@ -2961,6 +2963,18 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 	significant_context_offset5	= significant_context_offset4 + significant_context_size_y;
 	significant_context_offset6	= significant_context_offset5 + significant_context_size_y;
 	significant_context_offset7	= significant_context_offset6 + significant_context_size_y;
+
+
+	if(value_size == STATE_BIT_8){
+		value8		= codeblock->value8;
+		bit_plane	= 7 - bit_plane;
+	}else if(value_size == STATE_BIT_16){
+		value16	= codeblock->value16;
+		bit_plane	= 15 - bit_plane;
+	}else if(value_size == STATE_BIT_32){
+		value32	= codeblock->value32;
+		bit_plane	= 31 - bit_plane;
+	}
 
 	significant_pos_x_max = significant_pos_x_rest = PDC_ui_ceiling(size_x, 8);
 	if(size_x % 8 != 0){
@@ -3000,12 +3014,19 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 				if((need_coded & 0xFFFF) != 0xFFFF){
 					if((need_coded & 0x00FF) != 0x00FF){
 						if((need_coded & 0x0F) != 0x0F){
+							significant_context_value = (PDC_uint32*)(significant_context_base_address + significant_context_offset0);
 							current_bit = 0x1;
 							if((need_coded & current_bit) == 0){
 								if((first_refinement_value & current_bit) != 0){
 									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
 									if(decoder->D != 0){
-
+										if(value_size == STATE_BIT_8){
+											value8[pos_value]	|= 1 << bit_plane;
+										}else if(value_size == STATE_BIT_16){
+											value16[pos_value]	|= 1 << bit_plane;
+										}else if(value_size == STATE_BIT_32){
+											value32[pos_value]	|= 1 << bit_plane;
+										}
 									}
 								}else{
 
