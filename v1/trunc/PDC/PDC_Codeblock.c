@@ -516,8 +516,12 @@ PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *ex
 				codeblock->pass_state	= MAGNITUDE_PASS;
 				break;
 			case MAGNITUDE_PASS:
-				// codeblock->pass_state	= CLEANUP_PASS;
+				PDC_Codeblock_magnitude_decoding_pass(exception, codeblock, codeword_list->codeword);
+				codeblock->pass_state	= CLEANUP_PASS;
 				break;
+			case 76:
+				break;
+
 		}
 	}
 	return codeblock;
@@ -841,7 +845,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 									}else if(value_size == STATE_BIT_32){
 										value32[pos_value]	|= 1 << bit_plane;
 									}
-									significant |= 0x02;
+									significant |= 0x20;
 									/* Decode sign */
 									sign_context_use = ((sign_context2 >> 12) & 0xF) | ( (context >> 8) & 0xF0);
 									decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_use], codeword); 
@@ -2077,7 +2081,6 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 	}
 
 	if(extrastreet_size != 0){
-		max_street;
 		pos_street					= max_street;
 		significant_base_pos		= pos_street * size_x_bit;
 		pos_y_base					= pos_street * 4;
@@ -2113,7 +2116,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 
 			context = *((PDC_uint32*)significante_context_use);
 			/* Decode Pos A */
-			if((significant_temp & 0x1) == 0 && (context & 0xFF) != 0){
+			if((significant_temp & 0x1) == 0 && (context & 0xFF) != 0 && 0 < extrastreet_size){
 				decoder = PDC_Aed_decode_01(exception, decoder, PDK_context_states[context & 0xFF], codeword);
 				if(decoder->D != 0){
 					context1_address = ((PDC_uint32*)(significante_context_use - 1 - significante_context_size_y));
@@ -2149,7 +2152,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 
 			context = *((PDC_uint32*)significante_context_use);
 			/* Decode Pos B */
-			if((significant_temp & 0x2) == 0 && (context & 0xFF00) != 0){
+			if((significant_temp & 0x2) == 0 && (context & 0xFF00) != 0 && 1 < extrastreet_size){
 				decoder = PDC_Aed_decode_01(exception, decoder, PDK_context_states[(context & 0xFF00) >> 8], codeword);
 				if(decoder->D != 0){
 					context1_address = ((PDC_uint32*)(significante_context_use - significante_context_size_y));
@@ -2185,7 +2188,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 
 			context = *((PDC_uint32*)significante_context_use);
 			/* Decode Pos C */
-			if((significant_temp & 0x4) == 0 && (context & 0xFF0000) != 0){
+			if((significant_temp & 0x4) == 0 && (context & 0xFF0000) != 0 && 2 < extrastreet_size){
 				decoder = PDC_Aed_decode_01(exception, decoder, PDK_context_states[(context & 0xFF0000) >> 16], codeword);
 				if(decoder->D != 0){
 					context1_address = ((PDC_uint32*)(significante_context_use + 1 - significante_context_size_y));
@@ -2221,7 +2224,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 
 			context = *((PDC_uint32*)significante_context_use);
 			/* Decode Pos D */
-			if((significant_temp & 0x8) == 0 && (context & 0xFF000000) != 0){
+			if((significant_temp & 0x8) == 0 && (context & 0xFF000000) != 0 && 3 < extrastreet_size){
 				decoder = PDC_Aed_decode_01(exception, decoder, PDK_context_states[(context & 0xFF000000) >> 24], codeword);
 				if(decoder->D != 0){
 					context1_address = ((PDC_uint32*)(significante_context_use + 2 - significante_context_size_y));
@@ -2677,6 +2680,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 							}
 						}
 				}
+				pos_y = 4;
 			}
 
 			significant_value	|= (significant_value_temp << significant_pos_shift);
@@ -2933,7 +2937,8 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 					significant_context_offset0, significant_context_offset1, significant_context_offset2,
 					significant_context_offset3, significant_context_offset4, significant_context_offset5,
 					significant_context_offset6, significant_context_offset7, significant_context_value, *value32,
-					pos_value;
+					pos_value, pos_x_max, pos_x, shift_temp, sign_value_temp, significant_value_temp, 
+					is_coded_value_temp, first_refinement_value_temp, need_coded_temp, pos_y;
 	PDC_STATE_BIT	value_size;
 	PDC_uint8		*significant_context_base_address, *significant_context, *value8;
 	PDC_Arithmetic_entropy_decoder *decoder;
@@ -2979,8 +2984,9 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 
 	significant_pos_x_max = significant_pos_x_rest = PDC_ui_ceiling(size_x, 8);
 	if(size_x % 8 != 0){
-		significant_pos_x_max -= 1;
+		significant_pos_x_max	-= 1;
 	}
+	pos_x_max	= size_x;
 
 	if(value_size == STATE_BIT_8){
 		bit_plane = 7 - bit_plane;
@@ -2996,7 +3002,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 		max_street -= 1;
 	}
 
-	while(pos_street < max_street){
+	for(;pos_street < max_street; pos_street += 1){
 		pos_y_base				= 4 * pos_street;
 		sign_pos_base			= 2 * pos_street - 1;
 		significant_pos			= pos_street * significant_size;
@@ -3027,9 +3033,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 0) * (significant_pos_x * 8) + 0;
+									pos_value = (pos_street * 4 + 0) * size_x + (significant_pos_x * 8) + 0;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3051,9 +3058,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 1) * (significant_pos_x * 8) + 0;
+									pos_value = (pos_street * 4 + 1) *  size_x + (significant_pos_x * 8) + 0;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3075,9 +3083,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 2) * (significant_pos_x * 8) + 0;
+									pos_value = (pos_street * 4 + 2) *  size_x + (significant_pos_x * 8) + 0;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3099,9 +3108,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 3) * (significant_pos_x * 8) + 0;
+									pos_value = (pos_street * 4 + 3) *  size_x + (significant_pos_x * 8) + 0;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3113,7 +3123,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 							}
 						}
 						if((need_coded & 0xF0) != 0xF0){
-							*((PDC_uint32*)(significant_context_base_address + significant_context_offset1));
+							significant_context_value = *((PDC_uint32*)(significant_context_base_address + significant_context_offset1));
 							current_bit = 0x10;
 							if((need_coded & current_bit) == 0){
 								is_coded_value |= current_bit;
@@ -3125,9 +3135,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 0) * (significant_pos_x * 8) + 1;
+									pos_value = (pos_street * 4 + 0) *  size_x + (significant_pos_x * 8) + 1;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3149,9 +3160,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 1) * (significant_pos_x * 8) + 1;
+									pos_value = (pos_street * 4 + 1) * size_x + (significant_pos_x * 8) + 1;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3173,9 +3185,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 2) * (significant_pos_x * 8) + 1;
+									pos_value = (pos_street * 4 + 2) * size_x + (significant_pos_x * 8) + 1;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3197,9 +3210,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 3) * (significant_pos_x * 8) + 1;
+									pos_value = (pos_street * 4 + 3) * size_x + (significant_pos_x * 8) + 1;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3213,7 +3227,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 					}
 					if((need_coded & 0xFF00) != 0xFF00){
 						if((need_coded & 0x0F00) != 0x0F00){
-							*((PDC_uint32*)(significant_context_base_address + significant_context_offset2));
+							significant_context_value = *((PDC_uint32*)(significant_context_base_address + significant_context_offset2));
 							current_bit = 0x100;
 							if((need_coded & current_bit) == 0){
 								is_coded_value |= current_bit;
@@ -3225,9 +3239,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 0) * (significant_pos_x * 8) + 2;
+									pos_value = (pos_street * 4 + 0) * size_x + (significant_pos_x * 8) + 2;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3249,9 +3264,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 1) * (significant_pos_x * 8) + 2;
+									pos_value = (pos_street * 4 + 1) * size_x + (significant_pos_x * 8) + 2;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3273,9 +3289,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 2) * (significant_pos_x * 8) + 2;
+									pos_value = (pos_street * 4 + 2) * size_x + (significant_pos_x * 8) + 2;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3297,9 +3314,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 3) * (significant_pos_x * 8) + 2;
+									pos_value = (pos_street * 4 + 3) * size_x + (significant_pos_x * 8) + 2;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3311,7 +3329,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 							}
 						}
 						if((need_coded & 0xF000) != 0xF000){
-							*((PDC_uint32*)(significant_context_base_address + significant_context_offset3));
+							significant_context_value = *((PDC_uint32*)(significant_context_base_address + significant_context_offset3));
 							current_bit = 0x1000;
 							if((need_coded & current_bit) == 0){
 								is_coded_value |= current_bit;
@@ -3323,9 +3341,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 0) * (significant_pos_x * 8) + 3;
+									pos_value = (pos_street * 4 + 0) * size_x + (significant_pos_x * 8) + 3;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3347,9 +3366,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 1) * (significant_pos_x * 8) + 3;
+									pos_value = (pos_street * 4 + 1) * size_x + (significant_pos_x * 8) + 3;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3371,9 +3391,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 2) * (significant_pos_x * 8) + 3;
+									pos_value = (pos_street * 4 + 2) * size_x + (significant_pos_x * 8) + 3;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3395,9 +3416,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 3) * (significant_pos_x * 8) + 3;
+									pos_value = (pos_street * 4 + 3) * size_x + (significant_pos_x * 8) + 3;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3413,7 +3435,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 				if((need_coded & 0xFFFF0000) != 0xFFFF0000){
 					if((need_coded & 0x00FF0000) != 0x00FF0000){
 						if((need_coded & 0x0F0000) != 0x0F0000){
-							*((PDC_uint32*)(significant_context_base_address + significant_context_offset4));
+							significant_context_value = *((PDC_uint32*)(significant_context_base_address + significant_context_offset4));
 							current_bit = 0x10000;
 							if((need_coded & current_bit) == 0){
 								is_coded_value |= current_bit;
@@ -3425,9 +3447,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 0) * (significant_pos_x * 8) + 4;
+									pos_value = (pos_street * 4 + 0) * size_x + (significant_pos_x * 8) + 4;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3449,9 +3472,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 1) * (significant_pos_x * 8) + 4;
+									pos_value = (pos_street * 4 + 1) * size_x + (significant_pos_x * 8) + 4;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3473,9 +3497,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 2) * (significant_pos_x * 8) + 4;
+									pos_value = (pos_street * 4 + 2) * size_x + (significant_pos_x * 8) + 4;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3497,9 +3522,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 3) * (significant_pos_x * 8) + 4;
+									pos_value = (pos_street * 4 + 3) * size_x + (significant_pos_x * 8) + 4;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3511,7 +3537,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 							}
 						}
 						if((need_coded & 0xF00000) != 0xF00000){
-							*((PDC_uint32*)(significant_context_base_address + significant_context_offset5));
+							significant_context_value = *((PDC_uint32*)(significant_context_base_address + significant_context_offset5));
 							current_bit = 0x100000;
 							if((need_coded & current_bit) == 0){
 								is_coded_value |= current_bit;
@@ -3523,9 +3549,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 0) * (significant_pos_x * 8) + 5;
+									pos_value = (pos_street * 4 + 0) * size_x + (significant_pos_x * 8) + 5;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3547,9 +3574,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 1) * (significant_pos_x * 8) + 5;
+									pos_value = (pos_street * 4 + 1) * size_x + (significant_pos_x * 8) + 5;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3571,9 +3599,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 2) * (significant_pos_x * 8) + 5;
+									pos_value = (pos_street * 4 + 2) * size_x + (significant_pos_x * 8) + 5;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3595,9 +3624,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 3) * (significant_pos_x * 8) + 5;
+									pos_value = (pos_street * 4 + 3) * size_x + (significant_pos_x * 8) + 5;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3611,7 +3641,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 					}
 					if((need_coded & 0xFF000000) != 0xFF000000){
 						if((need_coded & 0x0F000000) != 0x0F000000){
-							*((PDC_uint32*)(significant_context_base_address + significant_context_offset6));
+							significant_context_value = *((PDC_uint32*)(significant_context_base_address + significant_context_offset6));
 							current_bit = 0x1000000;
 							if((need_coded & current_bit) == 0){
 								is_coded_value |= current_bit;
@@ -3623,9 +3653,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 0) * (significant_pos_x * 8) + 6;
+									pos_value = (pos_street * 4 + 0) * size_x + (significant_pos_x * 8) + 6;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3647,9 +3678,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 1) * (significant_pos_x * 8) + 6;
+									pos_value = (pos_street * 4 + 1) * size_x + (significant_pos_x * 8) + 6;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3671,9 +3703,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 2) * (significant_pos_x * 8) + 6;
+									pos_value = (pos_street * 4 + 2) * size_x + (significant_pos_x * 8) + 6;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3695,9 +3728,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 3) * (significant_pos_x * 8) + 6;
+									pos_value = (pos_street * 4 + 3) * size_x + (significant_pos_x * 8) + 6;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3709,7 +3743,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 							}
 						}
 						if((need_coded & 0xF0000000) != 0xF0000000){
-							*((PDC_uint32*)(significant_context_base_address + significant_context_offset7));
+							significant_context_value = *((PDC_uint32*)(significant_context_base_address + significant_context_offset7));
 							current_bit = 0x10000000;
 							if((need_coded & current_bit) == 0){
 								is_coded_value |= current_bit;
@@ -3721,9 +3755,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 0) * (significant_pos_x * 8) + 7;
+									pos_value = (pos_street * 4 + 0) * size_x + (significant_pos_x * 8) + 7;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3745,9 +3780,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 1) * (significant_pos_x * 8) + 7;
+									pos_value = (pos_street * 4 + 1) * size_x + (significant_pos_x * 8) + 7;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3769,9 +3805,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 2) * (significant_pos_x * 8) + 7;
+									pos_value = (pos_street * 4 + 2) * size_x + (significant_pos_x * 8) + 7;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3793,9 +3830,10 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else{
 										decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
 									}
+									first_refinement_value |= current_bit;
 								}
 								if(decoder->D != 0){
-									pos_value = (pos_street * 4 + 3) * (significant_pos_x * 8) + 7;
+									pos_value = (pos_street * 4 + 3) * size_x + (significant_pos_x * 8) + 7;
 									if(value_size == STATE_BIT_8){
 										value8[pos_value]	|= 1 << bit_plane;
 									}else if(value_size == STATE_BIT_16){
@@ -3809,12 +3847,286 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 					}
 				}
 			}
+			first_refinement[significant_pos + significant_pos_x] = first_refinement_value;
 		}
 
-		for(; significant_pos_x_rest < significant_pos_x_rest ; significant_pos_x += 1){
+		for(; significant_pos_x < significant_pos_x_rest ; significant_pos_x += 1){
+			pos_x					= significant_pos_x_max * 8;
+			shift_temp				= 0;
+			sign_value				= sign[significant_pos + significant_pos_x];
+			significant_value		= significant[significant_pos + significant_pos_x];
+			is_coded_value			= is_coded[significant_pos + significant_pos_x];
+			first_refinement_value	= first_refinement[significant_pos + significant_pos_x];
+			need_coded				= (significant_value ^ 0xFFFFFFFF) | is_coded_value;
 
+			for(;pos_x < pos_x_max; pos_x += 1, shift_temp += 4){
+				sign_value_temp				= sign_value >> shift_temp;
+				significant_value_temp		= significant_value >> shift_temp;
+				is_coded_value_temp			= is_coded_value >> shift_temp;
+				first_refinement_value_temp	= first_refinement_value >> shift_temp;
+				need_coded_temp				= need_coded >> shift_temp;
 
+				significant_context_base_address	= significant_context + (pos_x * significant_context_size_y + pos_y_base);
+
+				if((need_coded_temp & 0x0000000F) != 0x0000000F){
+					significant_context_value = *((PDC_uint32*)(significant_context_base_address));
+					current_bit = 0x00000001;
+					if((need_coded_temp & current_bit) == 0){
+						is_coded_value_temp |= current_bit;
+						if((first_refinement_value_temp & current_bit) != 0){
+							decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
+						}else{
+							if((significant_context_value & 0x000000FF) != 0){
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_1, codeword);
+							}else{
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
+							}
+							first_refinement_value |= current_bit;
+						}
+						if(decoder->D != 0){
+							pos_value = (pos_street * 4 + 0) * size_x + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+						}
+					}
+
+					current_bit = 0x00000002;
+					if((need_coded_temp & current_bit) == 0){
+						is_coded_value_temp |= current_bit;
+						if((first_refinement_value_temp & current_bit) != 0){
+							decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
+						}else{
+							if((significant_context_value & 0x0000FF00) != 0){
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_1, codeword);
+							}else{
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
+							}
+							first_refinement_value |= current_bit;
+						}
+						if(decoder->D != 0){
+							pos_value = (pos_street * 4 + 1) * size_x + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+						}
+					}
+
+					current_bit = 0x00000004;
+					if((need_coded_temp & current_bit) == 0){
+						is_coded_value_temp |= current_bit;
+						if((first_refinement_value_temp & current_bit) != 0){
+							decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
+						}else{
+							if((significant_context_value & 0x00FF0000) != 0){
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_1, codeword);
+							}else{
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
+							}
+							first_refinement_value |= current_bit;
+						}
+						if(decoder->D != 0){
+							pos_value = (pos_street * 4 + 2) * size_x + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+						}
+					}
+
+					current_bit = 0x00000008;
+					if((need_coded_temp & current_bit) == 0){
+						is_coded_value_temp |= current_bit;
+						if((first_refinement_value_temp & current_bit) != 0){
+							decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
+						}else{
+							if((significant_context_value & 0xFF000000) != 0){
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_1, codeword);
+							}else{
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
+							}
+							first_refinement_value |= current_bit;
+						}
+						if(decoder->D != 0){
+							pos_value = (pos_street * 4 + 3) * size_x + pos_x;
+							if(value_size == STATE_BIT_8){
+								value8[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_16){
+								value16[pos_value]	|= 1 << bit_plane;
+							}else if(value_size == STATE_BIT_32){
+								value32[pos_value]	|= 1 << bit_plane;
+							}
+						}
+					}
+					first_refinement_value	|= (first_refinement_value_temp & 0xF) << shift_temp;
+				}
+			}
 		}
+	}
+
+	for(;pos_street < max_street_rest; pos_street += 1){
+		pos_y_base				= 4 * pos_street;
+		sign_pos_base			= 2 * pos_street - 1;
+		significant_pos			= pos_street * significant_size;
+		significant_pos_x		= 0;
+		significant_pos_shift	= 0;
+		
+		sign_value				= sign[significant_pos + significant_pos_x];
+		significant_value		= significant[significant_pos + significant_pos_x];
+		is_coded_value			= is_coded[significant_pos + significant_pos_x];
+		first_refinement_value	= first_refinement[significant_pos + significant_pos_x];
+		need_coded				= (significant_value ^ 0xFFFFFFFF) | is_coded_value;
+		
+		for(shift_temp = 0, pos_x = 0;pos_x < pos_x_max; pos_x += 1, shift_temp += 4){
+			
+			if(shift_temp >=32){
+				first_refinement[significant_pos + significant_pos_x]	= first_refinement_value;
+
+				significant_pos_x		+= 1;
+				shift_temp				= 0;
+				sign_value				= sign[significant_pos + significant_pos_x];
+				significant_value		= significant[significant_pos + significant_pos_x];
+				is_coded_value			= is_coded[significant_pos + significant_pos_x];
+				first_refinement_value	= first_refinement[significant_pos + significant_pos_x];
+				need_coded				= (significant_value ^ 0xFFFFFFFF) | is_coded_value;
+			}
+			sign_value_temp				= sign_value >> shift_temp;
+			significant_value_temp		= significant_value >> shift_temp;
+			is_coded_value_temp			= is_coded_value >> shift_temp;
+			first_refinement_value_temp	= first_refinement_value >> shift_temp;
+			need_coded_temp				= need_coded >> shift_temp;			
+
+			significant_context_base_address	= significant_context + (pos_x * significant_context_size_y + pos_y_base);
+
+			
+			significant_context_value = *((PDC_uint32*)(significant_context_base_address));
+			
+			for(pos_y = 0; pos_y < size_y_rest; pos_y += 1){
+
+				switch(pos_y){
+					case 0:
+						current_bit = 0x00000001;
+						if((need_coded_temp & current_bit) == 0){
+							is_coded_value_temp |= current_bit;
+							if((first_refinement_value_temp & current_bit) != 0){
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
+							}else{
+								if((significant_context_value & 0x000000FF) != 0){
+									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_1, codeword);
+								}else{
+									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
+								}
+								first_refinement_value |= current_bit;
+							}
+							if(decoder->D != 0){
+								pos_value = (pos_street * 4 + 0) * size_x + pos_x;
+								if(value_size == STATE_BIT_8){
+									value8[pos_value]	|= 1 << bit_plane;
+								}else if(value_size == STATE_BIT_16){
+									value16[pos_value]	|= 1 << bit_plane;
+								}else if(value_size == STATE_BIT_32){
+									value32[pos_value]	|= 1 << bit_plane;
+								}
+							}
+						}
+						break;
+					case 1:
+						current_bit = 0x00000002;
+						if((need_coded_temp & current_bit) == 0){
+							is_coded_value_temp |= current_bit;
+							if((first_refinement_value_temp & current_bit) != 0){
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
+							}else{
+								if((significant_context_value & 0x0000FF00) != 0){
+									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_1, codeword);
+								}else{
+									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
+								}
+								first_refinement_value |= current_bit;
+							}
+							if(decoder->D != 0){
+								pos_value = (pos_street * 4 + 1) * size_x + pos_x;
+								if(value_size == STATE_BIT_8){
+									value8[pos_value]	|= 1 << bit_plane;
+								}else if(value_size == STATE_BIT_16){
+									value16[pos_value]	|= 1 << bit_plane;
+								}else if(value_size == STATE_BIT_32){
+									value32[pos_value]	|= 1 << bit_plane;
+								}
+							}
+						}
+						break;
+
+					case 2:
+						current_bit = 0x00000004;
+						if((need_coded_temp & current_bit) == 0){
+							is_coded_value_temp |= current_bit;
+							if((first_refinement_value_temp & current_bit) != 0){
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
+							}else{
+								if((significant_context_value & 0x00FF0000) != 0){
+									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_1, codeword);
+								}else{
+									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
+								}
+								first_refinement_value |= current_bit;
+							}
+							if(decoder->D != 0){
+								pos_value = (pos_street * 4 + 2) * size_x + pos_x;
+								if(value_size == STATE_BIT_8){
+									value8[pos_value]	|= 1 << bit_plane;
+								}else if(value_size == STATE_BIT_16){
+									value16[pos_value]	|= 1 << bit_plane;
+								}else if(value_size == STATE_BIT_32){
+									value32[pos_value]	|= 1 << bit_plane;
+								}
+							}
+						}
+						break;
+
+					case 3:
+						current_bit = 0x00000008;
+						if((need_coded_temp & current_bit) == 0){
+							is_coded_value_temp |= current_bit;
+							if((first_refinement_value_temp & current_bit) != 0){
+								decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_0, codeword);
+							}else{
+								if((significant_context_value & 0xFF000000) != 0){
+									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_1, codeword);
+								}else{
+									decoder = PDC_Aed_decode_01(exception, decoder, MAGNITUDE_CONTEXT_2, codeword);
+								}
+								first_refinement_value |= current_bit;
+							}
+							if(decoder->D != 0){
+								pos_value = (pos_street * 4 + 3) * size_x + pos_x;
+								if(value_size == STATE_BIT_8){
+									value8[pos_value]	|= 1 << bit_plane;
+								}else if(value_size == STATE_BIT_16){
+									value16[pos_value]	|= 1 << bit_plane;
+								}else if(value_size == STATE_BIT_32){
+									value32[pos_value]	|= 1 << bit_plane;
+								}
+							}
+						}
+						break;
+					
+				}
+			}
+			first_refinement_value	|= (first_refinement_value_temp & 0xF) << shift_temp;
+		}
+		first_refinement[significant_pos + significant_pos_x]	= first_refinement_value;
 	}
 	return codeblock;
 }
