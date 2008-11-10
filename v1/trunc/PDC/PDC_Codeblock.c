@@ -508,7 +508,28 @@ PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *ex
 				codeblock = PDC_Codeblock_cleanup_decoding_pass(exception, codeblock, codeword_list->codeword);
 				codeblock = PDC_Codeblock_reset_is_coded(exception, codeblock);
 				codeblock->bit_plane += 1;
-
+				if(codeblock->value_size == STATE_BIT_8){
+					if(codeblock->bit_plane >= 8){
+						PDC_Codeblock_change_value_size_up(exception, codeblock);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							return NULL;
+						}
+					}
+				}else if(codeblock->value_size == STATE_BIT_16){
+					if(codeblock->bit_plane >= 16){
+						PDC_Codeblock_change_value_size_up(exception, codeblock);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							return NULL;
+						}
+					}
+				}else if(codeblock->value_size == STATE_BIT_32){
+					if(codeblock->bit_plane >= 32){
+						PDC_Codeblock_change_value_size_up(exception, codeblock);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							return NULL;
+						}
+					}
+				}
 				codeblock->pass_state	= SIGNIFICANCE_PASS;
 				break;
 			case SIGNIFICANCE_PASS:
@@ -2092,6 +2113,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 		pos_y_base					= pos_street * 4;
 		sign_context_base_address	= codeblock->sign_context + (2 * pos_street) - 1;
 
+		significant_pos_x = 8;
 		while(pos_x < size_x){
 			if(significant_pos_x >= 8){
 				significant_pos_x	= 0;
@@ -2260,11 +2282,6 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 			*((PDC_uint32*)(sign_context_base_address1 - sign_context_size_y))	= sign_context1;
 			*((PDC_uint32*)(sign_context_base_address1))						= sign_context2;
 			*((PDC_uint32*)(sign_context_base_address1 + sign_context_size_y))	= sign_context3;
-
-
-
-
-
 
 			significant		|= (significant_temp << shift);
 			is_coded		|= (is_coded_temp << shift);
@@ -4131,7 +4148,59 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 	return codeblock;
 }
 
+/*
+ *
+ */
+PDC_Codeblock* PDC_Codeblock_change_value_size_up(PDC_Exception* exception, PDC_Codeblock *codeblock)
+{
+	PDC_uint32	size_x, size_y, size_1, pos, pos_temp;
+	PDC_uint16	*value16, *value32_temp;
+	PDC_uint8	*value8, *value16_temp;
+	
+	size_x		= codeblock->cx1 - codeblock->cx0;
+	size_y		= codeblock->cy1 - codeblock->cy0;
 
+	if(codeblock->state_bit	== STATE_BIT_8){
+		size_1 = size_x * size_y;
+		codeblock->value16 = malloc(sizeof(PDC_uint16) * size_1);
+		if(codeblock->value16 == NULL){
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+			return NULL;
+		};	
+		codeblock->state_bit = STATE_BIT_16;
+		value16_temp	= (PDC_uint8*)codeblock->value16;
+		value8			= codeblock->value8;
 
+		for(pos = 0, pos_temp = 1; pos < size_1; pos += 1, pos_temp +=2){
+			value16_temp[pos_temp] = value8[pos];
+		}
+		free(codeblock->value8);
+		codeblock->value8 = NULL;
+	}
+
+	if(codeblock->state_bit	== STATE_BIT_16){
+		size_1 = size_x * size_y;
+		codeblock->value32 = malloc(sizeof(PDC_uint32) * size_1);
+		if(codeblock->value16 == NULL){
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+			return NULL;
+		};	
+		codeblock->state_bit	= STATE_BIT_32;
+		value32_temp			= (PDC_uint16*)codeblock->value32;
+		value16					= codeblock->value16;
+
+		for(pos = 0, pos_temp = 1; pos < size_1; pos += 1, pos_temp +=2){
+			value32_temp[pos_temp] = value16[pos];
+		}
+		free(codeblock->value16);
+		codeblock->value16 = NULL;
+	}
+
+	if(codeblock->state_bit	== STATE_BIT_32){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+		return NULL;
+	}
+	return codeblock;
+}
 STOP_C
 

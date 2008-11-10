@@ -211,5 +211,9 @@ START_C
 	 */
 	PDC_Codeblock* PDC_Codeblock_reset_is_coded(PDC_Exception* exception, PDC_Codeblock *codeblock);
 
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_change_value_size_up(PDC_Exception* exception, PDC_Codeblock *codeblock);
 STOP_C
 #endif
