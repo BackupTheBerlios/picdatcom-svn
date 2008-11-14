@@ -25,8 +25,15 @@ START_C
 PDC_int PDC_i_ceiling(PDC_int a, PDC_int b)
 {
 	PDC_int i = a/b;
-	if(a%b != 0){
-		i += 1;
+	if( a < 0 && b < 0){		
+		if(a%b != 0){
+			i += 1;
+		}
+		
+	}else if( a > 0 && b > 0){
+		if(a%b != 0){
+			i += 1;
+		}
 	}
 	return i;	
 }
@@ -34,6 +41,16 @@ PDC_int PDC_i_ceiling(PDC_int a, PDC_int b)
 PDC_int PDC_i_floor( PDC_int a, PDC_int b)
 {
 	PDC_int i = a/b;
+
+	if( a < 0 && b > 0){
+		if(a%b != 0){
+			i -= 1;
+		}	
+	}else if( a > 0 && b < 0){
+		if(a%b != 0){
+			i -= 1;
+		}
+	}
 
 	return i;
 }

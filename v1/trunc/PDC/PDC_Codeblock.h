@@ -194,6 +194,11 @@ START_C
 	/*
 	 *
 	 */
+	PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode_01( PDC_Exception *exception, PDC_Codeblock *codeblock);
+
+	/*
+	 *
+	 */
 	PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword);
 
 	/*
@@ -215,5 +220,10 @@ START_C
 	 *
 	 */
 	PDC_Codeblock* PDC_Codeblock_change_value_size_up(PDC_Exception* exception, PDC_Codeblock *codeblock);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_set_End_of_Buffer(PDC_Exception* exception, PDC_Codeblock *codeblock);
 STOP_C
 #endif

@@ -78,8 +78,16 @@ START_C
 													PDC_Precinct *precinct,
 													PDC_uint layer_pos);
 
+	/*
+	 *
+	 */
+	PDC_Precinct* PDC_Precinct_decode_package_02(	PDC_Exception *exception,
+													PDC_Precinct *precinct);
 
-
-
+	/*
+	 *
+	 */
+	PDC_Precinct* PDC_Precinct_set_End_of_Buffer(	PDC_Exception *exception,
+													PDC_Precinct *precinct);
 STOP_C
 #endif

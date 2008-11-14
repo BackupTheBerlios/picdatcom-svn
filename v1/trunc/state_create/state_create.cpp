@@ -58,7 +58,7 @@ int offset = 2;
 
 int _tmain(int argc, _TCHAR* argv[])
 {
-	int t, g, z;
+	int t, g;
 	FILE *file;
 
 	file = fopen("states.txt", "w");
@@ -96,7 +96,7 @@ int _tmain(int argc, _TCHAR* argv[])
 
 	for( t = 0; t < 256; ){
 		for( g = 0; g < 16; g++){
-			fprintf(file," %2d",states[1][t]  + offset);
+			fprintf(file," %2d",states[2][t]  + offset);
 			if(t != 255){
 				fprintf(file,",");
 			}else{

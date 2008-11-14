@@ -97,6 +97,16 @@ START_C
 											PDC_uint resolution_pos,
 											PDC_uint precinct_pos,
 											PDC_uint layer_pos);
+
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_decode_package_03(	PDC_Exception* exception,
+											PDC_Tile* tile,
+											PDC_uint component_pos,
+											PDC_uint resolution_pos,
+											PDC_uint precinct_pos);
+
 	/*
 	 *
 	 */

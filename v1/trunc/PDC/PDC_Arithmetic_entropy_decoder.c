@@ -220,7 +220,8 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 	}
 
 	count += 1;
-	fprintf(DEBUG_FILE,"%10d  %7d %4d %9X %9X \n",count, context, D, C, A);
+	if(count < 500000)
+		fprintf(DEBUG_FILE,"%10d  %7d %4d %9X %9X \n",count, context, D, C, A);
 	
 	return return_decoder;
 }
