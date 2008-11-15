@@ -31,7 +31,7 @@ START_C
 	typedef struct str_PDC_Decoder PDC_Decoder;
 	typedef enum{PDC_DATA_END, PDC_DATA_MORE_DATA}PDC_DECODER_DATA_END;
 	typedef enum{PDC_UNKNOW, PDC_MAIN_HEADER, PDC_TILE_PART_HEADER, PDC_MAIN_HEADER_SIZ, PDC_ERROR} PDC_READING_STATE;
-	typedef enum{PDC_WAIT_FOR_DATA, PDC_HAS_DATA} PDC_DATA_SITUATION;
+	typedef enum{PDC_WAIT_FOR_DATA, PDC_HAS_DATA, PDC_NO_DATA} PDC_DATA_SITUATION;
 
 	#include "PDC_Buffer.h"
 	#include "PDC_Picture.h"
@@ -93,7 +93,7 @@ START_C
 	 * 
 	 */
 	DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception,
-									PDC_Decoder* decoder);
+										PDC_Decoder* decoder);
 
 	/*
 	 * 

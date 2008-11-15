@@ -218,11 +218,11 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 		return_decoder->B			= B;
 		return_decoder->D			= D;
 	}
-
+/*
 	count += 1;
-	if(count < 500000)
+	if(count >= 2000000 && count < 2500000)
 		fprintf(DEBUG_FILE,"%10d  %7d %4d %9X %9X \n",count, context, D, C, A);
-	
+*/	
 	return return_decoder;
 }
 

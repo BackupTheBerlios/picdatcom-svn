@@ -384,12 +384,17 @@ PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
 			case PDC_SOD:
 				PDC_Tile_read_SOD_01(exception, tile, buffer);
 				break;
+			case PDC_EOC:
+				decoder->data_situation = PDC_NO_DATA;
+				break;
+			case PDC_SOC:
+				break;
 			default:
 				PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 				return decoder;
 				break;
 		}
-	}while(symbol != PDC_SOC);
+	}while(symbol != PDC_SOC && symbol != PDC_EOC);
 	
 	return decoder;
 }

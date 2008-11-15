@@ -179,7 +179,7 @@ PDC_Buffer* PDC_Buffer_read_uint16(PDC_Exception* exception, PDC_Buffer* buffer,
 	PDC_uint16 temp_value = 0;
 	*value = 0;
 
-	if(buffer->read_byte_pos + 2 < buffer->write_byte_pos){
+	if(buffer->read_byte_pos + 1 < buffer->write_byte_pos){
 		temp_value = buffer->buffer[buffer->read_byte_pos];
 		buffer->read_byte_pos += 1;
 		*value = temp_value << 8;
@@ -190,8 +190,7 @@ PDC_Buffer* PDC_Buffer_read_uint16(PDC_Exception* exception, PDC_Buffer* buffer,
 		
 
 
-	}else{
-		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+	}else{		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return buffer;
 	}
 

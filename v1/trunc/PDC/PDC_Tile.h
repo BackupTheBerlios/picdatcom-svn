@@ -141,6 +141,12 @@ START_C
 										PDC_uint precinct_pos,
 										PDC_uint layer_pos);
 
+	/*
+	 *
+	 */
+	void PDC_Tile_dequantization_01(	PDC_Exception* exception,
+										PDC_Tile* tile);
+
 	/* 
 	 *
 	 

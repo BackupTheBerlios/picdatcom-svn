@@ -2782,13 +2782,14 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 				significant_value		= significant[significant_pos + significant_pos_x];
 				is_coded_value			= is_coded[significant_pos + significant_pos_x];
 				significant_pos_shift	= 0;
+
 			}
 		}
-		
+		/*
 		significant_value	|= (significant_value_temp << significant_pos_shift);
 		sign_value			|= (sign_value_temp << significant_pos_shift) ;
 		is_coded_value		|= (is_coded_value_temp << significant_pos_shift);
-
+		*/
 		sign[significant_pos + significant_pos_x]			= sign_value;
 		significant[significant_pos + significant_pos_x]	= significant_value;
 		is_coded[significant_pos + significant_pos_x]		= is_coded_value;
