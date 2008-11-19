@@ -165,6 +165,10 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 	codeblock->cx1							= 0;
 	codeblock->cy0							= 0;
 	codeblock->cy1							= 0;
+	codeblock->mx0							= 0;
+	codeblock->mx1							= 0;
+	codeblock->my0							= 0;
+	codeblock->my1							= 0;
 	codeblock->subband						= NULL;
 	codeblock->codeblock_inclusion			= PDC_false;
 	codeblock->zero_bit_plane_inclusion		= PDC_false;
@@ -241,6 +245,11 @@ PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subba
 	if(codeblock->cy0 > codeblock->cy1){
 		codeblock->cy0 = codeblock->cy1;
 	}
+
+	codeblock->mx0 = subband->mx0 + codeblock->cx0 - subband->tbx0;
+	codeblock->mx1 = subband->mx0 + codeblock->cx1 - subband->tbx0;
+	codeblock->my0 = subband->my0 + codeblock->cy0 - subband->tby0;
+	codeblock->my1 = subband->my0 + codeblock->cy1 - subband->tby0;
 
 	codeblock->read_codeword	= NULL;
 	codeblock->write_codeword	= new_PDC_Codeword_List_01(exception);
@@ -4310,5 +4319,14 @@ PDC_Codeblock* PDC_Codeblock_set_End_of_Buffer(PDC_Exception* exception, PDC_Cod
 	}
 	return codeblock;
 }
+
+/*
+ *
+ */
+PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_Codeblock *codeblock)
+{
+
+}
+
 STOP_C
 

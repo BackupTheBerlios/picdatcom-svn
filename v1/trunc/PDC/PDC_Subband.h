@@ -44,6 +44,11 @@ START_C
 		PDC_uint		tbx1;
 		PDC_uint		tby0;
 		PDC_uint		tby1;
+
+		PDC_uint32		mx0;
+		PDC_uint32		mx1;
+		PDC_uint32		my0;
+		PDC_uint32		my1;
 	};
 	
 	/*

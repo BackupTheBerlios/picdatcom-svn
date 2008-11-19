@@ -50,6 +50,7 @@ START_C
 
 		PDC_Pointer_Buffer*	tile_component;
 		PDC_COD_Segment*	cod_segment;
+		PDC_QCD_Segment*	qcd_segment;
 	};
 
 	/*

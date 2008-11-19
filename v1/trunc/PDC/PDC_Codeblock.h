@@ -84,6 +84,10 @@ START_C
 		PDC_uint32		cx1;
 		PDC_uint32		cy0;
 		PDC_uint32		cy1;
+		PDC_uint32		mx0;	
+		PDC_uint32		mx1;
+		PDC_uint32		my0;
+		PDC_uint32		my1;
 
 		PDC_bool		codeblock_inclusion;
 		PDC_bool		zero_bit_plane_inclusion;
@@ -225,5 +229,11 @@ START_C
 	 *
 	 */
 	PDC_Codeblock* PDC_Codeblock_set_End_of_Buffer(PDC_Exception* exception, PDC_Codeblock *codeblock);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_Codeblock *codeblock);
+
 STOP_C
 #endif

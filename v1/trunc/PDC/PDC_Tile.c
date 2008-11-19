@@ -39,6 +39,7 @@ PDC_Tile* new_PDC_Tile_01(PDC_Exception* exception, PDC_uint32 t, PDC_Picture* p
 	}
 	tile->tile_component	= NULL;
 	tile->cod_segment		= NULL;
+	tile->qcd_segment		= NULL;
 	tile->tile_part_counter	= 0;
 
 	tile->p			= PDC_i_ceiling(t, picture->numYtiles);

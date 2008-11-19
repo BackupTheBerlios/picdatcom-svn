@@ -69,6 +69,10 @@ START_C
 		PDC_uint			precinct_y0;
 		PDC_uint			precinct_y1;
 
+		PDC_uint32			mx0;
+		PDC_uint32			mx1;
+		PDC_uint32			my0;
+		PDC_uint32			my1;
 	};
 
 	/*

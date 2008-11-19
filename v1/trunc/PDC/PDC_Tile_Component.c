@@ -54,13 +54,19 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 
 	tile_component->tile		= tile;
 	tile_component->resolution	= NULL;
+	tile_component->qcd_segment	= NULL;
 
 	tile_component->tcx0	= PDC_i_ceiling(tile->tx0, siz_segment_component->XRsiz);
 	tile_component->tcx1	= PDC_i_ceiling(tile->tx1, siz_segment_component->XRsiz);
 	tile_component->tcy0	= PDC_i_ceiling(tile->ty0, siz_segment_component->YRsiz);
 	tile_component->tcy1	= PDC_i_ceiling(tile->ty1, siz_segment_component->YRsiz);
 	
-
+	tile_component->mx0		= tile->tx0 - siz_segment->XOsiz;
+	tile_component->mx1		= tile->tx1 - siz_segment->XOsiz;
+	tile_component->my0		= tile->ty0 - siz_segment->YOsiz;
+	tile_component->my1		= tile->ty1 - siz_segment->YOsiz;
+	tile_component->msizex	= tile->picture->sizeX;
+	tile_component->msizey	= tile->picture->sizeY;
 
 	return tile_component;
 }
@@ -121,6 +127,16 @@ PDC_Resolution* PDC_Tile_Component_get_Resolution(	PDC_Exception* exception,
 	resolution = PDC_Resolution_get_resolution(exception, tile_component->resolution, resolution_pos);
 
 	return resolution;
+}
+
+/*
+ *
+ */
+PDC_Resolution* PDC_Tile_Component_inverse_quantization(PDC_Exception* exception,
+														PDC_Tile_Component* tile_component)
+{
+	
+
 }
 
 STOP_C

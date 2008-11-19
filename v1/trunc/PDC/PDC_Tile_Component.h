@@ -42,7 +42,14 @@ START_C
 		PDC_uint32			tcy1;
 		PDC_Tile*			tile;
 		PDC_float32*		memory;
+		PDC_uint32			mx0;
+		PDC_uint32			mx1;
+		PDC_uint32			my0;
+		PDC_uint32			my1;
+		PDC_uint32			msizex;
+		PDC_uint32			msizey;
 		PDC_COD_Segment*	cod_segment;
+		PDC_QCD_Segment*	qcd_segment;
 		PDC_Resolution*		resolution;
 	};
 
@@ -75,6 +82,12 @@ START_C
 	PDC_Resolution* PDC_Tile_Component_get_Resolution(	PDC_Exception* exception,
 														PDC_Tile_Component* tile_component,
 														PDC_uint resolution_pos);
+
+	/*
+	 *
+	 */
+	PDC_Resolution* PDC_Tile_Component_inverse_quantization(PDC_Exception* exception,
+															PDC_Tile_Component* tile_component);
 STOP_C
 
 #endif

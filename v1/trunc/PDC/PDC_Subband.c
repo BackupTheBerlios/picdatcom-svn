@@ -41,6 +41,11 @@ PDC_Subband* new_PDC_Subband_01(PDC_Exception* exception)
 	subband->tby0			= 0;
 	subband->tby1			= 0;
 	subband->type			= SUBBAND_UNKNOW;
+	subband->mx0			= 0;
+	subband->mx1			= 0;
+	subband->my0			= 0;
+	subband->my1			= 0;
+
 	return subband;
 }
 
@@ -53,7 +58,7 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
 	PDC_uint			twohighnb;
 	PDC_uint			twohighnbminone;
 	PDC_uint			tcx0, tcx1, tcy0, tcy1;
-	PDC_uint			pos_x, pos_y, pos;
+	PDC_uint			pos_x, pos_y, pos, sizex, sizey;
 	PDC_uint			number_codeblocks_x, number_codeblocks_y;
 	PDC_Codeblock**		codeblocks;
 
@@ -98,7 +103,37 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
 	subband->tbx1	= PDC_i_ceiling(tcx1, twohighnb);
 	subband->tby0	= PDC_i_ceiling(tcy0, twohighnb);
 	subband->tby1	= PDC_i_ceiling(tcy1, twohighnb);
+	sizex			= subband->tbx1 - subband->tbx0;
+	sizey			= subband->tby1 - subband->tby0;
 
+	switch(subband->type){
+		case SUBBAND_LL:
+			subband->mx0	= resolution->mx0;
+			subband->my0	= resolution->my0;
+			subband->mx1	= subband->mx0 + sizex;
+			subband->my1	= subband->my0 + sizey;
+			break;
+		case SUBBAND_HL:
+			subband->mx1	= resolution->mx1;
+			subband->my0	= resolution->my0;
+			subband->mx0	= subband->mx1 - sizex;
+			subband->my1	= subband->my0 + sizey;
+			break;
+		case SUBBAND_LH:
+			subband->mx0	= resolution->mx0;
+			subband->my1	= resolution->my1;
+			subband->mx1	= subband->mx0 + sizex;
+			subband->my0	= subband->my1 - sizey;
+			break;
+		case SUBBAND_HH:
+			subband->mx1	= resolution->mx1;
+			subband->my1	= resolution->my1;
+			subband->mx0	= subband->mx1 - sizex;
+			subband->my0	= subband->my1 - sizey;
+			break;
+		default:
+			break;
+	}
 	number_codeblocks_x	= resolution->codeblock_x1 - resolution->codeblock_x0;
 	number_codeblocks_y = resolution->codeblock_y1 - resolution->codeblock_y0;
 	subband->number_codeblocks	=  number_codeblocks_x * number_codeblocks_y;
