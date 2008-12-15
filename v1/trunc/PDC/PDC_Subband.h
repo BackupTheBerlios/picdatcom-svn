@@ -65,6 +65,12 @@ START_C
 	 *
 	 */
 	PDC_Subband* delete_PDC_Subband(PDC_Exception* exception, PDC_Subband* subband);
+	
+	/*
+	 *
+	 */
+	PDC_Subband* PDC_Subband_inverse_quantization(	PDC_Exception* exception,
+													PDC_Subband* subband);
 
 
 STOP_C

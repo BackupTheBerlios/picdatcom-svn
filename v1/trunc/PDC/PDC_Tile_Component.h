@@ -48,9 +48,11 @@ START_C
 		PDC_uint32			my1;
 		PDC_uint32			msizex;
 		PDC_uint32			msizey;
-		PDC_COD_Segment*	cod_segment;
-		PDC_QCD_Segment*	qcd_segment;
-		PDC_Resolution*		resolution;
+
+		PDC_COD_Segment*			cod_segment;
+		PDC_QCD_Segment*			qcd_segment;
+		PDC_Resolution*				resolution;
+		PDC_SIZ_Segment_Componente*	siz_segment_component;
 	};
 
 	/*
@@ -69,6 +71,13 @@ START_C
 	PDC_Tile_Component* PDC_Tile_Component_set_COD_Segment(	PDC_Exception* exception, 
 															PDC_Tile_Component* tile_component,
 															PDC_COD_Segment* cod_segment);
+															
+	/*
+	 *
+	 */
+	PDC_Tile_Component* PDC_Tile_Component_set_QCD_Segment(	PDC_Exception* exception, 
+															PDC_Tile_Component* tile_component,
+															PDC_QCD_Segment* qcd_segment);
 
 	/*
 	 *
@@ -86,7 +95,7 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Resolution* PDC_Tile_Component_inverse_quantization(PDC_Exception* exception,
+	PDC_Tile_Component* PDC_Tile_Component_inverse_quantization(PDC_Exception* exception,
 															PDC_Tile_Component* tile_component);
 STOP_C
 

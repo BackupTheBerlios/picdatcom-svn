@@ -40,6 +40,7 @@ START_C
 #define MASK_MANTISSA		0x007F
 #define MASK_EXPONENT		0xF800
 #define SHIFT_EXPONENT		11
+#define SHIFT_GUARD_BITS	5
 	
 	struct str_PDC_QCD_Segment{
 		PDC_bool				succesfull_read;

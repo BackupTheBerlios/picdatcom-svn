@@ -133,5 +133,12 @@ START_C
 	PDC_Precinct* PDC_Resolution_get_precinct(	PDC_Exception*	exception,
 												PDC_Resolution*	resolution,
 												PDC_uint		precinct_pos);
+												
+	/*
+	 *
+	 */
+	PDC_Resolution* PDC_Resolution_inverse_quantization(PDC_Exception* exception,
+														PDC_Resolution* resolution);	
+														
 STOP_C
 #endif

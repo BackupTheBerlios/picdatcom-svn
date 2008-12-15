@@ -4325,7 +4325,71 @@ PDC_Codeblock* PDC_Codeblock_set_End_of_Buffer(PDC_Exception* exception, PDC_Cod
  */
 PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_Codeblock *codeblock)
 {
+	PDC_QCD_Segment *qcd_segment;
+	PDC_uint	Mb, G, eb, ub, Rb, Nl, nb, r, pos;
+	PDC_float32	delta_b;
 
+	Nl	= codeblock->subband->resolution->tile_component->cod_segment->number_of_decompostion_levels;
+	nb	= codeblock->subband->resolution->n;
+	r	= codeblock->subband->resolution->r;
+	Rb	= codeblock->subband->resolution->tile_component->siz_segment_component->Ssiz + 1;
+
+	if(codeblock->subband->resolution->tile_component->qcd_segment != NULL){
+		qcd_segment = codeblock->subband->resolution->tile_component->qcd_segment;
+	}else{
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+		return codeblock;
+	}
+
+	G = (qcd_segment->Sqcd & MASK_GUARD_BITS) >> SHIFT_GUARD_BITS;
+	
+	if((qcd_segment->Sqcd & MASK_QUANTIZATION) != 0){
+		if((qcd_segment->Sqcd & SCALAR_DERIVED) == SCALAR_DERIVED){
+			eb	= qcd_segment->SPqcd[0] >> SHIFT_EXPONENT;
+			ub	= qcd_segment->SPqcd[0] & MASK_MANTISSA;
+			eb	= eb - Nl + nb;
+		}else if((qcd_segment->Sqcd & SCALAR_EXPOUNDED) == SCALAR_EXPOUNDED){
+			if( r == 0){
+				pos = 0;
+			}else{
+				pos = (r - 1) * 3 + 1;
+				if(codeblock->subband->type == SUBBAND_LH){
+					pos += 1;
+				}else if( codeblock->subband->type == SUBBAND_HH){
+					pos += 2;
+				}
+				eb	= qcd_segment->SPqcd[pos] >> SHIFT_EXPONENT;
+				ub	= qcd_segment->SPqcd[pos] & MASK_MANTISSA;
+			}
+		}else{
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+			return codeblock;
+		}
+		switch(codeblock->subband->type){
+			case SUBBAND_LL:
+				Rb += 0;
+				break;
+			case SUBBAND_LH:
+				Rb += 1;
+				break;
+			case SUBBAND_HL:
+				Rb += 1;
+				break;
+			case SUBBAND_HH:
+				Rb += 2;
+				break;
+		}
+		Mb = G + eb - 1;
+		if((Rb - eb) >= 0){
+			delta_b = (PDC_float32)(1 << (Rb - eb));
+		}else{
+			delta_b = 1.0f / (PDC_float32)(1 << (-1 * (Rb - eb)));
+		}
+		
+		delta_b *= (1.0f + (PDC_float32)ub/ 2048.0f);
+
+	}
+	return codeblock;
 }
 
 STOP_C

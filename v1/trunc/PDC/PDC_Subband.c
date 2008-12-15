@@ -171,5 +171,26 @@ PDC_Subband* delete_PDC_Subband(PDC_Exception* exception, PDC_Subband* subband)
 	return NULL;
 }
 
+/*
+ *
+ */
+PDC_Subband* PDC_Subband_inverse_quantization(	PDC_Exception* exception,
+												PDC_Subband* subband)
+{
+	PDC_uint pos_codeblock, num_codeblock;
+	PDC_Codeblock* codeblock;
+	
+	num_codeblock = subband->number_codeblocks;
+	
+	for(pos_codeblock = 0; pos_codeblock < num_codeblock; pos_codeblock += 1){
+		codeblock = subband->codeblocks[pos_codeblock];
+		PDC_Codeblock_inverse_quantization(exception, codeblock);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return subband;
+		}	
+	}
+	return subband;
+}												
+
 STOP_C
 

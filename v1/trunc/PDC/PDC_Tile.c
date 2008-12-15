@@ -134,6 +134,11 @@ PDC_Tile* PDC_Tile_read_SOD_01(	PDC_Exception* exception,
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return NULL;
 	}
+	
+	PDC_Tile_dequantization_01(exception, tile);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return NULL;
+	}
 	return tile;
 }
 
@@ -167,6 +172,35 @@ PDC_Tile* PDC_Tile_set_COD_Segment(	PDC_Exception* exception,
 	return tile;
 }
 
+/*
+ *
+ */
+PDC_Tile* PDC_Tile_set_QCD_Segment(	PDC_Exception* exception, 
+									PDC_Tile* tile, 
+									PDC_QCD_Segment* qcd_segment)
+{
+	PDC_uint	number, pos;
+	PDC_Tile_Component* tile_component;
+
+	tile->qcd_segment = qcd_segment;
+
+	number = tile->picture->siz_segment->Csiz;
+	for(pos = 0; pos < number; pos += 1){
+		tile_component = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, pos);	
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_Tile(exception, tile);
+			return NULL;
+		}
+
+		PDC_Tile_Component_set_QCD_Segment(	exception, tile_component, qcd_segment);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_Tile(exception, tile);
+			return NULL;
+		}	
+	}
+
+	return tile;
+}
 
 /*
  *
@@ -454,6 +488,30 @@ PDC_Tile* PDC_Tile_decode_package_03(	PDC_Exception* exception,
 	}
 
 	return tile;
-
 }
+
+
+/*
+ *
+ */
+PDC_Tile* PDC_Tile_dequantization_01(	PDC_Exception* exception,
+										PDC_Tile* tile)
+{
+	PDC_uint Csiz, Csiz_pos;
+	PDC_Tile_Component* tile_component;
+		
+	Csiz = tile->picture->siz_segment->Csiz;
+	for(Csiz_pos = 0; Csiz_pos < Csiz; Csiz_pos += 1){
+		tile_component = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, Csiz_pos);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return tile;
+		}
+		PDC_Tile_Component_inverse_quantization(exception, tile_component);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return tile;
+		}
+	}
+	return tile;								
+}
+
 STOP_C

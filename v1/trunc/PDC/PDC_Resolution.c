@@ -335,6 +335,32 @@ PDC_Precinct* PDC_Resolution_get_precinct(	PDC_Exception*	exception,
 	return resolution->precinct[precinct_pos];
 }
 
-
+/*
+ *
+ */
+PDC_Resolution* PDC_Resolution_inverse_quantization(PDC_Exception* exception,
+													PDC_Resolution* resolution)
+{
+	PDC_uint num_subband, pos_subband;
+	
+	if(resolution->r != 0){
+		PDC_Resolution_inverse_quantization(exception, resolution->resolution_small);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return resolution;
+		}
+		num_subband = 3;
+	}else{
+		num_subband = 1;
+	}
+	
+	for(pos_subband = 0; pos_subband < num_subband; pos_subband += 1){
+		PDC_Subband_inverse_quantization(exception, resolution->subband[pos_subband]);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return resolution;
+		}		
+	}
+	
+	return resolution;
+}
 STOP_C
 

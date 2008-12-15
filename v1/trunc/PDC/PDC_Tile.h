@@ -145,8 +145,8 @@ START_C
 	/*
 	 *
 	 */
-	void PDC_Tile_dequantization_01(	PDC_Exception* exception,
-										PDC_Tile* tile);
+	PDC_Tile* PDC_Tile_dequantization_01(	PDC_Exception* exception,
+											PDC_Tile* tile);
 
 	/* 
 	 *
@@ -157,6 +157,14 @@ START_C
 										PDC_uint resolution_pos,
 										PDC_uint precinct_pos);
 	*/									
+	
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_set_QCD_Segment(	PDC_Exception* exception, 
+										PDC_Tile* tile, 
+										PDC_QCD_Segment* qcd_segment);
+	
 STOP_C
 #endif
 	

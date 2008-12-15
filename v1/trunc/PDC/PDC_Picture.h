@@ -80,6 +80,15 @@ START_C
 	PDC_Picture* PDC_Picture_set_COD_Segment(	PDC_Exception* exception,
 												PDC_Picture* picture,
 												PDC_COD_Segment* cod_segment);
+												
+	/*
+	 *
+	 */
+	PDC_Picture* PDC_Picture_set_QCD_Segment(	PDC_Exception* exception,
+												PDC_Picture* picture,
+												PDC_QCD_Segment* qcd_segment);
+												
+									
 	
 STOP_C
 #endif

@@ -167,4 +167,33 @@ PDC_Picture* PDC_Picture_set_COD_Segment(	PDC_Exception* exception,
 	}		
 	return picture;
 }
+
+/*
+ *
+ */
+PDC_Picture* PDC_Picture_set_QCD_Segment(	PDC_Exception* exception,
+											PDC_Picture* picture,
+											PDC_QCD_Segment* qcd_segment)
+{
+	PDC_uint32 num_tiles, pos;
+	PDC_Tile* tile;
+	num_tiles = picture->numXtiles * picture->numYtiles;
+
+	for(pos = 0; pos < num_tiles; pos += 1){
+		tile = PDC_Pointer_Buffer_get_pointer(exception, picture->tiles, pos);	
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_Tile(exception, tile);
+			return NULL;
+		}
+
+		PDC_Tile_set_QCD_Segment(	exception, tile, qcd_segment);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_Tile(exception, tile);
+			return NULL;
+		}	
+	}		
+	return picture;
+
+}
+
 STOP_C

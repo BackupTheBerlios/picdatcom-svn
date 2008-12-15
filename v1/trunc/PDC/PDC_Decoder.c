@@ -293,6 +293,13 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 			case PDC_QCD:
 				if(qcd_segment == NULL){
 					qcd_segment = new_PDC_QCD_Segment_02(exception, buffer, cod_segment);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						return decoder;
+					}	
+					PDC_Picture_set_QCD_Segment(exception, decoder->picture, qcd_segment);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						return decoder;
+					}						
 				}else{
 					PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 					return decoder;
