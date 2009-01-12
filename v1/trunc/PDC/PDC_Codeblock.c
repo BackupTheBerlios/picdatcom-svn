@@ -22,6 +22,8 @@
 
 START_C
 
+extern FILE* DEBUG_FILE;
+
 /*
  * H0 H1 V0 V1 D0 D1 D2 D3
  * 87654321
@@ -190,6 +192,7 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 	codeblock->pass_state					= CLEANUP_PASS;
 	codeblock->pos_x						= 0;
 	codeblock->init_decoder					= PDC_false;
+	codeblock->zero_bitplanes				= 0;
 
 
 	codeblock->read_codeword	= new_PDC_Codeword_List_01( exception);
@@ -209,14 +212,14 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
  */
 PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subband, PDC_uint pos_x, PDC_uint pos_y)
 {
-	PDC_Codeblock*	codeblock;
-	PDC_uint		work;
+	PDC_Codeblock*		codeblock;
+	PDC_uint			work;
 
 	PDC_Resolution* resolution	= subband->resolution;
 	PDC_uint		size_x		= 1 << resolution->xcb;
 	PDC_uint		size_y		= 1 << resolution->ycb;
 	PDC_uint		num_layer	= subband->resolution->tile_component->cod_segment->number_of_layer;
-
+	
 	codeblock = new_PDC_Codeblock_01(exception);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		delete_PDC_Codeblock(exception, codeblock);
@@ -582,6 +585,10 @@ PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode_01( PDC_Exception 
 				case CLEANUP_PASS:
 					codeblock = PDC_Codeblock_cleanup_decoding_pass(exception, codeblock, codeword_list->codeword);
 					codeblock = PDC_Codeblock_reset_is_coded(exception, codeblock);
+					codeblock->pass_state	= SIGNIFICANCE_PASS;
+					break;
+				case SIGNIFICANCE_PASS:
+				
 					codeblock->bit_plane += 1;
 					if(codeblock->value_size == STATE_BIT_8){
 						if(codeblock->bit_plane >= 8){
@@ -605,9 +612,6 @@ PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode_01( PDC_Exception 
 							}
 						}
 					}
-					codeblock->pass_state	= SIGNIFICANCE_PASS;
-					break;
-				case SIGNIFICANCE_PASS:
 					PDC_Codeblock_significance_decoding_pass(exception, codeblock, codeword_list->codeword);
 					codeblock->pass_state	= MAGNITUDE_PASS;
 					break;
@@ -3107,14 +3111,6 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 	}
 	pos_x_max	= size_x;
 
-	if(value_size == STATE_BIT_8){
-		bit_plane = 7 - bit_plane;
-	}else if(value_size == STATE_BIT_16){
-		bit_plane = 15 - bit_plane;
-	}else if(value_size == STATE_BIT_32){
-		bit_plane = 31 - bit_plane;
-	}
-
 	max_street_rest = max_street;
 	size_y_rest = size_y % 4;
 	if(size_y_rest != 0){	
@@ -4257,8 +4253,8 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 PDC_Codeblock* PDC_Codeblock_change_value_size_up(PDC_Exception* exception, PDC_Codeblock *codeblock)
 {
 	PDC_uint32	size_x, size_y, size_1, pos, pos_temp;
-	PDC_uint16	*value16, *value32_temp;
-	PDC_uint8	*value8, *value16_temp;
+	PDC_uint16	*value16, *value16_temp, *value32_temp;
+	PDC_uint8	*value8;
 	
 	size_x		= codeblock->cx1 - codeblock->cx0;
 	size_y		= codeblock->cy1 - codeblock->cy0;
@@ -4271,14 +4267,15 @@ PDC_Codeblock* PDC_Codeblock_change_value_size_up(PDC_Exception* exception, PDC_
 			return NULL;
 		};	
 		codeblock->state_bit = STATE_BIT_16;
-		value16_temp	= (PDC_uint8*)codeblock->value16;
+		value16_temp	= codeblock->value16;
 		value8			= codeblock->value8;
 
-		for(pos = 0, pos_temp = 1; pos < size_1; pos += 1, pos_temp +=2){
-			value16_temp[pos_temp] = value8[pos];
+		for(pos = 0, pos_temp = 0; pos < size_1; pos += 1, pos_temp +=1){
+			value16_temp[pos_temp] = (PDC_uint16)value8[pos] << 8;
 		}
 		free(codeblock->value8);
 		codeblock->value8 = NULL;
+		codeblock->value_size = STATE_BIT_16;
 	}else if(codeblock->state_bit	== STATE_BIT_16){
 		size_1 = size_x * size_y;
 		codeblock->value32 = malloc(sizeof(PDC_uint32) * size_1);
@@ -4295,6 +4292,7 @@ PDC_Codeblock* PDC_Codeblock_change_value_size_up(PDC_Exception* exception, PDC_
 		}
 		free(codeblock->value16);
 		codeblock->value16 = NULL;
+		codeblock->value_size = STATE_BIT_32;
 	}else if(codeblock->state_bit	== STATE_BIT_32){
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return NULL;
@@ -4320,15 +4318,42 @@ PDC_Codeblock* PDC_Codeblock_set_End_of_Buffer(PDC_Exception* exception, PDC_Cod
 	return codeblock;
 }
 
+
+#ifdef _DEBUG
+	int g = 0;
+	#define OUTPUT(float_wert) if(g++ < 50000000)fprintf(DEBUG_FILE,"%13f \n",float_wert);
+#else
+	#define OUTPUT(float_wert)
+#endif
+
 /*
  *
  */
 PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_Codeblock *codeblock)
 {
 	PDC_QCD_Segment *qcd_segment;
-	PDC_uint	Mb, G, eb, ub, Rb, Nl, nb, r, pos;
-	PDC_float32	delta_b;
-
+	PDC_Tile_Component* tile_component;
+	PDC_uint	Mb, G, eb, ub, Rb, Nl, nb, r, posx, posy, bit_pos_soll, bit_pos_ist, pos;
+	PDC_float32	delta_b, delta_b_negativ, *mOut, extra_add;
+	PDC_uint32 *sign, sign_value;
+	
+	PDC_uint mPos, mPlus, inPos, street_pos, street_pos_rest, sign_pos, sign_size;
+	PDC_STATE_BIT	value_size;
+	PDC_uint8		*value8;
+	PDC_uint16		*value16;
+	PDC_uint32		*value32, size_x, size_y;
+	
+	tile_component	= codeblock->subband->resolution->tile_component;
+	size_y			= codeblock->cy1 - codeblock->cy0;
+	size_x			= codeblock->cx1 - codeblock->cx0;
+	value_size		= codeblock->value_size;
+	value8			= NULL;
+	value16			= NULL;
+	value32			= NULL;
+	extra_add		= 0.0f;
+	sign_size		= PDC_i_ceiling(size_x, 8);
+	sign			= codeblock->sign;
+	
 	Nl	= codeblock->subband->resolution->tile_component->cod_segment->number_of_decompostion_levels;
 	nb	= codeblock->subband->resolution->n;
 	r	= codeblock->subband->resolution->r;
@@ -4358,9 +4383,10 @@ PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_
 				}else if( codeblock->subband->type == SUBBAND_HH){
 					pos += 2;
 				}
-				eb	= qcd_segment->SPqcd[pos] >> SHIFT_EXPONENT;
-				ub	= qcd_segment->SPqcd[pos] & MASK_MANTISSA;
 			}
+			eb	= qcd_segment->SPqcd[pos] >> SHIFT_EXPONENT;
+			ub	= qcd_segment->SPqcd[pos] & MASK_MANTISSA;
+		
 		}else{
 			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 			return codeblock;
@@ -4380,13 +4406,124 @@ PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_
 				break;
 		}
 		Mb = G + eb - 1;
-		if((Rb - eb) >= 0){
+		bit_pos_soll = Mb - codeblock->zero_bitplanes;
+		if((Rb >= eb) ){
 			delta_b = (PDC_float32)(1 << (Rb - eb));
 		}else{
-			delta_b = 1.0f / (PDC_float32)(1 << (-1 * (Rb - eb)));
+			delta_b = 1.0f / (PDC_float32)(1 << ((eb - Rb)));
 		}
 		
 		delta_b *= (1.0f + (PDC_float32)ub/ 2048.0f);
+		
+		if(bit_pos_soll >= (codeblock->bit_plane + 2)){
+			extra_add = (PDC_float32)(1 << (bit_pos_soll - 2 - codeblock->bit_plane)) * delta_b;
+		}else{
+			extra_add = 0.0f;
+		}
+					
+		mOut	= tile_component->memory;
+		mPos	= codeblock->mx0 + codeblock->my0 * tile_component->msizex;
+		mPlus	= tile_component->msizex - size_x;
+		inPos	= 0;
+		extra_add = 0.0f;
+		if(value_size == STATE_BIT_8){
+			#define VALUE value8
+			VALUE = codeblock->VALUE;
+			bit_pos_ist = 8;			
+			if(bit_pos_ist < bit_pos_soll){
+				delta_b *= 1 << (bit_pos_soll - bit_pos_ist);
+			}else{
+				delta_b /= 1 << (bit_pos_ist - bit_pos_soll);
+			}
+			delta_b_negativ = -1.0f * delta_b;
+			for(posy = 0; posy < size_y; posy += 1, mPos += mPlus){
+				street_pos		= posy / 4;
+				street_pos_rest = posy % 4;
+				sign_pos		= street_pos * sign_size;
+				for(posx = 0; posx < size_x; posx += 1, mPos += 1, inPos += 1){
+					if( posx % 8 == 0){
+						sign_value = sign[sign_pos + posx / 8];
+					}
+					if(VALUE[inPos] != 0){
+						//if((sign_value & (0x80000000 >> ((posx % 8) * 4) + street_pos_rest)) == 0){
+						if((sign_value & (0x00000001 << ((posx % 8) * 4) + street_pos_rest)) == 0){
+							mOut[mPos] = (float)VALUE[inPos] * delta_b + extra_add;
+						}else{
+							mOut[mPos] = (float)VALUE[inPos] * delta_b_negativ + extra_add;
+						}
+					}else{
+						mOut[mPos] = .0f;
+					}
+					OUTPUT(mOut[mPos])
+				}
+			}
+			#undef VALUE
+		}else if(value_size == STATE_BIT_16){
+			#define VALUE value16
+			VALUE	= codeblock->VALUE;
+			bit_pos_ist = 16;
+			if(bit_pos_ist < bit_pos_soll){
+				delta_b *= 1 << (bit_pos_soll - bit_pos_ist);
+			}else{
+				delta_b /= 1 << (bit_pos_ist - bit_pos_soll);
+			}
+			delta_b_negativ = -1.0f * delta_b;
+			for(posy = 0; posy < size_y; posy += 1, mPos += mPlus){
+				street_pos		= posy / 4;
+				street_pos_rest = posy % 4;
+				sign_pos		= street_pos * sign_size;
+				for(posx = 0; posx < size_x; posx += 1, mPos += 1, inPos += 1){
+					if( posx % 8 == 0){
+						sign_value = sign[sign_pos + posx / 8];
+					}
+					if(VALUE[inPos] != 0){
+						//if((sign_value & (0x80000000 >> ((posx % 8) * 4) + street_pos_rest)) == 0){
+						if((sign_value & (0x00000001 << ((posx % 8) * 4) + street_pos_rest)) == 0){
+							mOut[mPos] = (float)VALUE[inPos] * delta_b + extra_add;
+						}else{
+							mOut[mPos] = (float)VALUE[inPos] * delta_b_negativ - extra_add;
+						}
+					}else{
+						mOut[mPos] = .0f;
+					}
+					OUTPUT(mOut[mPos])
+				}
+			}
+			#undef VALUE			
+		}else if(value_size == STATE_BIT_32){
+			#define VALUE value32
+			VALUE	= codeblock->VALUE;
+			bit_pos_ist = 32;
+			if(bit_pos_ist < bit_pos_soll){
+				delta_b *= 1 << (bit_pos_soll - bit_pos_ist);
+			}else{
+				delta_b /= 1 << (bit_pos_ist - bit_pos_soll);
+			}
+			delta_b_negativ = -1.0f * delta_b;
+			for(posy = 0; posy < size_y; posy += 1, mPos += mPlus){
+				street_pos		= posy / 4;
+				street_pos_rest = posy % 4;
+				sign_pos		= street_pos * sign_size;
+				for(posx = 0; posx < size_x; posx += 1, mPos += 1, inPos += 1){
+					if( posx % 8 == 0){
+						sign_value = sign[sign_pos + posx / 8];
+					}
+					if(VALUE[inPos] != 0){
+						//if((sign_value & (0x80000000 >> ((posx % 8) * 4) + street_pos_rest)) == 0){
+						if((sign_value & (0x00000001 << ((posx % 8) * 4) + street_pos_rest)) == 0){
+							mOut[mPos] = (float)VALUE[inPos] * delta_b + extra_add;
+						}else{
+							mOut[mPos] = (float)VALUE[inPos] * delta_b_negativ - extra_add;
+						}
+					}else{
+						mOut[mPos] = .0f;
+					}
+					OUTPUT(mOut[mPos])
+				}
+			}
+			#undef VALUE
+		}		
+		mPos = codeblock->mx0;
 
 	}
 	return codeblock;

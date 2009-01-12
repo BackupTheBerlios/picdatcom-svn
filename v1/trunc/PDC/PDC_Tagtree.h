@@ -139,6 +139,14 @@ START_C
 	 */
 	void PDC_Tagtree_pop(	PDC_Exception* exception,
 							PDC_Tagtree* tagtree);
+							
+	/*
+	 *
+	 */
+	PDC_int PDC_Tagtree_get_value(		PDC_Exception* exception,
+										PDC_Tagtree* tagtree,
+										PDC_uint pos_x,
+										PDC_uint pos_y);
 
 STOP_C
 #endif

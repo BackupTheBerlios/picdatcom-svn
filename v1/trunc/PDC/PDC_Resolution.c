@@ -158,6 +158,9 @@ PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 
 	PDC_uint32		precinct_size_x;
 	PDC_uint32		precinct_size_y;
+	PDC_uint32		precinct_number_x;
+	PDC_uint32		precinct_number_y;
+	PDC_uint32		precinct_number_xy;
 	PDC_uint32		precinct_size_xy;
 	PDC_uint32		precinct_pos_x;
 	PDC_uint32		precinct_pos_y;
@@ -210,16 +213,16 @@ PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 	in_resolution->precinct_y0	= PDC_i_floor(in_resolution->try0, precinct_size_y);
 	in_resolution->precinct_y1	= PDC_i_ceiling(in_resolution->try1, precinct_size_y);	
 
-	precinct_size_x		= in_resolution->precinct_x1 - in_resolution->precinct_x0;
-	precinct_size_y		= in_resolution->precinct_y1 - in_resolution->precinct_y0;
-	precinct_size_xy	= precinct_size_x * precinct_size_y;
+	precinct_number_x		= in_resolution->precinct_x1 - in_resolution->precinct_x0;
+	precinct_number_y		= in_resolution->precinct_y1 - in_resolution->precinct_y0;
+	precinct_number_xy		= precinct_number_x * precinct_number_y;
 
 	in_resolution->mx0	= tile_component->mx0;
-	in_resolution->mx1	= tile_component->mx0 + precinct_size_x;
+	in_resolution->mx1	= tile_component->mx0 + in_resolution->trx1 - in_resolution->trx0;
 	in_resolution->my0	= tile_component->my0;
-	in_resolution->my1	= tile_component->my0 + precinct_size_y;
+	in_resolution->my1	= tile_component->my0 + in_resolution->try1 - in_resolution->try0;
 	
-	in_resolution->precinct = malloc(sizeof(PDC_Precinct*) * precinct_size_xy);
+	in_resolution->precinct = malloc(sizeof(PDC_Precinct*) * precinct_number_xy);
 	if(in_resolution->precinct == NULL){
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return in_resolution;

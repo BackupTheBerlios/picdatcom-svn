@@ -437,5 +437,24 @@ void PDC_Tagtree_pop(	PDC_Exception* exception,
 	}
 }
 
+/*
+ *
+ */
+PDC_int PDC_Tagtree_get_value(		PDC_Exception* exception,
+									PDC_Tagtree* tagtree,
+									PDC_uint pos_x,
+									PDC_uint pos_y)
+{
+	PDC_Tagtree_item*	item;
+	PDC_int				value = 0;
+	
+	if(pos_x < tagtree->size_x[0] && pos_y < tagtree->size_y[0]){
+		item	= &(tagtree->item[0][pos_x][pos_y]);
+		value	= item->value;
+	}else{
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+	}
+	return value;
 
+}
 STOP_C

@@ -72,6 +72,7 @@ START_C
 	#include "PDC_Tile_Component.h"
 	#include "PDC_COD_Segment.h"
 
+
 	struct str_PDC_Codeblock{
 		PDC_Subband*		subband;
 		PDC_Codeword_List*	read_codeword;
@@ -91,6 +92,8 @@ START_C
 
 		PDC_bool		codeblock_inclusion;
 		PDC_bool		zero_bit_plane_inclusion;
+		
+		PDC_uint32		zero_bitplanes;
 
 		/*
 		 * Coefficient bit modeling variable

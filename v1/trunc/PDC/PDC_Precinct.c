@@ -275,6 +275,20 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 								return precinct;
 							}	
 							codeblock->zero_bit_plane_inclusion	= PDC_true;
+							codeblock->zero_bitplanes			= PDC_Tagtree_get_value(	exception,
+																							precinct->zero_bitplane[pos_subband],
+																							pos_x,
+																							pos_y);
+							if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+								PDC_Buffer_pop_state(exception, buffer);
+								PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[0]);
+								PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[1]);
+								PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[2]);
+								PDC_Tagtree_pop(exception, precinct->zero_bitplane[0]);
+								PDC_Tagtree_pop(exception, precinct->zero_bitplane[1]);
+								PDC_Tagtree_pop(exception, precinct->zero_bitplane[2]);
+								return precinct;
+							}	
 						}
 						number_of_codingpasses = PDC_Buffer_get_number_of_codingpasses(exception, buffer);
 						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){

@@ -58,7 +58,7 @@ PDC_QCD_Segment* new_PDC_QCD_Segment_02(PDC_Exception* exception,
 	}
 
 	qcd_segment = PDC_QCD_Segment_read_buffer(exception, qcd_segment, buffer, cod_segment);
-	return NULL;
+	return qcd_segment;
 }
 
 /*

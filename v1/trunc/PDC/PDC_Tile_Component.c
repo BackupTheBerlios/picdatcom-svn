@@ -146,7 +146,7 @@ PDC_Resolution* PDC_Tile_Component_get_Resolution(	PDC_Exception* exception,
  *
  */
 PDC_Tile_Component* PDC_Tile_Component_inverse_quantization(PDC_Exception* exception,
-														PDC_Tile_Component* tile_component)
+															PDC_Tile_Component* tile_component)
 {
 	PDC_Resolution_inverse_quantization(exception,tile_component->resolution);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
