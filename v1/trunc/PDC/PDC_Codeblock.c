@@ -4319,7 +4319,7 @@ PDC_Codeblock* PDC_Codeblock_set_End_of_Buffer(PDC_Exception* exception, PDC_Cod
 }
 
 
-#ifdef _DEBUG
+#ifdef _DEBUG_OUT
 	int g = 0;
 	#define OUTPUT(float_wert) if(g++ < 50000000)fprintf(DEBUG_FILE,"%13f \n",float_wert);
 #else

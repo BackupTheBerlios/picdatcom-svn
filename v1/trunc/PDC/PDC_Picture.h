@@ -87,7 +87,18 @@ START_C
 	PDC_Picture* PDC_Picture_set_QCD_Segment(	PDC_Exception* exception,
 												PDC_Picture* picture,
 												PDC_QCD_Segment* qcd_segment);
-												
+		
+	/*
+	 *
+	 */
+	PDC_uint32 PDC_Picture_get_width(	PDC_Exception *excption,
+										PDC_Picture *picture);
+										
+	/*
+	 *
+	 */
+	PDC_uint32 PDC_Picture_get_height(	PDC_Exception *excption,
+										PDC_Picture *picture);			
 									
 	
 STOP_C

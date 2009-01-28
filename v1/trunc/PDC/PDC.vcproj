@@ -44,7 +44,7 @@
 				InlineFunctionExpansion="0"
 				EnableIntrinsicFunctions="false"
 				FavorSizeOrSpeed="0"
-				AdditionalIncludeDirectories="&quot;$(SolutionDir)\extern\Win32\pthreads.2&quot;"
+				AdditionalIncludeDirectories="C:\Programme\Java\jdk1.6.0_10\include\win32;C:\Programme\Java\jdk1.6.0_10\include;&quot;$(SolutionDir)\extern\Win32\pthreads.2&quot;"
 				PreprocessorDefinitions="WIN32;_DEBUG;_WINDOWS;_USRDLL;PDC_EXPORTSLE;_CRT_SECURE_NO_WARNINGS"
 				MinimalRebuild="true"
 				BasicRuntimeChecks="3"
@@ -213,6 +213,10 @@
 				>
 			</File>
 			<File
+				RelativePath=".\PDC_Java_Junction.c"
+				>
+			</File>
+			<File
 				RelativePath=".\PDC_Parameter.c"
 				>
 			</File>
@@ -308,6 +312,10 @@
 			</File>
 			<File
 				RelativePath=".\PDC_Exception.h"
+				>
+			</File>
+			<File
+				RelativePath=".\PDC_Java_Junction.h"
 				>
 			</File>
 			<File

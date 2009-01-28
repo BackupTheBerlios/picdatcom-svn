@@ -139,6 +139,11 @@ PDC_Tile* PDC_Tile_read_SOD_01(	PDC_Exception* exception,
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return NULL;
 	}
+	
+	PDC_Tile_inverse_transformation(exception, tile);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return NULL;
+	}
 	return tile;
 }
 
@@ -512,6 +517,30 @@ PDC_Tile* PDC_Tile_dequantization_01(	PDC_Exception* exception,
 		}
 	}
 	return tile;								
+}
+
+/*
+ *
+ */
+PDC_Tile* PDC_Tile_inverse_transformation(	PDC_Exception* exception,
+											PDC_Tile* tile)
+{
+	PDC_uint Csiz, Csiz_pos;
+	PDC_Tile_Component* tile_component;
+		
+	Csiz = tile->picture->siz_segment->Csiz;
+	for(Csiz_pos = 0; Csiz_pos < Csiz; Csiz_pos += 1){
+		tile_component = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, Csiz_pos);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return tile;
+		}
+		PDC_Tile_Component_inverse_transformation(exception, tile_component);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return tile;
+		}
+	}
+	return tile;		
+
 }
 
 STOP_C

@@ -67,12 +67,18 @@ START_C
 		PDC_READING_STATE	reading_state;
 		PDC_DATA_SITUATION	data_situation;
 		PDC_Tile*			current_tile;
+		PDC_Exception*		exception;
 	};
 	
 	/*
 	 * 
 	 */
 	DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception);
+	
+	/*
+	 * 
+	 */
+	DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath);
 
 	/*
 	 * 

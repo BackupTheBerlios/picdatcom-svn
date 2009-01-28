@@ -32,6 +32,7 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 	PDC_SIZ_Segment*			siz_segment;
 	PDC_SIZ_Segment_Componente*	siz_segment_component;
 
+	PDC_uint32 maxSize = 0;
 
 	tile_component			= NULL;
 	picture					= tile->picture;
@@ -56,6 +57,7 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 	tile_component->resolution				= NULL;
 	tile_component->qcd_segment				= NULL;
 	tile_component->siz_segment_component	= siz_segment_component;
+	tile_component->transformer_97_decoder	= NULL;
 
 	tile_component->tcx0	= PDC_i_ceiling(tile->tx0, siz_segment_component->XRsiz);
 	tile_component->tcx1	= PDC_i_ceiling(tile->tx1, siz_segment_component->XRsiz);
@@ -69,6 +71,12 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 	tile_component->msizex	= tile->picture->sizeX;
 	tile_component->msizey	= tile->picture->sizeY;
 
+	maxSize = max_uint32(tile_component->mx1 - tile_component->mx0, tile_component->my1 - tile_component->my0);
+	tile_component->transformer_97_decoder = new_PDC_Transformation_97_decoder(exception, maxSize);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return NULL;
+	}
+	
 	return tile_component;
 }
 
@@ -154,5 +162,27 @@ PDC_Tile_Component* PDC_Tile_Component_inverse_quantization(PDC_Exception* excep
 	}
 	return tile_component;
 }
+
+
+/*
+ *
+ */
+PDC_Tile_Component* PDC_Tile_Component_inverse_transformation(	PDC_Exception* exception,
+																PDC_Tile_Component* tile_component)
+{
+	if((tile_component->cod_segment->multiple_component_transformation & MULTIPLE_TRANSFORMATION) != 0){
+		if((tile_component->cod_segment->transformation & TRANSFORMATION_REVERSIBLE) != 0){
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+			return tile_component;
+		}else{
+			PDC_Resolution_inverse_transformation_97(exception, tile_component->resolution);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return tile_component;
+			}
+		}
+	}
+	return tile_component;
+}
+																		
 
 STOP_C

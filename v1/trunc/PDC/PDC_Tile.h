@@ -164,6 +164,13 @@ START_C
 	PDC_Tile* PDC_Tile_set_QCD_Segment(	PDC_Exception* exception, 
 										PDC_Tile* tile, 
 										PDC_QCD_Segment* qcd_segment);
+											
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_inverse_transformation(	PDC_Exception* exception,
+												PDC_Tile* tile);
+
 	
 STOP_C
 #endif

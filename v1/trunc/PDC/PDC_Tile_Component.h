@@ -23,6 +23,7 @@
 
 #include <stdlib.h>
 #include "PDC_Parameter.h"
+#include "PDC_Transformation_97_decoder.h"
 
 START_C
 
@@ -49,10 +50,11 @@ START_C
 		PDC_uint32			msizex;
 		PDC_uint32			msizey;
 
-		PDC_COD_Segment*			cod_segment;
-		PDC_QCD_Segment*			qcd_segment;
-		PDC_Resolution*				resolution;
-		PDC_SIZ_Segment_Componente*	siz_segment_component;
+		PDC_COD_Segment*				cod_segment;
+		PDC_QCD_Segment*				qcd_segment;
+		PDC_Resolution*					resolution;
+		PDC_SIZ_Segment_Componente*		siz_segment_component;
+		PDC_Transformation_97_decoder*	transformer_97_decoder;
 	};
 
 	/*
@@ -97,6 +99,14 @@ START_C
 	 */
 	PDC_Tile_Component* PDC_Tile_Component_inverse_quantization(PDC_Exception* exception,
 															PDC_Tile_Component* tile_component);
+
+
+	/*
+	 *
+	 */
+	PDC_Tile_Component* PDC_Tile_Component_inverse_transformation(	PDC_Exception* exception,
+																	PDC_Tile_Component* tile_component);
+																	
 STOP_C
 
 #endif

@@ -40,6 +40,8 @@ DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 	decoder->in_data_save	= NULL;
 	decoder->picture		= NULL;
 	decoder->current_tile	= NULL;
+	
+	decoder->exception		= exception;
 
 
 	decoder->in_data = new_PDC_Buffer_1( exception, PDC_FIRST_LENGTH);
@@ -57,6 +59,62 @@ DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 	decoder->reading_state	= PDC_UNKNOW;
 	decoder->data_situation	= PDC_WAIT_FOR_DATA;
 
+	return decoder;
+}
+
+
+/*
+ * 
+ */
+DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
+{
+	PDC_Decoder	*decoder		= NULL;
+	PDC_Exception *exception	= NULL;
+	FILE *fp					= NULL;
+	unsigned int read_byte		= 0;
+	unsigned int data_read_plus	= 1048576;
+	unsigned char*	data		= NULL;
+	
+	
+	data = malloc(data_read_plus);
+	if(data == NULL){
+		return NULL;
+	}
+	
+	fp = fopen(filepath, "rb");
+	if(fp == NULL){
+		return NULL;
+	}	
+	
+	exception	= new_PDC_Exception(); 
+	if(exception == NULL){
+		return NULL;
+	}
+	
+	decoder		= new_PDC_Decoder(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Decoder(exception, decoder);
+		free(data);
+		fclose(fp);
+		return NULL;
+	}
+	
+	do{
+		read_byte = fread(data, 1, data_read_plus, fp); 
+		PDC_Decoder_add_Data_01(exception, decoder, data, read_byte, PDC_DATA_MORE_DATA);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_Decoder(exception, decoder);
+			free(data);
+			fclose(fp);
+			return NULL;
+		}
+
+	}while(read_byte > 0) ;
+	fclose(fp);
+	free(data);
+	PDC_Decoder_add_Data_01(exception, decoder, NULL, 0, PDC_DATA_END);
+	PDC_Decoder_decode(exception, decoder);
+	
 	return decoder;
 }
 

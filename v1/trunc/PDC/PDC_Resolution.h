@@ -32,6 +32,7 @@ START_C
 	#include "PDC_Subband.h"
 	#include "PDC_COD_Segment.h"
 	#include "PDC_Precinct.h"
+	#include "PDC_Transformation_97_decoder.h"
 
 	struct str_PDC_Resolution
 	{
@@ -139,6 +140,12 @@ START_C
 	 */
 	PDC_Resolution* PDC_Resolution_inverse_quantization(PDC_Exception* exception,
 														PDC_Resolution* resolution);	
+														
+	/*
+	 *
+	 */
+	PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* exception,
+																PDC_Resolution* resolution);	
 														
 STOP_C
 #endif

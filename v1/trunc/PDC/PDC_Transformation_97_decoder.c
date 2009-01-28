@@ -22,13 +22,20 @@
 
 START_C
 
-
+/*
 float alpha	= -1.586134342059924f;
 float beta	= -0.052980118572961f;
 float gamma	=  0.882911075530934f;
 float delta	=  0.443506852043971f;
 float K		=  1.230174104914001f; 
 float K1	=  1.0f/1.230174104914001f;
+*/
+float alpha	= -1.586134342f;
+float beta	= -0.05298011854f;
+float gamma	= 0.8829110762f;
+float delta	= 0.4435068522f;
+float K1	= 0.8128930655f;
+float K		= 1.230174106f;
 
 /*
  *
@@ -355,7 +362,7 @@ PDC_Transformation_97_decoder* PDC_td_start(	PDC_Exception* exception,
 			if(out_size % 2 == 0){
 				i_help1 = 0;
 				out_1		= out_start;
-				out_1end	= out_size * out_plus;
+				out_1end	= out_size * out_plus + out_start;
 				out_plus2	= 2 * out_plus;
 				for(i_help2 = 0;out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
 					out[out_1] = orange[i_help2];
@@ -368,7 +375,7 @@ PDC_Transformation_97_decoder* PDC_td_start(	PDC_Exception* exception,
 			}else{
 				i_help1 = 0;
 				out_1		= out_start;
-				out_1end	= out_size * out_plus;
+				out_1end	= out_size * out_plus  + out_start;
 				out_plus2	= 2 * out_plus;
 				for(i_help2 = 0;out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
 					out[out_1] = orange[i_help2];
@@ -383,28 +390,28 @@ PDC_Transformation_97_decoder* PDC_td_start(	PDC_Exception* exception,
 			if(out_size % 2 == 0){
 				i_help1 = 0;
 				out_1		= out_start + out_plus;
-				out_1end	= out_size * out_plus;
+				out_1end	= out_size * out_plus  + out_start;
 				out_plus2	= 2 * out_plus;
 				for(i_help2 = 1;out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
 					out[out_1] = orange[i_help2];
 				}
 
 				out_1		= out_start ;
-				out_1end	= out_size * out_plus;
+				out_1end	= out_size * out_plus  + out_start;
 				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
 					out[out_1] = green[i_help2];
 				}
 			}else{
 				i_help1 = 0;
 				out_1		= out_start + out_plus;
-				out_1end	= out_size * out_plus;
+				out_1end	= out_size * out_plus  + out_start;
 				out_plus2	= 2 * out_plus;
 				for(i_help2 = 1;out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
 					out[out_1] = orange[i_help2];
 				}
 
 				out_1		= out_start ;
-				out_1end	= out_size * out_plus;
+				out_1end	= out_size * out_plus + out_start;
 				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
 					out[out_1] = green[i_help2];
 				}

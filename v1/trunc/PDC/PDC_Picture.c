@@ -196,4 +196,63 @@ PDC_Picture* PDC_Picture_set_QCD_Segment(	PDC_Exception* exception,
 
 }
 
+
+/*
+ *
+ */
+PDC_uint32 PDC_Picture_get_width(	PDC_Exception *exception,
+									PDC_Picture *picture)
+{
+	PDC_uint32 width				= 0;
+	PDC_SIZ_Segment *siz_segment	= NULL;
+	
+	if(exception == NULL){
+		return width;
+	}
+	
+	if(picture == NULL){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NULL_POINTER, __LINE__, __FILE__);
+		return width;
+	}
+	
+	if(picture->siz_segment == NULL){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NULL_POINTER, __LINE__, __FILE__);
+		return width;	
+	}
+	siz_segment = picture->siz_segment;
+	
+	width = siz_segment->Xsiz - siz_segment->XOsiz;
+	
+	return width;
+}
+									
+/*
+ *
+ */
+PDC_uint32 PDC_Picture_get_height(	PDC_Exception *exception,
+									PDC_Picture *picture)
+{
+	PDC_uint32 height				= 0;
+	PDC_SIZ_Segment *siz_segment	= NULL;
+	
+	if(exception == NULL){
+		return height;
+	}
+	
+	if(picture == NULL){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NULL_POINTER, __LINE__, __FILE__);
+		return height;
+	}
+	
+	if(picture->siz_segment == NULL){
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NULL_POINTER, __LINE__, __FILE__);
+		return height;	
+	}
+	siz_segment = picture->siz_segment;
+	
+	height = siz_segment->Ysiz - siz_segment->YOsiz;
+		
+	return height;
+}
+
 STOP_C
