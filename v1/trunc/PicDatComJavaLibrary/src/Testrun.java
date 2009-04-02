@@ -3,6 +3,7 @@
  * and open the template in the editor.
  */
 
+import java.awt.image.BufferedImage;
 import PicDatCom.*;
 /**
  *
@@ -11,6 +12,7 @@ import PicDatCom.*;
 public class Testrun {
 
     PicDatComImage image;
+    BufferedImage bimage;
     
     String testfile = "C:\\Dokumente und Einstellungen\\uwe_work\\Eigene Dateien\\Visual Studio 2008\\Projects\\PicDatCom\\prototype\\bdk\\image.jpc";
     
@@ -19,7 +21,8 @@ public class Testrun {
     }
     
     Testrun(){
-        image = new PicDatComImage(testfile);
+        image   = new PicDatComImage(testfile);
+        bimage  = image.getdirectImage(); 
         
         System.out.println("Ich lebe");
     }

@@ -8,6 +8,11 @@ package PicDatCom;
 import java.awt.image.ComponentColorModel;
 import java.awt.image.DataBuffer;
 import java.awt.color.ColorSpace;
+import java.awt.image.WritableRaster;
+import java.awt.image.DataBufferFloat;
+import java.awt.image.BufferedImage;
+import java.awt.image.DataBufferInt;
+
 
 /**
  *
@@ -23,6 +28,9 @@ public class PicDatComImage{
     
     private long pointer = 0;
     
+    private WritableRaster  raster;
+    private DataBufferFloat databuffer;
+    
     private static native long create_structur(String path);
     
     private static native long delete_structur(long pointer);
@@ -31,7 +39,9 @@ public class PicDatComImage{
     
     private static native int get_height(long pointer);
     
-    private static native float[] get_RGB(float[] RGB);
+    private static native float[] get_RGB( long pointer, float[] RGB);
+    
+    private static native int[] get_RGB( long pointer, int[] RGB);
     
     private int width;
     
@@ -49,14 +59,32 @@ public class PicDatComImage{
         height  = get_height(pointer);
         size    = width * height;
         
-        System.out.println("height = " + height +"\nwidth = " + width);
-        /*
-        colormodel = new ComponentColorModel(   ColorSpace.getInstance(ColorSpace.CS_sRGB), 
-                                                false,false, ComponentColorModel.OPAQUE,
-                                                DataBuffer.TYPE_FLOAT);                                                  
-         */
+
     }
     
+    public BufferedImage getImage(){
+       BufferedImage image;
+       
+       colormodel = new ComponentColorModel(   ColorSpace.getInstance(ColorSpace.CS_sRGB), 
+                                                false,false, ComponentColorModel.OPAQUE,
+                                                DataBuffer.TYPE_FLOAT);                                                  
+        raster = colormodel.createCompatibleWritableRaster(width, width); 
+        databuffer = (DataBufferFloat)raster.getDataBuffer();
+        get_RGB(pointer, databuffer.getData());
+        
+        image = new BufferedImage(colormodel, raster, false, null);
+        
+        return image;
+    }
     
-    
+    public BufferedImage getdirectImage(){
+       BufferedImage image;    
+       DataBufferInt databufferint;
+       
+       image = new BufferedImage(width, height, BufferedImage.TYPE_INT_RGB);
+       databufferint = (DataBufferInt)image.getTile(0, 0).getDataBuffer();
+       get_RGB(pointer, databufferint.getData());
+       
+       return image;
+    }
 }
