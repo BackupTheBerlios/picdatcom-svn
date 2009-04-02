@@ -15,15 +15,29 @@ import javax.swing.Timer;
 import javax.swing.Icon;
 import javax.swing.JDialog;
 import javax.swing.JFrame;
+import javax.swing.filechooser.FileNameExtensionFilter;
+import javax.swing.filechooser.FileFilter;
+import javax.swing.JFileChooser;
+import java.io.File;
 
 /**
  * The application's main frame.
  */
 public class PicDatComGuiView extends FrameView {
 
+    final FileFilter file_chooser_filter_1 = new FileNameExtensionFilter("JPEG2000 file", "jpc");
+    //final FileFilter file_chooser_filter_2 = new FileNameExtensionFilter("Adobe dng", "dng");
+    final JFileChooser fc = new JFileChooser();
+    
+    private Controller controller;
+    
     public PicDatComGuiView(SingleFrameApplication app) {
         super(app);
-
+    
+        controller = new Controller(this);
+        fc.setAcceptAllFileFilterUsed(false); 
+        fc.addChoosableFileFilter(file_chooser_filter_1);
+                
         initComponents();
 
         // status bar initialization - message timeout, idle icon and busy animation, etc
@@ -104,6 +118,8 @@ public class PicDatComGuiView extends FrameView {
         jToolBar1 = new javax.swing.JToolBar();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
+        jMenuItem1 = new javax.swing.JMenuItem();
+        jSeparator1 = new javax.swing.JSeparator();
         javax.swing.JMenuItem exitMenuItem = new javax.swing.JMenuItem();
         javax.swing.JMenu helpMenu = new javax.swing.JMenu();
         javax.swing.JMenuItem aboutMenuItem = new javax.swing.JMenuItem();
@@ -136,6 +152,20 @@ public class PicDatComGuiView extends FrameView {
         org.jdesktop.application.ResourceMap resourceMap = org.jdesktop.application.Application.getInstance(picdatcomgui.PicDatComGuiApp.class).getContext().getResourceMap(PicDatComGuiView.class);
         fileMenu.setText(resourceMap.getString("fileMenu.text")); // NOI18N
         fileMenu.setName("fileMenu"); // NOI18N
+
+        jMenuItem1.setMnemonic('O');
+        jMenuItem1.setText(resourceMap.getString("jMenuItem1.text")); // NOI18N
+        jMenuItem1.setToolTipText(resourceMap.getString("jMenuItem1.toolTipText")); // NOI18N
+        jMenuItem1.setName("jMenuItem1"); // NOI18N
+        jMenuItem1.addActionListener(new java.awt.event.ActionListener() {
+            public void actionPerformed(java.awt.event.ActionEvent evt) {
+                openfile(evt);
+            }
+        });
+        fileMenu.add(jMenuItem1);
+
+        jSeparator1.setName("jSeparator1"); // NOI18N
+        fileMenu.add(jSeparator1);
 
         javax.swing.ActionMap actionMap = org.jdesktop.application.Application.getInstance(picdatcomgui.PicDatComGuiApp.class).getContext().getActionMap(PicDatComGuiView.class, this);
         exitMenuItem.setAction(actionMap.get("quit")); // NOI18N
@@ -195,7 +225,17 @@ public class PicDatComGuiView extends FrameView {
         setStatusBar(statusPanel);
     }// </editor-fold>//GEN-END:initComponents
 
+private void openfile(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openfile
+    int returnVal = fc.showOpenDialog(this.getFrame());
+
+        if (returnVal == JFileChooser.APPROVE_OPTION) {
+            File file = fc.getSelectedFile(); 
+        }
+}//GEN-LAST:event_openfile
+
     // Variables declaration - do not modify//GEN-BEGIN:variables
+    private javax.swing.JMenuItem jMenuItem1;
+    private javax.swing.JSeparator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel mainPanel;
     private javax.swing.JMenuBar menuBar;
