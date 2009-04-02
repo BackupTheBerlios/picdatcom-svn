@@ -255,4 +255,60 @@ PDC_uint32 PDC_Picture_get_height(	PDC_Exception *exception,
 	return height;
 }
 
+
+/*
+ *
+ */
+PDC_Picture* PDC_Picture_get_RGB_float(	PDC_Exception *exception,
+										PDC_Picture *picture,
+										PDC_float32 *out_Vector,
+										PDC_uint out_line_feed)
+{
+	PDC_uint32 numtiles, postile;
+	PDC_Tile* tile;
+	
+	numtiles = picture->numXtiles * picture->numYtiles;
+	for(postile = 0; postile < numtiles; postile += 1){
+		tile = PDC_Pointer_Buffer_get_pointer(exception, picture->tiles, postile);	
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return picture;
+		}
+		
+		PDC_Tile_get_RGB_float(	exception, tile, out_Vector, out_line_feed);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return picture;
+		}
+	}
+	
+	return picture;
+}
+
+/*
+ *
+ */
+PDC_Picture* PDC_Picture_get_RGB_int(	PDC_Exception *exception,
+										PDC_Picture *picture,
+									PDC_uint32 *out_Vector,
+										PDC_uint out_line_feed)
+{
+	PDC_uint32 numtiles, postile;
+	PDC_Tile* tile;
+	
+	numtiles = picture->numXtiles * picture->numYtiles;
+	for(postile = 0; postile < numtiles; postile += 1){
+		tile = PDC_Pointer_Buffer_get_pointer(exception, picture->tiles, postile);	
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return picture;
+		}
+		
+		PDC_Tile_get_RGB_int(	exception, tile, out_Vector, out_line_feed);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return picture;
+		}
+	}
+	
+	return picture;
+}
+										
+										
 STOP_C

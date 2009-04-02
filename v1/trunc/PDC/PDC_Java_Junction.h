@@ -43,10 +43,18 @@ JNIEXPORT jint JNICALL Java_PicDatCom_PicDatComImage_get_1height
 /*
  * Class:     PicDatCom_PicDatComImage
  * Method:    get_RGB
- * Signature: ([F)[F
+ * Signature: (J[F)[F
  */
-JNIEXPORT jfloatArray JNICALL Java_PicDatCom_PicDatComImage_get_1RGB
-  (JNIEnv *, jclass, jfloatArray);
+JNIEXPORT jfloatArray JNICALL Java_PicDatCom_PicDatComImage_get_1RGB__J_3F
+  (JNIEnv *, jclass, jlong, jfloatArray);
+
+/*
+ * Class:     PicDatCom_PicDatComImage
+ * Method:    get_RGB
+ * Signature: (J[I)[I
+ */
+JNIEXPORT jintArray JNICALL Java_PicDatCom_PicDatComImage_get_1RGB__J_3I
+  (JNIEnv *, jclass, jlong, jintArray);
 
 #ifdef __cplusplus
 }

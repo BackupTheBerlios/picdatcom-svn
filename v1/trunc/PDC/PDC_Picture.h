@@ -98,7 +98,24 @@ START_C
 	 *
 	 */
 	PDC_uint32 PDC_Picture_get_height(	PDC_Exception *excption,
-										PDC_Picture *picture);			
+										PDC_Picture *picture);	
+										
+	/*
+	 *
+	 */
+	PDC_Picture* PDC_Picture_get_RGB_float(	PDC_Exception *exception,
+											PDC_Picture *picture,
+											PDC_float32 *out_Vector,
+											PDC_uint out_line_feed);
+											
+	/*
+	 *
+	 */
+	PDC_Picture* PDC_Picture_get_RGB_int(	PDC_Exception *exception,
+											PDC_Picture *picture,
+											PDC_uint32 *out_Vector,
+											PDC_uint out_line_feed);
+													
 									
 	
 STOP_C

@@ -170,6 +170,29 @@ START_C
 	 */
 	PDC_Tile* PDC_Tile_inverse_transformation(	PDC_Exception* exception,
 												PDC_Tile* tile);
+												
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_interpolation(	PDC_Exception* exception,
+										PDC_Tile* tile);
+
+												
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_get_RGB_float(	PDC_Exception *exception,
+										PDC_Tile *tile,
+										PDC_float32 *out_vector,
+										PDC_uint out_line_feed);
+										
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_get_RGB_int(		PDC_Exception *exception,
+										PDC_Tile *tile,
+										PDC_uint32 *out_vector,
+										PDC_uint out_line_feed);
 
 	
 STOP_C

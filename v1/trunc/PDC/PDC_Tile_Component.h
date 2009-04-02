@@ -107,6 +107,12 @@ START_C
 	PDC_Tile_Component* PDC_Tile_Component_inverse_transformation(	PDC_Exception* exception,
 																	PDC_Tile_Component* tile_component);
 																	
+
+	/*
+	 *
+	 */
+	PDC_Tile_Component* PDC_Tile_Component_interpolation(	PDC_Exception* exception,
+															PDC_Tile_Component* tile_component);
 STOP_C
 
 #endif

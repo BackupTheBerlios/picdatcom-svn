@@ -184,5 +184,22 @@ PDC_Tile_Component* PDC_Tile_Component_inverse_transformation(	PDC_Exception* ex
 	return tile_component;
 }
 																		
+/*
+ *
+ */
+PDC_Tile_Component* PDC_Tile_Component_interpolation(	PDC_Exception* exception,
+														PDC_Tile_Component* tile_component)
+{
+	
+	if(	tile_component->siz_segment_component->XRsiz == 1 &&
+		tile_component->siz_segment_component->YRsiz == 1){
+		return tile_component;
+	}else{
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+		return tile_component;
+	}
+			
+	return tile_component;
+}
 
 STOP_C

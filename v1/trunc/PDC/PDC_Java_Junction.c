@@ -20,6 +20,10 @@
  
  #include "PDC_Java_Junction.h"
  #include "PDC_Decoder.h"
+ #include "PDC_Parameter.h"
+ #include "PDC_Picture.h"
+ 
+ START_C
  
  /* Inaccessible static: dll_path */
 /*
@@ -43,7 +47,7 @@ JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur
 	if(decoder == NULL){
 		return pointer;
 	}
-	pointer = decoder;
+	pointer = (jlong)decoder;
 	
 	return pointer;
 }
@@ -129,3 +133,67 @@ JNIEXPORT jint JNICALL Java_PicDatCom_PicDatComImage_get_1height
 	
 	return height;
 }
+
+/*
+ * Class:     PicDatCom_PicDatComImage
+ * Method:    get_RGB
+ * Signature: (J[F)[F
+ */
+JNIEXPORT jfloatArray JNICALL Java_PicDatCom_PicDatComImage_get_1RGB__J_3F
+  (JNIEnv *env, jclass in_class, jlong in_pointer, jfloatArray floatarray)
+{
+	PDC_Decoder	*decoder = NULL;
+	PDC_Picture *picture = NULL;
+	jboolean	isCopy;
+	float*		data;
+	PDC_uint	size;
+
+	decoder = (PDC_Decoder*)in_pointer;
+	if(decoder == NULL){
+		return NULL;
+	}
+	
+	picture = decoder->picture;	
+	size = PDC_Picture_get_width(decoder->exception, picture);
+
+	data = (*env)->GetFloatArrayElements(env, floatarray, &isCopy);
+	
+	PDC_Picture_get_RGB_float(decoder->exception, picture, data, size);
+	
+	(*env)->ReleaseFloatArrayElements(env, floatarray, data, 0);
+	return floatarray;
+}
+
+/*
+ * Class:     PicDatCom_PicDatComImage
+ * Method:    get_RGB
+ * Signature: (J[I)[I
+ */
+JNIEXPORT jintArray JNICALL Java_PicDatCom_PicDatComImage_get_1RGB__J_3I
+  (JNIEnv *env, jclass in_class, jlong in_pointer, jintArray intarray)
+{
+	PDC_Decoder	*decoder = NULL;
+	PDC_Picture *picture = NULL;
+	jboolean	isCopy;
+	int*		data;
+	PDC_uint	size;
+
+	decoder = (PDC_Decoder*)in_pointer;
+	if(decoder == NULL){
+		return NULL;
+	}
+	
+	picture = decoder->picture;	
+	size = PDC_Picture_get_width(decoder->exception, picture);
+
+	data = (*env)->GetIntArrayElements(env, intarray, &isCopy);
+	
+	PDC_Picture_get_RGB_int(decoder->exception, picture, data, size);
+	
+	(*env)->ReleaseIntArrayElements(env, intarray, data, 0);
+	return intarray;
+}
+
+
+										
+STOP_C

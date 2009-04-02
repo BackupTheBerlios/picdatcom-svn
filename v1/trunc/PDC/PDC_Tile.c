@@ -144,6 +144,12 @@ PDC_Tile* PDC_Tile_read_SOD_01(	PDC_Exception* exception,
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return NULL;
 	}
+
+	PDC_Tile_interpolation(exception, tile);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return NULL;
+	}		
+	
 	return tile;
 }
 
@@ -543,4 +549,206 @@ PDC_Tile* PDC_Tile_inverse_transformation(	PDC_Exception* exception,
 
 }
 
+/*
+ *
+ */
+PDC_Tile* PDC_Tile_interpolation(	PDC_Exception* exception,
+									PDC_Tile* tile)
+{
+	PDC_uint Csiz, Csiz_pos;
+	PDC_Tile_Component* tile_component;
+		
+	Csiz = tile->picture->siz_segment->Csiz;
+	for(Csiz_pos = 0; Csiz_pos < Csiz; Csiz_pos += 1){
+		tile_component = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, Csiz_pos);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return tile;
+		}
+		PDC_Tile_Component_interpolation(exception, tile_component);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return tile;
+		}
+	}
+	return tile;		
+}
+
+/*
+ *
+ */
+PDC_Tile* PDC_Tile_get_RGB_float(	PDC_Exception *exception,
+									PDC_Tile *tile,
+									PDC_float32 *out_vector,
+									PDC_uint out_line_feed)
+{
+	PDC_Tile_Component* tile_component_Y, *tile_component_Cb, *tile_component_Cr;
+	PDC_float32 red, green, blue, Y, Cb, Cr, *ptr_Y, *ptr_Cb, *ptr_Cr, normalisierer, *out;
+	PDC_uint	in_point, out_point, out_point_plus, mx0, mx1, my0, my1, x, y, 
+				msizex;
+	
+	normalisierer	= 255.0f;
+	out				= out_vector;
+	
+	tile_component_Y = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, 0);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return tile;
+	}
+	ptr_Y = tile_component_Y->memory;
+	msizex = tile_component_Y->msizex;
+	
+	tile_component_Cb = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, 1);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return tile;		
+	}
+	ptr_Cb = tile_component_Cb->memory;
+	
+	tile_component_Cr = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, 2);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return tile;
+	}
+	ptr_Cr = tile_component_Cr->memory;
+	
+	mx0 = tile_component_Y->mx0;
+	mx1 = tile_component_Y->mx1;
+	my0 = tile_component_Y->my0;
+	my1 = tile_component_Y->my1;
+	
+	out_point		= tile_component_Y->my0 * out_line_feed + tile_component_Y->mx0 * 3;
+	out_point_plus	= (out_line_feed - mx1 + mx0) * 3;
+	for(y = my0; y < my1; y += 1){
+		in_point = y * msizex;
+		for(x = mx0; x < mx1; x += 1, in_point += 1){
+			Y	= ptr_Y[in_point];
+			Cb	= ptr_Cb[in_point];
+			Cr	= ptr_Cr[in_point];
+			
+			red		= Y					+ 1.40200f * Cr;
+			green	= Y - 0.34413f * Cb - 0.71414f * Cr;  
+			blue	= Y + 1.72200f * Cb;
+			
+			red		+= 127.0f;
+			green	+= 127.0f;
+			blue	+= 127.0f;
+			
+			red		/= normalisierer;
+			green	/= normalisierer;
+			blue	/= normalisierer;
+			
+			if(red > 1.0f){
+				red = 1.0f;
+			}else if( red < 0.0f){
+				red = 0.0f;
+			}
+			
+			if(green > 1.0f){
+				green = 1.0f;
+			}else if( green < 0.0f){
+				green = 0.0f;
+			}
+			
+			if(blue > 1.0f){
+				blue = 1.0f;
+			}else if(blue < 0.0f){
+				blue = 0.0f;
+			}
+			
+			out[out_point] = red;
+			out_point  += 1;
+			out[out_point] = green;
+			out_point += 1;
+			out[out_point] = blue;
+			out_point += 1;
+			
+		}
+		out_point += out_point_plus;
+	}
+	
+	return tile;
+}
+
+
+/*
+ *
+ */
+PDC_Tile* PDC_Tile_get_RGB_int(		PDC_Exception *exception,
+									PDC_Tile *tile,
+									PDC_uint32 *out_vector,
+									PDC_uint out_line_feed)
+{
+	PDC_Tile_Component* tile_component_Y, *tile_component_Cb, *tile_component_Cr;
+	PDC_float32 red, green, blue, Y, Cb, Cr, *ptr_Y, *ptr_Cb, *ptr_Cr;
+	PDC_uint	in_point, out_point, out_point_plus, mx0, mx1, my0, my1, x, y, 
+				msizex;
+	PDC_uint32	*out;
+
+	out				= out_vector;
+	
+	tile_component_Y = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, 0);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return tile;
+	}
+	ptr_Y = tile_component_Y->memory;
+	msizex = tile_component_Y->msizex;
+	
+	tile_component_Cb = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, 1);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return tile;		
+	}
+	ptr_Cb = tile_component_Cb->memory;
+	
+	tile_component_Cr = PDC_Pointer_Buffer_get_pointer(exception, tile->tile_component, 2);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return tile;
+	}
+	ptr_Cr = tile_component_Cr->memory;
+	
+	mx0 = tile_component_Y->mx0;
+	mx1 = tile_component_Y->mx1;
+	my0 = tile_component_Y->my0;
+	my1 = tile_component_Y->my1;
+	
+	out_point		= tile_component_Y->my0 * out_line_feed + tile_component_Y->mx0;
+	out_point_plus	= (out_line_feed - mx1 + mx0);
+	for(y = my0; y < my1; y += 1){
+		in_point = y * msizex;
+		for(x = mx0; x < mx1; x += 1, in_point += 1){
+			Y	= ptr_Y[in_point];
+			Cb	= ptr_Cb[in_point];
+			Cr	= ptr_Cr[in_point];
+			
+			red		= Y					+ 1.40200f * Cr;
+			green	= Y - 0.34413f * Cb - 0.71414f * Cr;  
+			blue	= Y + 1.72200f * Cb;
+			
+			red		+= 127.0f;
+			green	+= 127.0f;
+			blue	+= 127.0f;
+			
+			if(red > 255.0f){
+				red = 255.0f;
+			}else if( red < 0.0f){
+				red = 0.0f;
+			}
+			
+			if(green > 255.0f){
+				green = 255.0f;
+			}else if( green < 0.0f){
+				green = 0.0f;
+			}
+			
+			if(blue > 255.0f){
+				blue = 255.0f;
+			}else if(blue < 0.0f){
+				blue = 0.0f;
+			}
+			
+			out[out_point] = ((unsigned int)red) << 16;
+			out[out_point] |= ((unsigned int)green) << 8;
+			out[out_point] |= ((unsigned int)blue);
+			out_point += 1;
+		}
+		out_point += out_point_plus;
+	}
+	
+	return tile;
+}
 STOP_C
