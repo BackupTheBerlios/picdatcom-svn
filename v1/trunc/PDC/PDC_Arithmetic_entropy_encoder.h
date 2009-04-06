@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -31,13 +31,15 @@ START_C
 	struct str_PDC_Arithmetic_entropy_encoder;
 	typedef struct str_PDC_Arithmetic_entropy_encoder PDC_Arithmetic_entropy_encoder;
 
-	PDC_uint32 PDC_A_Encoder__index[];
-	PDC_decision PDC_A_Encoder__mps[];
-
-	#include "PDC_Buffer.h"
-
 	#define MPS_I_LENGTH 19
 	#define RESIZE_BUFFER 10
+
+
+	PDC_uint32 PDC_A_Encoder__index[MPS_I_LENGTH];
+	PDC_decision PDC_A_Encoder__mps[MPS_I_LENGTH];
+
+
+	#include "PDC_Buffer.h"
 
 	struct str_PDC_Arithmetic_entropy_encoder{
 		PDC_uint32		c_register;
@@ -61,7 +63,7 @@ START_C
 	 *
 	 */
 	PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Exception*	exception,
-														PDC_Arithmetic_entropy_encoder* in_encoder, 
+														PDC_Arithmetic_entropy_encoder* in_encoder,
 														PDC_decision* d,
 														PDC_context* cx,
 														PDC_uint size,
@@ -71,7 +73,7 @@ START_C
 	 *
 	 */
 	PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Exception*	exception,
-														PDC_Arithmetic_entropy_encoder* in_encoder, 
+														PDC_Arithmetic_entropy_encoder* in_encoder,
 														PDC_Buffer* in_buffer);
 	/*
 	 *
@@ -79,7 +81,7 @@ START_C
 	PDC_Arithmetic_entropy_encoder* PDC_Aee_init_01(	PDC_Exception*	exception,
 														PDC_Arithmetic_entropy_encoder* in_encoder,
 														PDC_decision* default_MPS,
-														PDC_uint32* default_I);		
+														PDC_uint32* default_I);
 
 STOP_C
 

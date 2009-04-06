@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -25,7 +25,7 @@
 START_C
 
 /*
- * 
+ *
  */
 DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 {
@@ -40,7 +40,7 @@ DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 	decoder->in_data_save	= NULL;
 	decoder->picture		= NULL;
 	decoder->current_tile	= NULL;
-	
+
 	decoder->exception		= exception;
 
 
@@ -64,7 +64,7 @@ DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 
 
 /*
- * 
+ *
  */
 DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
 {
@@ -74,23 +74,23 @@ DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
 	unsigned int read_byte		= 0;
 	unsigned int data_read_plus	= 1048576;
 	unsigned char*	data		= NULL;
-	
-	
+
+
 	data = malloc(data_read_plus);
 	if(data == NULL){
 		return NULL;
 	}
-	
+
 	fp = fopen(filepath, "rb");
 	if(fp == NULL){
 		return NULL;
-	}	
-	
-	exception	= new_PDC_Exception(); 
+	}
+
+	exception	= new_PDC_Exception();
 	if(exception == NULL){
 		return NULL;
 	}
-	
+
 	decoder		= new_PDC_Decoder(exception);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		delete_PDC_Decoder(exception, decoder);
@@ -98,9 +98,9 @@ DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
 		fclose(fp);
 		return NULL;
 	}
-	
+
 	do{
-		read_byte = fread(data, 1, data_read_plus, fp); 
+		read_byte = fread(data, 1, data_read_plus, fp);
 		PDC_Decoder_add_Data_01(exception, decoder, data, read_byte, PDC_DATA_MORE_DATA);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			delete_PDC_Decoder(exception, decoder);
@@ -114,7 +114,7 @@ DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
 	free(data);
 	PDC_Decoder_add_Data_01(exception, decoder, NULL, 0, PDC_DATA_END);
 	PDC_Decoder_decode(exception, decoder);
-	
+
 	return decoder;
 }
 
@@ -122,9 +122,9 @@ DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
  *
  */
 DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
-											PDC_Decoder* decoder, 
-											PDC_uchar* data, 
-											PDC_uint32 length, 
+											PDC_Decoder* decoder,
+											PDC_uchar* data,
+											PDC_uint32 length,
 											PDC_DECODER_DATA_END end)
 {
 	if(decoder->in_data->end_state != END_OF_BUFFER && data != NULL && length != 0 && decoder != NULL){
@@ -132,7 +132,7 @@ DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return decoder;
 		}
-	
+
 
 		if(end == PDC_DATA_END){
 			decoder->in_data->end_state = END_OF_BUFFER;
@@ -154,7 +154,7 @@ DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
 
 
 /*
- * 
+ *
  */
 DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception, PDC_Decoder* decoder)
 {
@@ -168,16 +168,16 @@ DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception, PDC_Decoder* decod
 
 FILE* DEBUG_FILE;
 /*
- * 
+ *
  */
 DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decoder)
 {
-	
+
 	PDC_READING_STATE	reading_state;
 
 	DEBUG_FILE = fopen("debug_file.txt", "w");
 	reading_state	= decoder->reading_state;
-	
+
 	do{
 		switch(reading_state){
 			case PDC_UNKNOW:
@@ -199,8 +199,11 @@ DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decod
 				PDC_Decoder_decode_tile_part_header(exception, decoder);
 				reading_state	= decoder->reading_state;
 				break;
+			case PDC_ERROR:
+				PDC_Exception_error(exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+				break;
 		}
-	
+
 		if(reading_state == PDC_ERROR){
 			break;
 		}
@@ -213,7 +216,7 @@ DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decod
 
 
 /*
- * 
+ *
  */
 PDC_Decoder* PDC_Decoder_decode_unknow(PDC_Exception* exception, PDC_Decoder* decoder)
 {
@@ -253,7 +256,7 @@ PDC_Decoder* PDC_Decoder_decode_unknow(PDC_Exception* exception, PDC_Decoder* de
 }
 
 /*
- * 
+ *
  */
 PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_Decoder* decoder)
 {
@@ -283,7 +286,7 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_De
 			return decoder;
 		}
 		decoder->picture = PDC_Picture_set_SIZ_Segment(	exception,
-														decoder->picture, 
+														decoder->picture,
 														siz_segment);
 
 		decoder->reading_state = PDC_MAIN_HEADER;
@@ -295,7 +298,7 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_De
 }
 
 /*
- * 
+ *
  */
 PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decoder* decoder)
 {
@@ -353,11 +356,11 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 					qcd_segment = new_PDC_QCD_Segment_02(exception, buffer, cod_segment);
 					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 						return decoder;
-					}	
+					}
 					PDC_Picture_set_QCD_Segment(exception, decoder->picture, qcd_segment);
 					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 						return decoder;
-					}						
+					}
 				}else{
 					PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 					return decoder;
@@ -405,7 +408,7 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 
 
 /*
- * 
+ *
  */
 PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
 												 PDC_Decoder* decoder)
@@ -437,9 +440,9 @@ PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
 				return decoder;
 			}
 		}
-	
+
 		switch(symbol){
-			case PDC_COD: 
+			case PDC_COD:
 				cod_segment = new_PDC_COD_Segment_02(exception, buffer);
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 					return decoder;
@@ -460,7 +463,7 @@ PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
 				break;
 		}
 	}while(symbol != PDC_SOC && symbol != PDC_EOC);
-	
+
 	return decoder;
 }
 

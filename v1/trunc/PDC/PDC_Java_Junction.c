@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
- *      Contact Email: 
- * 
+ * Copyright (C) 2008  Uwe Brï¿½nen
+ *      Contact Email:
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,18 +13,18 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
- 
+
  #include "PDC_Java_Junction.h"
  #include "PDC_Decoder.h"
  #include "PDC_Parameter.h"
  #include "PDC_Picture.h"
- 
+
  START_C
- 
+
  /* Inaccessible static: dll_path */
 /*
  * Class:     PicDatCom_PicDatComImage
@@ -37,18 +37,18 @@ JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur
 	const char *path		= NULL;
 	jlong pointer			= 0;
 	PDC_Decoder	*decoder	= NULL;
-	
+
 	path = (*env)->GetStringUTFChars(env, in_path, 0);
 	if(path == NULL){
 		return pointer;
 	}
-	
+
 	decoder = new_PDC_Decoder_02(path);
 	if(decoder == NULL){
 		return pointer;
 	}
-	pointer = (jlong)decoder;
-	
+	pointer = (jlong)(unsigned int)decoder;
+
 	return pointer;
 }
 
@@ -60,7 +60,7 @@ JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur
 JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_delete_1structur
   (JNIEnv *env, jclass in_class, jlong in_pointer)
 {
-  
+
 	return in_pointer;
 }
 
@@ -75,27 +75,27 @@ JNIEXPORT jint JNICALL Java_PicDatCom_PicDatComImage_get_1width
 	PDC_Decoder	*decoder	= NULL;
 	jint width				= 0;
 	PDC_Picture *picture	= NULL;
-	
+
 	if(in_pointer == 0){
 		return width;
 	}
-	
-	decoder = (PDC_Decoder	*)in_pointer;
+
+	decoder = (PDC_Decoder	*)(unsigned int)in_pointer;
 	if(decoder == NULL){
 		return width;
 	}
-	
+
 	picture = decoder->picture;
 	if(picture == NULL){
 		return width;
 	}
-	
+
 	width = (jint) PDC_Picture_get_width(decoder->exception, picture);
 	if(decoder->exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return 0;
 	}
-	
-	
+
+
 	return width;
 }
 
@@ -110,27 +110,27 @@ JNIEXPORT jint JNICALL Java_PicDatCom_PicDatComImage_get_1height
 	PDC_Decoder	*decoder	= NULL;
 	jint height				= 0;
 	PDC_Picture *picture	= NULL;
-	
+
 	if(in_pointer == 0){
 		return height;
 	}
-	
-	decoder = (PDC_Decoder	*)in_pointer;
+
+	decoder = (PDC_Decoder	*)(unsigned int)in_pointer;
 	if(decoder == NULL){
 		return height;
 	}
-	
+
 	picture = decoder->picture;
 	if(picture == NULL){
 		return height;
 	}
-	
+
 	height = (jint) PDC_Picture_get_height(decoder->exception, picture);
 	if(decoder->exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return 0;
 	}
-	
-	
+
+
 	return height;
 }
 
@@ -148,18 +148,18 @@ JNIEXPORT jfloatArray JNICALL Java_PicDatCom_PicDatComImage_get_1RGB__J_3F
 	float*		data;
 	PDC_uint	size;
 
-	decoder = (PDC_Decoder*)in_pointer;
+	decoder = (PDC_Decoder*)(unsigned int)in_pointer;
 	if(decoder == NULL){
 		return NULL;
 	}
-	
-	picture = decoder->picture;	
+
+	picture = decoder->picture;
 	size = PDC_Picture_get_width(decoder->exception, picture);
 
 	data = (*env)->GetFloatArrayElements(env, floatarray, &isCopy);
-	
+
 	PDC_Picture_get_RGB_float(decoder->exception, picture, data, size);
-	
+
 	(*env)->ReleaseFloatArrayElements(env, floatarray, data, 0);
 	return floatarray;
 }
@@ -178,22 +178,22 @@ JNIEXPORT jintArray JNICALL Java_PicDatCom_PicDatComImage_get_1RGB__J_3I
 	int*		data;
 	PDC_uint	size;
 
-	decoder = (PDC_Decoder*)in_pointer;
+	decoder = (PDC_Decoder*)(unsigned int)in_pointer;
 	if(decoder == NULL){
 		return NULL;
 	}
-	
-	picture = decoder->picture;	
+
+	picture = decoder->picture;
 	size = PDC_Picture_get_width(decoder->exception, picture);
 
 	data = (*env)->GetIntArrayElements(env, intarray, &isCopy);
-	
-	PDC_Picture_get_RGB_int(decoder->exception, picture, data, size);
-	
+
+	PDC_Picture_get_RGB_int(decoder->exception, picture, (PDC_uint32 *)data, size);
+
 	(*env)->ReleaseIntArrayElements(env, intarray, data, 0);
 	return intarray;
 }
 
 
-										
+
 STOP_C

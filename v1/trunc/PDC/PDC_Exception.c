@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -21,6 +21,7 @@
 #include "PDC_Exception.h"
 #include <string.h>
 #include <stdio.h>
+#include <stdlib.h>
 #include <pthread.h>
 
 char PDC_error_code[][25]	= {	"No Error", "Out of memory", "NULL Pointer", "out_size > maxSize ", "Out of Range.",
@@ -39,9 +40,9 @@ pthread_mutex_t exception_mutex =	PTHREAD_MUTEX_INITIALIZER;
 DLL PDC_Exception* new_PDC_Exception()
 {
 	PDC_Exception* exception = NULL;
-	
+
 	exception = malloc(sizeof(PDC_Exception));
-	
+
 	if(exception == NULL){
 		return NULL;
 	}
@@ -62,12 +63,12 @@ void delete_PDC_Exception(PDC_Exception* exception)
 
 
 PDC_Exception*  PDC_Exception_error(	PDC_Exception* exception,
-										PDC_Exception* last_exception, 
-										const PDC_EXCEPTION_TYPES code, 
-										const unsigned int line, 
+										PDC_Exception* last_exception,
+										const PDC_EXCEPTION_TYPES code,
+										const unsigned int line,
 										const char* file)
 {
-	
+
 	pthread_mutex_lock(&exception_mutex);
 
 	if(exception->code == PDC_EXCEPTION_NO_EXCEPTION){

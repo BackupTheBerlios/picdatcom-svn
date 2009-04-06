@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -40,25 +40,25 @@ START_C
 		float			*pink;
 		float			*orange;
 		float			*brown;
-		
+
 		float			*del_workbuffer;
 		float			*del_green;
 		float			*del_pink;
 		float			*del_orange;
 		float			*del_brown;
-		
+
 		PDC_uint32		greenSize;
 		PDC_uint32		pinkSize;
 		PDC_uint32		orangeSize;
 		PDC_uint32		brownSize;
 		PDC_uint32		maxSize;
-		PDC_Datatype	datatype;	
+		PDC_Datatype	datatype;
 	};
-	
+
 	/*
 	 *
 	 */
-	PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception* exception, 
+	PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception* exception,
 																		PDC_uint32 maxSize);
 
 	/*
@@ -66,14 +66,14 @@ START_C
 	 */
 	PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(PDC_Exception* exception,
 																		PDC_Transformation_97_decoder* decoder);
-	
+
 	/*
 	 *
 	 */
 	PDC_Transformation_97_decoder* PDC_td_start(	PDC_Exception* exception,
 													PDC_Transformation_97_decoder* decoder,
-													float *out, float *in_high, float* in_low, 
-													PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even, 
+													float *out, float *in_high, float* in_low,
+													PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even,
 													PDC_uint in_high_start, PDC_uint in_hight_plus,
 													PDC_uint in_low_start, PDC_uint in_low_plus);
 
@@ -81,14 +81,27 @@ START_C
 	/*
 	 *
 	 */
+	PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
+														PDC_Transformation_97_decoder* decoder,
+														float *out, float *in_high, float* in_low,
+														PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even,
+														PDC_uint in_high_start, PDC_uint in_hight_plus,
+														PDC_uint in_low_start, PDC_uint in_low_plus,
+														PDC_uint num_rows, PDC_uint high_row_stride, PDC_uint low_row_stride,
+														PDC_uint out_row_stride);
+
+
+	/*
+	 *
+	 */
 	PDC_Transformation_97_decoder* PDC_td_start_sse2(	PDC_Exception* exception,
 														PDC_Transformation_97_decoder* decoder,
-														float *out, float *in_high, float* in_low, 
-														PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even, 
+														float *out, float *in_high, float* in_low,
+														PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even,
 														PDC_uint in_high_start, PDC_uint in_hight_plus,
 														PDC_uint in_low_start, PDC_uint in_low_plus);
-												
 
+/*
 	void PDC_td_start_sse2_kernel(	float			*workbuffer,
 									float			*green,
 									float			*pink,
@@ -105,6 +118,6 @@ START_C
 									float			*delta,
 									float			*K1,
 									float			*K);
-
+*/
 STOP_C
 #endif

@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,13 +13,13 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
 
-#ifdef __cplusplus     
-extern "C" {         
+#ifdef __cplusplus
+extern "C" {
 #endif
 
 #include "PDC_Buffer.h"
@@ -33,7 +33,7 @@ PDC_Buffer* new_PDC_Buffer_1(PDC_Exception* exception, PDC_uint32 length)
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	buffer->buffer		= NULL;	
+	buffer->buffer		= NULL;
 
 	if(length == 0){
 		length = 1;
@@ -68,9 +68,9 @@ PDC_Buffer* new_PDC_Buffer_3(PDC_Exception* exception)
 	if(buffer == NULL){
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
-	}	
-	
-	buffer->buffer			= NULL;	
+	}
+
+	buffer->buffer			= NULL;
 	buffer->length			= 0;
 	buffer->read_byte_pos	= 0;
 	buffer->write_byte_pos	= 0;
@@ -100,7 +100,7 @@ PDC_Buffer* PDC_Buffer_realloc(PDC_Exception* exception, PDC_Buffer* buffer, PDC
 	PDC_Buffer* return_buffer = buffer;
 	PDC_uchar*  new_buffer;
 	PDC_uint32	new_size = buffer->length + plus_buffer_length;
-	                                   
+
 	new_buffer = realloc(buffer->buffer, sizeof(PDC_uchar) * new_size);
 	if(new_buffer == NULL){
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
@@ -127,7 +127,7 @@ PDC_Buffer* PDC_Buffer_add_byte_1(PDC_Exception* exception, PDC_Buffer* buffer, 
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return return_buffer;
 		}
-	}	
+	}
 
 	return_buffer->buffer[return_buffer->write_byte_pos]	= byte;
 	return_buffer->write_byte_pos							+= 1;
@@ -151,7 +151,7 @@ PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Exception* exception, PDC_Buffer* buffer,
 			return buffer;
 		}
 	}
-	
+
 	data = buffer->buffer;
 	for(i = 0, i2 = buffer->write_byte_pos; i < numbytes; i++, i2++){
 		data[i2] = byte[i];
@@ -165,7 +165,7 @@ PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Exception* exception, PDC_Buffer* buffer,
  */
 PDC_Buffer* PDC_Buffer_save_state(PDC_Exception* exception, PDC_Buffer* buffer, PDC_Buffer* save_buffer)
 {
-	
+
 	save_buffer->read_byte_pos	= buffer->read_byte_pos;
 	save_buffer->write_byte_pos	= buffer->write_byte_pos;
 
@@ -187,7 +187,7 @@ PDC_Buffer* PDC_Buffer_read_uint16(PDC_Exception* exception, PDC_Buffer* buffer,
 		temp_value = buffer->buffer[buffer->read_byte_pos];
 		buffer->read_byte_pos += 1;
 		*value  |= temp_value;
-		
+
 
 
 	}else{		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
@@ -214,7 +214,7 @@ PDC_Buffer* PDC_Buffer_read_uint32(PDC_Exception* exception, PDC_Buffer* buffer,
 		temp_value = buffer->buffer[buffer->read_byte_pos];
 		buffer->read_byte_pos += 1;
 		*value  |= temp_value << 16;
-		
+
 		temp_value = buffer->buffer[buffer->read_byte_pos];
 		buffer->read_byte_pos += 1;
 		*value  |= temp_value << 8;
@@ -243,7 +243,7 @@ PDC_Buffer* PDC_Buffer_read_uint8(PDC_Exception* exception, PDC_Buffer* buffer, 
 	if(buffer->read_byte_pos + 1 < buffer->write_byte_pos){
 		temp_value = buffer->buffer[buffer->read_byte_pos];
 		buffer->read_byte_pos += 1;
-		*value = temp_value;		
+		*value = temp_value;
 
 	}else{
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
@@ -256,9 +256,9 @@ PDC_Buffer* PDC_Buffer_read_uint8(PDC_Exception* exception, PDC_Buffer* buffer, 
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_read_uint8_02(PDC_Exception* exception, 
-									 PDC_Buffer* buffer, 
-									 PDC_uint8 *value, 
+PDC_Buffer* PDC_Buffer_read_uint8_02(PDC_Exception* exception,
+									 PDC_Buffer* buffer,
+									 PDC_uint8 *value,
 									 PDC_uint32 number)
 {
 	PDC_uint32	pos, pos_end, pos1;
@@ -283,15 +283,15 @@ PDC_Buffer* PDC_Buffer_read_uint8_02(PDC_Exception* exception,
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_read_uint8_03(	PDC_Exception* exception, 
-										PDC_Buffer* buffer, 
-										PDC_uint8 *value, 
+PDC_Buffer* PDC_Buffer_read_uint8_03(	PDC_Exception* exception,
+										PDC_Buffer* buffer,
+										PDC_uint8 *value,
 										PDC_uint32 position)
 {
 	if(position > buffer->write_byte_pos){
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return buffer;
-	}	
+	}
 	*value = buffer->buffer[position];
 
 	return buffer;
@@ -304,7 +304,7 @@ PDC_bit PDC_Buffer_get_next_bit(	PDC_Exception* exception,
 									PDC_Buffer* buffer)
 {
 	PDC_bit back = 0;
-	
+
 	if(buffer->read_byte_pos < buffer->write_byte_pos){
 		if(buffer->read_bit_pos < 8){
 			back = (buffer->buffer[buffer->read_byte_pos] >> (7 - buffer->read_bit_pos)) & 1;
@@ -350,7 +350,7 @@ PDC_bit PDC_Buffer_get_next_bit(	PDC_Exception* exception,
 	return back;
 }
 
-/* 
+/*
  *
  */
 void PDC_Buffer_push_state(	PDC_Exception* exception,
@@ -361,7 +361,7 @@ void PDC_Buffer_push_state(	PDC_Exception* exception,
 	buffer->save_write_byte_pos	= buffer->write_byte_pos;
 }
 
-/* 
+/*
  *
  */
 void PDC_Buffer_pop_state(	PDC_Exception* exception,
@@ -375,20 +375,20 @@ void PDC_Buffer_pop_state(	PDC_Exception* exception,
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_add_bit_1(	PDC_Exception* exception,		
-									PDC_Buffer* buffer, 
+PDC_Buffer* PDC_Buffer_add_bit_1(	PDC_Exception* exception,
+									PDC_Buffer* buffer,
 									PDC_bit bit)
 {
 	PDC_uint plus_length = 10;
 	PDC_uint8 mask = 0xFF;
 	PDC_uint8 byte;
 
-	
+
 	if(buffer->write_bit_pos > 7){
 		buffer->write_bit_pos	= INIT_WRITE_BIT_POS;
 		buffer->write_byte_pos	+= 1;
 	}
-	
+
 	if(buffer->write_byte_pos >= buffer->length){
 		buffer =  PDC_Buffer_realloc(exception, buffer, plus_length);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
@@ -407,16 +407,16 @@ PDC_Buffer* PDC_Buffer_add_bit_1(	PDC_Exception* exception,
 	return buffer;
 }
 
-/* 
+/*
  *
  */
-PDC_uint PDC_Buffer_get_number_of_codingpasses(	PDC_Exception* exception,		
+PDC_uint PDC_Buffer_get_number_of_codingpasses(	PDC_Exception* exception,
 												PDC_Buffer* buffer)
 {
 	PDC_uint	value = 0;
 	PDC_bit		bit;
 	PDC_uint	pos;
-		
+
 	bit = PDC_Buffer_get_next_bit(exception, buffer);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return 0;
@@ -469,7 +469,7 @@ PDC_uint PDC_Buffer_get_number_of_codingpasses(	PDC_Exception* exception,
 	}
 }
 
-/* 
+/*
  *
  */
 PDC_uint PDC_Buffer_get_Lblock_increase(PDC_Exception* exception,
@@ -482,7 +482,7 @@ PDC_uint PDC_Buffer_get_Lblock_increase(PDC_Exception* exception,
 		bit = PDC_Buffer_get_next_bit(exception, buffer);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return 0;
-		}	
+		}
 		if(bit != 0){
 			back += 1;
 		}
@@ -498,7 +498,7 @@ PDC_uint PDC_Buffer_read_bits(	PDC_Exception* exception,
 								PDC_Buffer* buffer,
 								PDC_uint number_bits)
 {
-	PDC_uint number_of_bits = number_bits;
+	//PDC_uint number_of_bits = number_bits;
 	PDC_uint bit_pos;
 	PDC_bit bit;
 
@@ -510,7 +510,7 @@ PDC_uint PDC_Buffer_read_bits(	PDC_Exception* exception,
 
 	for(bit_pos = 0; bit_pos < number_bits; bit_pos += 1){
 		bit = PDC_Buffer_get_next_bit(exception, buffer);
-		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){		
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return 0;
 		}
 		result <<= 1;
@@ -523,7 +523,7 @@ PDC_uint PDC_Buffer_read_bits(	PDC_Exception* exception,
 }
 
 /*
- * 
+ *
  */
 void PDC_Buffer_padding_read(	PDC_Exception* exception,
 								PDC_Buffer* buffer)
@@ -548,7 +548,7 @@ void PDC_Buffer_copy_bytes_01(	PDC_Exception* exception,
 		if(buffer_destination->write_byte_pos + num_bytes >= buffer_destination->length){
 			length_add = buffer_destination->write_byte_pos + num_bytes + 5 - buffer_destination->length;
 			PDC_Buffer_realloc(exception, buffer_destination, length_add);
-			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){		
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 				return;
 			}
 		}
@@ -567,6 +567,6 @@ void PDC_Buffer_copy_bytes_01(	PDC_Exception* exception,
 
 }
 
-#ifdef __cplusplus     
-}       
+#ifdef __cplusplus
+}
 #endif

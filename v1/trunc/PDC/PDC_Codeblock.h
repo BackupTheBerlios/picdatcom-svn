@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -28,22 +28,22 @@
 START_C
 
 	#define	SET_SIGN_CONTEXT_A1 0x0800
-	#define	SET_SIGN_CONTEXT_A2 0x1020 
+	#define	SET_SIGN_CONTEXT_A2 0x1020
 	#define	SET_SIGN_CONTEXT_A3 0x0400
 
 
 	#define	SET_SIGN_CONTEXT_B1 0x08000
-	#define	SET_SIGN_CONTEXT_B2 0x10200 
+	#define	SET_SIGN_CONTEXT_B2 0x10200
 	#define	SET_SIGN_CONTEXT_B3 0x04000
 
 
 	#define	SET_SIGN_CONTEXT_C1 0x080000
-	#define	SET_SIGN_CONTEXT_C2 0x102000 
+	#define	SET_SIGN_CONTEXT_C2 0x102000
 	#define	SET_SIGN_CONTEXT_C3 0x040000
 
 
 	#define	SET_SIGN_CONTEXT_D1 0x0800000
-	#define	SET_SIGN_CONTEXT_D2 0x1020000 
+	#define	SET_SIGN_CONTEXT_D2 0x1020000
 	#define	SET_SIGN_CONTEXT_D3 0x0400000
 
 /*
@@ -63,7 +63,7 @@ START_C
 	typedef struct str_PDC_Codeword_List PDC_Codeword_List;
 
 	typedef enum{ STATE_BIT_8, STATE_BIT_16, STATE_BIT_32}PDC_STATE_BIT;
-	typedef enum{ CLEANUP_PASS, SIGNIFICANCE_PASS,MAGNITUDE_PASS} PDC_PASS_STATE;
+	typedef enum{ CLEANUP_PASS, SIGNIFICANCE_PASS,MAGNITUDE_PASS, NO_PASS = 76} PDC_PASS_STATE;
 
 	#define DEFAULT_RESIZE_CODEWORD 5
 
@@ -78,21 +78,21 @@ START_C
 		PDC_Codeword_List*	read_codeword;
 		PDC_Codeword_List*	write_codeword;
 		PDC_uint*			coding_passes_per_layer;
-		
+
 		PDC_uint		Lblock;
 
-		PDC_uint32		cx0;	
+		PDC_uint32		cx0;
 		PDC_uint32		cx1;
 		PDC_uint32		cy0;
 		PDC_uint32		cy1;
-		PDC_uint32		mx0;	
+		PDC_uint32		mx0;
 		PDC_uint32		mx1;
 		PDC_uint32		my0;
 		PDC_uint32		my1;
 
 		PDC_bool		codeblock_inclusion;
 		PDC_bool		zero_bit_plane_inclusion;
-		
+
 		PDC_uint32		zero_bitplanes;
 
 		/*
@@ -127,7 +127,7 @@ START_C
 		PDC_PASS_STATE	pass_state;
 
 	};
-	
+
 	struct str_PDC_Codeword_List{
 		PDC_Codeword_List*	first_codedword;
 		PDC_Codeword_List*	last_codedword;
@@ -160,7 +160,7 @@ START_C
 
 	/*
 	 *
-	 
+
 	PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_uint num_codingpasses);
 	*/
 
@@ -172,8 +172,8 @@ START_C
 	/*
 	 *
 	 */
-	PDC_uint PDC_Codeblock_set_number_of_coding_passes(	PDC_Exception* exception, 
-														PDC_Codeblock* codeblock, 
+	PDC_uint PDC_Codeblock_set_number_of_coding_passes(	PDC_Exception* exception,
+														PDC_Codeblock* codeblock,
 														PDC_uint number_of_coding_passes,
 														PDC_uint layer_pos);
 

@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -25,7 +25,7 @@
 #include "PDC_Parameter.h"
 
 START_C
-	
+
 	#define INIT_WRITE_BIT_POS 0
 
 	struct str_PDC_Buffer;
@@ -68,7 +68,7 @@ START_C
 	/*
 	 * Empty Buffer
 	 */
-	PDC_Buffer* new_PDC_Buffer_3();
+	PDC_Buffer* new_PDC_Buffer_3(PDC_Exception* exception);
 
 	/*
 	 * Destructor of the PDC_Buffer*
@@ -80,7 +80,7 @@ START_C
 	 *
 	 */
 	PDC_Buffer* PDC_Buffer_realloc(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint32 plus_buffer_length);
-	
+
 	/*
 	 *
 	 */
@@ -128,18 +128,18 @@ START_C
 										PDC_Buffer* buffer);
 
 	/*
-	 * 
+	 *
 	 */
 	void PDC_Buffer_return_bit(	PDC_Exception* exception,
 								PDC_Buffer* buffer);
 
-	/* 
+	/*
 	 *
 	 */
 	void PDC_Buffer_push_state(	PDC_Exception* exception,
 								PDC_Buffer* buffer);
 
-	/* 
+	/*
 	 *
 	 */
 	void PDC_Buffer_pop_state(	PDC_Exception* exception,
@@ -148,17 +148,17 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Buffer* PDC_Buffer_add_bit_1(	PDC_Exception* exception,		
-										PDC_Buffer* buffer, 
+	PDC_Buffer* PDC_Buffer_add_bit_1(	PDC_Exception* exception,
+										PDC_Buffer* buffer,
 										PDC_bit bit);
 
-	/* 
+	/*
 	 *
 	 */
-	PDC_uint PDC_Buffer_get_number_of_codingpasses(	PDC_Exception* exception,		
+	PDC_uint PDC_Buffer_get_number_of_codingpasses(	PDC_Exception* exception,
 													PDC_Buffer* buffer);
 
-	/* 
+	/*
 	 *
 	 */
 	PDC_uint PDC_Buffer_get_Lblock_increase(PDC_Exception* exception,
@@ -172,7 +172,7 @@ START_C
 									PDC_uint number_bits);
 
 	/*
-	 * 
+	 *
 	 */
 	void PDC_Buffer_padding_read(	PDC_Exception* exception,
 									PDC_Buffer* buffer);
