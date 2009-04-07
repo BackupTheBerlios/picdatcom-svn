@@ -285,10 +285,6 @@
 				>
 			</File>
 			<File
-				RelativePath=".\PDC_Transformation_97_decoder_sse2.asm"
-				>
-			</File>
-			<File
 				RelativePath=".\PDC_Transformation_97_encoder.c"
 				>
 			</File>
