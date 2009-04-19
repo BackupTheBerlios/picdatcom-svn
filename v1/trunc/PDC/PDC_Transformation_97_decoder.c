@@ -161,12 +161,12 @@ PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(	PDC_Excepti
 /*
  *
  */
-PDC_Transformation_97_decoder* PDC_td_start(	PDC_Exception* exception,
-												PDC_Transformation_97_decoder* decoder,
-												float *out, float *in_high, float* in_low,
-												PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even,
-												PDC_uint in_high_start, PDC_uint in_high_plus,
-												PDC_uint in_low_start, PDC_uint in_low_plus)
+PDC_Transformation_97_decoder* PDC_td_start_v1(	PDC_Exception* exception,
+													PDC_Transformation_97_decoder* decoder,
+													float *out, float *in_high, float* in_low,
+													PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even,
+													PDC_uint in_high_start, PDC_uint in_high_plus,
+													PDC_uint in_low_start, PDC_uint in_low_plus)
 {
 
 	PDC_uint i_help1, i_help2, i_help1_end, greensize, orangesize, out_1, out_1end, out_plus2;
@@ -454,16 +454,18 @@ PDC_Transformation_97_decoder* PDC_td_start(	PDC_Exception* exception,
 PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 													PDC_Transformation_97_decoder* decoder,
 													float *out, float *in_high, float* in_low,
-													PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even,
+													PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus,
+													PDC_uint out_stride, PDC_bool even,
 													PDC_uint in_high_start, PDC_uint in_high_plus,
 													PDC_uint in_low_start, PDC_uint in_low_plus,
 													PDC_uint num_rows, PDC_uint high_stride, PDC_uint low_stride,
 													PDC_uint out_row_stride)
 {
 
-	PDC_uint i_help1, i_help2, i_help1_end, greensize, orangesize, out_1, out_1end, out_plus2;
+	PDC_uint i_help1, i_help2, i_help1_end, greensize, orangesize, greensize_temp, orangesize_temp, out_1, out_1end, out_plus2;
 	PDC_uint low_stride2, low_stride3, low_stride4;
 	PDC_uint high_stride2, high_stride3, high_stride4;
+	PDC_uint out_stride2, out_stride3, out_stride4;
 
 	float			*workbuffer;
 	float			*green1, * green2, *green3, *green4;
@@ -484,51 +486,68 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 		in_low1		= in_low;
 
 		low_stride2	= low_stride;
-		low_stride3	= low_stride * 2; 
+		low_stride3	= low_stride * 2;
 		low_stride4	= low_stride * 3;
 
 		high_stride2	= high_stride;
-		high_stride3	= high_stride * 2; 
+		high_stride3	= high_stride * 2;
 		high_stride4	= high_stride * 3;
+
+		out_stride2	= out_stride;
+		out_stride3 = out_stride * 2;
+		out_stride4	= out_stride * 3;
 
 	}else if(num_rows == 3){
 		in_high1	= in_high;
 		in_low1		= in_low;
 
 		low_stride2	= low_stride;
-		low_stride3	= low_stride * 2; 
+		low_stride3	= low_stride * 2;
 		low_stride4	= 0;
 
 		high_stride2	= high_stride;
-		high_stride3	= high_stride * 2; 
+		high_stride3	= high_stride * 2;
 		high_stride4	= 0;
+
+		out_stride2	= out_stride;
+		out_stride3 = out_stride * 2;
+		out_stride4	= 0;
 
 	}else if(num_rows == 2){
 		in_high1	= in_high;
 		in_low1		= in_low;
 
-		low_stride2	= low__stride;
-		low_stride3	= 0; 
+		low_stride2	= low_stride;
+		low_stride3	= 0;
 		low_stride4	= 0;
 
-		high_stride2	= high__stride;
-		high_stride3	= 0; 
+		high_stride2	= high_stride;
+		high_stride3	= 0;
 		high_stride4	= 0;
+
+		out_stride2	= out_stride;
+		out_stride3 = 0;
+		out_stride4	= 0;
 
 	}else if(num_rows == 1){
 		in_high1	= in_high;
 		in_low1		= in_low;
 
 		low_stride2	= 0;
-		low_stride3	= 0; 
-		low_stride4	= 0;	
+		low_stride3	= 0;
+		low_stride4	= 0;
 
 		high_stride2	= 0;
-		high_stride3	= 0; 
-		high_stride4	= 0;	
+		high_stride3	= 0;
+		high_stride4	= 0;
+
+		out_stride2	= 0;
+		out_stride3 = 0;
+		out_stride4	= 0;
+
 	}else{
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_DECODER, __LINE__, __FILE__);
-		return;
+		return decoder;
 	}
 
 	greensize	= 0;
@@ -594,22 +613,22 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 					green1[4]			= green1[8];						//green[1]			= green[2];
 					green1[i_help1]		= green1[i_help1 - 8];			//green[i_help1]		= green[i_help1 - 2];
 					green1[i_help1 + 4]	= green1[i_help1 - 12];			//green[i_help1 + 1]	= green[i_help1 - 3];
-					
+
 					green2[0]			= green2[12];					//green[0]			= green[3];
 					green2[4]			= green2[8];						//green[1]			= green[2];
 					green2[i_help1]		= green2[i_help1 - 8];			//green[i_help1]		= green[i_help1 - 2];
 					green2[i_help1 + 4]	= green2[i_help1 - 12];			//green[i_help1 + 1]	= green[i_help1 - 3];
-					
+
 					green3[0]			= green3[12];					//green[0]			= green[3];
 					green3[4]			= green3[8];						//green[1]			= green[2];
 					green3[i_help1]		= green3[i_help1 - 8];			//green[i_help1]		= green[i_help1 - 2];
 					green3[i_help1 + 4]	= green3[i_help1 - 12];			//green[i_help1 + 1]	= green[i_help1 - 3];
-					
+
 					green4[0]			= green4[12];					//green[0]			= green[3];
 					green4[4]			= green4[8];						//green[1]			= green[2];
 					green4[i_help1]		= green4[i_help1 - 8];			//green[i_help1]		= green[i_help1 - 2];
 					green4[i_help1 + 4]	= green4[i_help1 - 12];			//green[i_help1 + 1]	= green[i_help1 - 3];
-										
+
 					greensize			= out_size / 2 + 4;
 					orangesize			= greensize - 1;
 				}else{
@@ -669,50 +688,124 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 				}
 			}else{
 				if(out_size % 2 == 0){
-					i_help1		= 2;
-					i_help1_end	= i_help1 + out_size / 2;
+					i_help1		= 8;
+					i_help1_end	= (i_help1 + out_size / 2) * 4;
 					i_help2		= in_low_start;
-					for(;i_help1 < i_help1_end; i_help1 += 1, i_help2 += in_low_plus){
-						orange[i_help1] = in_low[i_help2];
-					}
-					orange[0]			= orange[3];
-					orange[1]			= orange[2];
-					orange[i_help1]		= orange[i_help1 - 2];
+					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_low_plus){
+						orange1[i_help1] = in_low1[i_help2];
+						orange2[i_help1] = in_low1[i_help2 + low_stride2];
+						orange3[i_help1] = in_low1[i_help2 + low_stride3];
+						orange4[i_help1] = in_low1[i_help2 + low_stride4];
 
-					i_help1		= 2;
-					i_help1_end	= i_help1 + out_size / 2;
-					i_help2		= in_high_start;
-					for(;i_help1 < i_help1_end; i_help1 += 1, i_help2 += in_high_plus){
-						green[i_help1] = in_high[i_help2];
 					}
-					green[0]			= green[4];
-					green[1]			= green[3];
-					green[i_help1]		= green[i_help1 - 1];
-					green[i_help1 + 1]	= green[i_help1 - 2];
+					orange1[0]			= orange1[12];					// orange[0]			= orange[3];
+					orange1[4]			= orange1[8];					// orange[1]			= orange[2];
+					orange1[i_help1]	= orange1[i_help1 - 8];			// orange[i_help1]		= orange[i_help1 - 2];
+
+					orange2[0]			= orange2[12];					// orange[0]			= orange[3];
+					orange2[4]			= orange2[8];					// orange[1]			= orange[2];
+					orange2[i_help1]	= orange2[i_help1 - 8];			// orange[i_help1]		= orange[i_help1 - 2];
+
+					orange3[0]			= orange3[12];					// orange[0]			= orange[3];
+					orange3[4]			= orange3[8];					// orange[1]			= orange[2];
+					orange3[i_help1]	= orange3[i_help1 - 8];			// orange[i_help1]		= orange[i_help1 - 2];
+
+					orange4[0]			= orange4[12];					// orange[0]			= orange[3];
+					orange4[4]			= orange4[8];					// orange[1]			= orange[2];
+					orange4[i_help1]	= orange4[i_help1 - 8];			// orange[i_help1]		= orange[i_help1 - 2];
+
+
+					i_help1		= 8;
+					i_help1_end	= (i_help1 + out_size / 2) * 4;
+					i_help2		= in_high_start;
+					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_high_plus){
+						green1[i_help1] = in_high1[i_help2];
+						green2[i_help1] = in_high1[i_help2 + high_stride2];
+						green3[i_help1] = in_high1[i_help2 + high_stride3];
+						green4[i_help1] = in_high1[i_help2 + high_stride4];
+					}
+					green1[0]			= green1[16];					// green[0]			= green[4];
+					green1[4]			= green1[12];					// green[1]			= green[3];
+					green1[i_help1]		= green1[i_help1 - 4];			// green[i_help1]		= green[i_help1 - 1];
+					green1[i_help1 + 4]	= green1[i_help1 - 8];			// green[i_help1 + 1]	= green[i_help1 - 2];
+
+					green2[0]			= green2[16];					// green[0]			= green[4];
+					green2[4]			= green2[12];					// green[1]			= green[3];
+					green2[i_help1]		= green2[i_help1 - 4];			// green[i_help1]		= green[i_help1 - 1];
+					green2[i_help1 + 4]	= green2[i_help1 - 8];			// green[i_help1 + 1]	= green[i_help1 - 2];
+
+					green3[0]			= green3[16];					// green[0]			= green[4];
+					green3[4]			= green3[12];					// green[1]			= green[3];
+					green3[i_help1]		= green3[i_help1 - 4];			// green[i_help1]		= green[i_help1 - 1];
+					green3[i_help1 + 4]	= green3[i_help1 - 8];			// green[i_help1 + 1]	= green[i_help1 - 2];
+
+					green4[0]			= green4[16];					// green[0]			= green[4];
+					green4[4]			= green4[12];					// green[1]			= green[3];
+					green4[i_help1]		= green4[i_help1 - 4];			// green[i_help1]		= green[i_help1 - 1];
+					green4[i_help1 + 4]	= green4[i_help1 - 8];			// green[i_help1 + 1]	= green[i_help1 - 2];
+
 					greensize			= out_size / 2 + 4;
 					orangesize			= greensize - 1;
 				}else{
-					i_help1		= 2;
-					i_help1_end	= i_help1 + PDC_i_floor(out_size, 2);
+					i_help1		= 8;
+					i_help1_end	= (i_help1 + PDC_i_floor(out_size, 2)) * 4;
 					i_help2		= in_low_start;
-					for(;i_help1 < i_help1_end; i_help1 += 1, i_help2 += in_low_plus){
-						orange[i_help1] = in_low[i_help2];
+					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_low_plus){
+						orange1[i_help1] = in_low1[i_help2];
+						orange2[i_help1] = in_low1[i_help2 + low_stride2];
+						orange3[i_help1] = in_low1[i_help2 + low_stride3];
+						orange4[i_help1] = in_low1[i_help2 + low_stride4];
 					}
-					orange[0]			= orange[3];
-					orange[1]			= orange[2];
-					orange[i_help1]		= orange[i_help1 - 1];
-					orange[i_help1 + 1]	= orange[i_help1 - 2];
+					orange1[0]				= orange1[12];					// orange[0]			= orange[3];
+					orange1[4]				= orange1[8];					// orange[1]			= orange[2];
+					orange1[i_help1]		= orange1[i_help1 - 4];			// orange[i_help1]		= orange[i_help1 - 1];
+					orange1[i_help1 + 4]	= orange1[i_help1 - 8];			// orange[i_help1 + 1]	= orange[i_help1 - 2];
 
-					i_help1		= 2;
-					i_help1_end	= i_help1 + PDC_i_ceiling(out_size, 2);
+					orange2[0]				= orange2[12];					// orange[0]			= orange[3];
+					orange2[4]				= orange2[8];					// orange[1]			= orange[2];
+					orange2[i_help1]		= orange2[i_help1 - 4];			// orange[i_help1]		= orange[i_help1 - 1];
+					orange2[i_help1 + 4]	= orange2[i_help1 - 8];			// orange[i_help1 + 1]	= orange[i_help1 - 2];
+
+					orange3[0]				= orange3[12];					// orange[0]			= orange[3];
+					orange3[4]				= orange3[8];					// orange[1]			= orange[2];
+					orange3[i_help1]		= orange3[i_help1 - 4];			// orange[i_help1]		= orange[i_help1 - 1];
+					orange3[i_help1 + 4]	= orange3[i_help1 - 8];			// orange[i_help1 + 1]	= orange[i_help1 - 2];
+
+					orange4[0]				= orange4[12];					// orange[0]			= orange[3];
+					orange4[4]				= orange4[8];					// orange[1]			= orange[2];
+					orange4[i_help1]		= orange4[i_help1 - 4];			// orange[i_help1]		= orange[i_help1 - 1];
+					orange4[i_help1 + 4]	= orange4[i_help1 - 8];			// orange[i_help1 + 1]	= orange[i_help1 - 2];
+
+					i_help1		= 8;
+					i_help1_end	= (i_help1 + PDC_i_ceiling(out_size, 2)) * 4;
 					i_help2		= in_high_start;
-					for(;i_help1 < i_help1_end; i_help1 += 1, i_help2 += in_high_plus){
-						green[i_help1] = in_high[i_help2];
+					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_high_plus){
+						green1[i_help1] = in_high1[i_help2];
+						green2[i_help1] = in_high1[i_help2 + high_stride2];
+						green3[i_help1] = in_high1[i_help2 + high_stride3];
+						green4[i_help1] = in_high1[i_help2 + high_stride4];
 					}
-					green[0]			= green[4];
-					green[1]			= green[3];
-					green[i_help1]		= green[i_help1 - 2];
-					green[i_help1 + 1]	= green[i_help1 - 3];
+
+					green1[0]			= green1[16];						// green[0]			= green[4];
+					green1[4]			= green1[12];						// green[1]			= green[3];
+					green1[i_help1]		= green1[i_help1 - 8];				// green[i_help1]		= green[i_help1 - 2];
+					green1[i_help1 + 4]	= green1[i_help1 - 12];				// green[i_help1 + 1]	= green[i_help1 - 3];
+
+					green2[0]			= green2[16];						// green[0]			= green[4];
+					green2[4]			= green2[12];						// green[1]			= green[3];
+					green2[i_help1]		= green2[i_help1 - 8];				// green[i_help1]		= green[i_help1 - 2];
+					green2[i_help1 + 4]	= green2[i_help1 - 12];				// green[i_help1 + 1]	= green[i_help1 - 3];
+
+					green3[0]			= green3[16];						// green[0]			= green[4];
+					green3[4]			= green3[12];						// green[1]			= green[3];
+					green3[i_help1]		= green3[i_help1 - 8];				// green[i_help1]		= green[i_help1 - 2];
+					green3[i_help1 + 4]	= green3[i_help1 - 12];				// green[i_help1 + 1]	= green[i_help1 - 3];
+
+					green4[0]			= green4[16];						// green[0]			= green[4];
+					green4[4]			= green4[12];						// green[1]			= green[3];
+					green4[i_help1]		= green4[i_help1 - 8];				// green[i_help1]		= green[i_help1 - 2];
+					green4[i_help1 + 4]	= green4[i_help1 - 12];				// green[i_help1 + 1]	= green[i_help1 - 3];
+
 					greensize			= PDC_i_ceiling(out_size, 2) + 4;
 					orangesize			= greensize - 1;
 				}
@@ -721,84 +814,203 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 			if(even){
 				if(out_size == 1){
 					out[out_start] = in_low[in_low_start];
+					out[out_start + out_stride2] = in_low[in_low_start + low_stride2];
+					out[out_start + out_stride3] = in_low[in_low_start + low_stride3];
+					out[out_start + out_stride4] = in_low[in_low_start + low_stride4];
 					return decoder;
 				}else if(out_size == 2){
-					green[0] = green[1] = green[2] = green[3] = green[4] = in_high[in_high_start];
-					orange[0] = orange[1] = orange[2] = orange[3] = in_low[in_low_start];
+					// green[0] = green[1] = green[2] = green[3] = green[4] = in_high[in_high_start];
+					green1[0] = green1[4] = green1[8] = green1[12] = green1[16] = in_high[in_high_start];
+					green2[0] = green2[4] = green2[8] = green2[12] = green2[16] = in_high[in_high_start + high_stride2];
+					green3[0] = green3[4] = green3[8] = green3[12] = green3[16] = in_high[in_high_start + high_stride3];
+					green4[0] = green4[4] = green4[8] = green4[12] = green4[16] = in_high[in_high_start + high_stride4];
+
+					// orange[0] = orange[1] = orange[2] = orange[3] = in_low[in_low_start];
+					orange1[0] = orange1[4] = orange1[8] = orange1[12] = in_low[in_low_start];
+					orange2[0] = orange2[4] = orange2[8] = orange2[12] = in_low[in_low_start + low_stride2];
+					orange3[0] = orange3[4] = orange3[8] = orange3[12] = in_low[in_low_start + low_stride3];
+					orange4[0] = orange4[4] = orange4[8] = orange4[12] = in_low[in_low_start + low_stride4];
+
 					greensize = 5;
 					orangesize = 4;
 				}else if(out_size == 3){
-					green[0] = green[1] = green[2] = green[3] = green[4] = in_high[in_high_start];
-					orange[0] = orange[2] = in_low[in_low_start + in_low_plus];
-					orange[1] = orange[3] = in_low[in_low_start];
+					// green[0] = green[1] = green[2] = green[3] = green[4] = in_high[in_high_start];
+					green1[0] = green1[4] = green1[8] = green1[12] = green1[16] = in_high[in_high_start];
+					green2[0] = green2[4] = green2[8] = green2[12] = green2[16] = in_high[in_high_start + high_stride2];
+					green3[0] = green3[4] = green3[8] = green3[12] = green3[16] = in_high[in_high_start + high_stride3];
+					green4[0] = green4[4] = green4[8] = green4[12] = green4[16] = in_high[in_high_start + high_stride4];
+
+					// orange[0] = orange[2] = in_low[in_low_start + in_low_plus];
+					orange1[0] = orange1[8] = in_low[in_low_start + in_low_plus];
+					orange2[0] = orange2[8] = in_low[in_low_start + in_low_plus + low_stride2];
+					orange3[0] = orange3[8] = in_low[in_low_start + in_low_plus + low_stride3];
+					orange4[0] = orange4[8] = in_low[in_low_start + in_low_plus + low_stride4];
+
+					// orange[1] = orange[3] = in_low[in_low_start];
+					orange1[4] = orange1[12] = in_low[in_low_start];
+					orange2[4] = orange2[12] = in_low[in_low_start + low_stride2];
+					orange3[4] = orange3[12] = in_low[in_low_start + low_stride3];
+					orange4[4] = orange4[12] = in_low[in_low_start + low_stride4];
+
 					greensize = 5;
 					orangesize = 4;
 				}else if(out_size == 4){
-					green[0] = green[3] = in_high[in_high_start + in_high_plus];
-					green[1] = green[2] = green[4] = green[5] = in_high[in_high_start];
-					orange[0] = orange[2] = orange[3] = in_low[in_low_start + in_low_plus];
-					orange[1] = orange[4] = in_low[in_low_start];
+					// green[0] = green[3] = in_high[in_high_start + in_high_plus];
+					green1[0] = green1[3] = in_high[in_high_start + in_high_plus];
+					green2[0] = green2[3] = in_high[in_high_start + in_high_plus + high_stride2];
+					green3[0] = green3[3] = in_high[in_high_start + in_high_plus + high_stride3];
+					green4[0] = green4[3] = in_high[in_high_start + in_high_plus + high_stride4];
+
+					// green[1] = green[2] = green[4] = green[5] = in_high[in_high_start];
+					green1[4] = green1[8] = green1[16] = green1[20] = in_high[in_high_start];
+					green2[4] = green2[8] = green2[16] = green2[20] = in_high[in_high_start + high_stride2];
+					green3[4] = green3[8] = green3[16] = green3[20] = in_high[in_high_start + high_stride3];
+					green4[4] = green4[8] = green4[16] = green4[20] = in_high[in_high_start + high_stride4];
+
+					// orange[0] = orange[2] = orange[3] = in_low[in_low_start + in_low_plus];
+					orange1[0] = orange1[8] = orange1[12] = in_low[in_low_start + in_low_plus];
+					orange2[0] = orange2[8] = orange2[12] = in_low[in_low_start + in_low_plus + low_stride2];
+					orange3[0] = orange3[8] = orange3[12] = in_low[in_low_start + in_low_plus + low_stride3];
+					orange4[0] = orange4[8] = orange4[12] = in_low[in_low_start + in_low_plus + low_stride4];
+
+					// orange[1] = orange[4] = in_low[in_low_start];
+					orange1[4] = orange1[16] = in_low[in_low_start];
+					orange2[4] = orange2[16] = in_low[in_low_start + low_stride2];
+					orange3[4] = orange3[16] = in_low[in_low_start + low_stride3];
+					orange4[4] = orange4[16] = in_low[in_low_start + low_stride4];
+
 					greensize = 6;
 					orangesize = 5;
 				}
 			}else{
 				if(out_size == 1){
-					out[out_start] = in_low[in_low_start];
+					out[out_start] 					= in_low[in_low_start];
+					out[out_start + out_stride2]	= in_low[in_low_start + low_stride2];
+					out[out_start + out_stride3]	= in_low[in_low_start + low_stride3];
+					out[out_start + out_stride4]	= in_low[in_low_start + low_stride4];
 					return decoder;
 				}else if(out_size == 2){
-					green[0] = green[1] = green[2] = green[3] = green[4] = in_high[in_high_start];
-					orange[0] = orange[1] = orange[2] = orange[3] = in_low[in_low_start];
+					// green[0] = green[1] = green[2] = green[3] = green[4] = in_high[in_high_start];
+					green1[0] = green1[4] = green1[8] = green1[12] = green1[16]	= in_high[in_high_start];
+					green2[0] = green2[4] = green2[8] = green2[12] = green2[16]	= in_high[in_high_start + high_stride2];
+					green3[0] = green3[4] = green3[8] = green3[12] = green3[16]	= in_high[in_high_start + high_stride3];
+					green4[0] = green4[4] = green4[8] = green4[12] = green4[16]	= in_high[in_high_start + high_stride4];
+
+					// orange[0] = orange[1] = orange[2] = orange[3] = in_low[in_low_start];
+					orange1[0] = orange1[4] = orange1[8] = orange1[12] = in_low[in_low_start];
+					orange2[0] = orange2[4] = orange2[8] = orange2[12] = in_low[in_low_start + low_stride2];
+					orange3[0] = orange3[4] = orange3[8] = orange3[12] = in_low[in_low_start + low_stride3];
+					orange4[0] = orange4[4] = orange4[8] = orange4[12] = in_low[in_low_start + low_stride4];
+
 					greensize = 5;
 					orangesize = 4;
 				}else if(out_size == 3){
-					green[0] = green[2] = green[4] = in_high[in_high_start];
-					green[1] = green[3] = green[5] = in_high[in_high_start + in_high_plus];
-					orange[0] = orange[1] = orange[2] = orange[3] = orange[4] = in_low[in_low_start];
+					// green[0] = green[2] = green[4] = in_high[in_high_start];
+					green1[0] = green1[8] = green1[16] = in_high[in_high_start];
+					green2[0] = green2[8] = green2[16] = in_high[in_high_start + high_stride2];
+					green3[0] = green3[8] = green3[16] = in_high[in_high_start + high_stride3];
+					green4[0] = green4[8] = green4[16] = in_high[in_high_start + high_stride4];
+
+					// green[1] = green[3] = green[5] = in_high[in_high_start + in_high_plus];
+					green1[4] = green1[12] = green1[20] = in_high[in_high_start + in_high_plus];
+					green2[4] = green2[12] = green2[20] = in_high[in_high_start + in_high_plus + high_stride2];
+					green3[4] = green3[12] = green3[20] = in_high[in_high_start + in_high_plus + high_stride3];
+					green4[4] = green4[12] = green4[20] = in_high[in_high_start + in_high_plus + high_stride4];
+
+					//orange[0] = orange[1] = orange[2] = orange[3] = orange[4] = in_low[in_low_start];
+					orange1[0] = orange1[4] = orange1[8] = orange1[12] = orange1[16] = in_low[in_low_start];
+					orange2[0] = orange2[4] = orange2[8] = orange2[12] = orange2[16] = in_low[in_low_start + low_stride2];
+					orange3[0] = orange3[4] = orange3[8] = orange3[12] = orange3[16] = in_low[in_low_start + low_stride3];
+					orange4[0] = orange4[4] = orange4[8] = orange4[12] = orange4[16] = in_low[in_low_start + low_stride4];
+
 					greensize = 6;
 					orangesize = 5;
 				}else if(out_size == 4){
-					green[0] = green[1] = green[3] = green[4] = in_high[in_high_start + in_high_plus];
-					green[2] = green[5] = in_high[in_high_start];
-					orange[0] = orange[3] = in_low[in_low_start + in_low_plus];
-					orange[1] = orange[2] = orange[4] = in_low[in_low_start];
+					// green[0] = green[1] = green[3] = green[4] = in_high[in_high_start + in_high_plus];
+					green1[0] = green1[4] = green1[12] = green1[16] = in_high[in_high_start + in_high_plus];
+					green2[0] = green2[4] = green2[12] = green2[16] = in_high[in_high_start + in_high_plus + high_stride2];
+					green3[0] = green3[4] = green3[12] = green3[16] = in_high[in_high_start + in_high_plus + high_stride3];
+					green4[0] = green4[4] = green4[12] = green4[16] = in_high[in_high_start + in_high_plus + high_stride4];
+
+					// green[2] = green[5] = in_high[in_high_start];
+					green1[8] = green1[20] = in_high[in_high_start];
+					green2[8] = green2[20] = in_high[in_high_start + high_stride2];
+					green3[8] = green3[20] = in_high[in_high_start + high_stride3];
+					green4[8] = green4[20] = in_high[in_high_start + high_stride4];
+
+					// orange[0] = orange[3] = in_low[in_low_start + in_low_plus];
+					orange1[0] = orange1[12] = in_low[in_low_start + in_low_plus];
+					orange2[0] = orange2[12] = in_low[in_low_start + in_low_plus + low_stride2];
+					orange3[0] = orange3[12] = in_low[in_low_start + in_low_plus + low_stride3];
+					orange4[0] = orange4[12] = in_low[in_low_start + in_low_plus + low_stride4];
+
+					// orange[1] = orange[2] = orange[4] = in_low[in_low_start];
+					orange1[4] = orange1[8] = orange1[16] = in_low[in_low_start];
+					orange2[4] = orange2[8] = orange2[16] = in_low[in_low_start + low_stride2];
+					orange3[4] = orange3[8] = orange3[16] = in_low[in_low_start + low_stride3];
+					orange4[4] = orange4[8] = orange4[16] = in_low[in_low_start + low_stride4];
+
+
 					greensize = 6;
 					orangesize =5;
 				}
 			}
 		}
 
-		for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
-			green[i_help1] *= K1;
+		orangesize_temp	= orangesize * 4;
+		greensize_temp	= greensize	* 4;
+		for(i_help1 = 0; i_help1 < greensize_temp; i_help1 += 4){
+			green1[i_help1] *= K1;
+			green2[i_help1] *= K1;
+			green3[i_help1] *= K1;
+			green4[i_help1] *= K1;
 		}
-		for(i_help1 = 0; i_help1 < orangesize; i_help1 += 1){
-			orange[i_help1] *= K;
-		}
-
-		for(i_help1 = 0, i_help2 = 1; i_help1 < orangesize;){
-			orange[i_help1] = orange[i_help1] - delta * ( green[i_help1] + green[i_help2]);
-			i_help1 = i_help2;
-			i_help2 += 1;
-		}
-
-		greensize = orangesize - 1;
-		for(i_help1 = 0, i_help2 = 1; i_help1 < greensize;){
-			green[i_help1] = green[i_help2] - f_gamma * ( orange[i_help1] + orange[i_help2]);
-			i_help1 = i_help2;
-			i_help2 += 1;
+		for(i_help1 = 0; i_help1 < orangesize_temp; i_help1 += 4){
+			orange1[i_help1] *= K;
+			orange2[i_help1] *= K;
+			orange3[i_help1] *= K;
+			orange4[i_help1] *= K;
 		}
 
-		orangesize = greensize - 1;
-		for(i_help1 = 0, i_help2 = 1; i_help1 < orangesize;){
-			orange[i_help1] = orange[i_help2] - beta * ( green[i_help1] + green[i_help2]);
+		for(i_help1 = 0, i_help2 = 4; i_help1 < orangesize_temp;){
+			orange1[i_help1] = orange1[i_help1] - delta * ( green1[i_help1] + green1[i_help2]);
+			orange2[i_help1] = orange2[i_help1] - delta * ( green2[i_help1] + green2[i_help2]);
+			orange3[i_help1] = orange3[i_help1] - delta * ( green3[i_help1] + green3[i_help2]);
+			orange4[i_help1] = orange4[i_help1] - delta * ( green4[i_help1] + green4[i_help2]);
+
 			i_help1 = i_help2;
-			i_help2 += 1;
+			i_help2 += 4;
 		}
 
-		greensize = orangesize - 1;
-		for(i_help1 = 0, i_help2 = 1; i_help1 < greensize;){
-			green[i_help1] = green[i_help2] - alpha * ( orange[i_help1] + orange[i_help2]);
+		greensize_temp = orangesize_temp - 4;
+		for(i_help1 = 0, i_help2 = 4; i_help1 < greensize_temp;){
+			green1[i_help1] = green1[i_help2] - f_gamma * ( orange1[i_help1] + orange1[i_help2]);
+			green2[i_help1] = green2[i_help2] - f_gamma * ( orange2[i_help1] + orange2[i_help2]);
+			green3[i_help1] = green3[i_help2] - f_gamma * ( orange3[i_help1] + orange3[i_help2]);
+			green4[i_help1] = green4[i_help2] - f_gamma * ( orange4[i_help1] + orange4[i_help2]);
+
 			i_help1 = i_help2;
-			i_help2 += 1;
+			i_help2 += 4;
+		}
+
+		orangesize_temp = greensize_temp - 4;
+		for(i_help1 = 0, i_help2 = 4; i_help1 < orangesize;){
+			orange1[i_help1] = orange1[i_help2] - beta * ( green1[i_help1] + green1[i_help2]);
+			orange2[i_help1] = orange2[i_help2] - beta * ( green2[i_help1] + green2[i_help2]);
+			orange3[i_help1] = orange3[i_help2] - beta * ( green3[i_help1] + green3[i_help2]);
+			orange4[i_help1] = orange4[i_help2] - beta * ( green4[i_help1] + green4[i_help2]);
+			i_help1 = i_help2;
+			i_help2 += 4;
+		}
+
+		greensize_temp = orangesize_temp - 1;
+		for(i_help1 = 0, i_help2 = 4; i_help1 < greensize;){
+			green1[i_help1] = green1[i_help2] - alpha * ( orange1[i_help1] + orange1[i_help2]);
+			green2[i_help1] = green2[i_help2] - alpha * ( orange2[i_help1] + orange2[i_help2]);
+			green3[i_help1] = green3[i_help2] - alpha * ( orange3[i_help1] + orange3[i_help2]);
+			green4[i_help1] = green4[i_help2] - alpha * ( orange4[i_help1] + orange4[i_help2]);
+			i_help1 = i_help2;
+			i_help2 += 4;
 		}
 
 
@@ -808,26 +1020,38 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 				out_1		= out_start;
 				out_1end	= out_size * out_plus + out_start;
 				out_plus2	= 2 * out_plus;
-				for(i_help2 = 0;out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
-					out[out_1] = orange[i_help2];
+				for(i_help2 = 0;out_1 < out_1end; out_1 += out_plus2, i_help2 += 4){
+					out[out_1] 					= orange1[i_help2]; //out[out_1] = orange[i_help2];
+					out[out_1 + out_stride2] 	= orange2[i_help2]; //out[out_1] = orange[i_help2];
+					out[out_1 + out_stride3] 	= orange3[i_help2]; //out[out_1] = orange[i_help2];
+					out[out_1 + out_stride4] 	= orange4[i_help2]; //out[out_1] = orange[i_help2];
 				}
 
 				out_1		= out_start + out_plus;
-				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
-					out[out_1] = green[i_help2];
+				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 4){
+					out[out_1] 					= green1[i_help2];		//out[out_1] = green[i_help2];
+					out[out_1 + out_stride2]	= green2[i_help2];		//out[out_1] = green[i_help2];
+					out[out_1 + out_stride3]	= green3[i_help2];		//out[out_1] = green[i_help2];
+					out[out_1 + out_stride4]	= green4[i_help2];		//out[out_1] = green[i_help2];
 				}
 			}else{
 				i_help1 = 0;
 				out_1		= out_start;
 				out_1end	= out_size * out_plus  + out_start;
 				out_plus2	= 2 * out_plus;
-				for(i_help2 = 0;out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
-					out[out_1] = orange[i_help2];
+				for(i_help2 = 0;out_1 < out_1end; out_1 += out_plus2, i_help2 += 4){
+					out[out_1] 					= orange1[i_help2];		//out[out_1] = orange[i_help2];
+					out[out_1 + out_stride2]	= orange2[i_help2];		//out[out_1] = orange[i_help2];
+					out[out_1 + out_stride3]	= orange3[i_help2];		//out[out_1] = orange[i_help2];
+					out[out_1 + out_stride4]	= orange4[i_help2];		//out[out_1] = orange[i_help2];
 				}
 
 				out_1		= out_start + out_plus;
-				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
-					out[out_1] = green[i_help2];
+				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 4){
+					out[out_1] 					= green1[i_help2];		// out[out_1] = green[i_help2];
+					out[out_1 + out_stride2]	= green2[i_help2];		// out[out_1] = green[i_help2];
+					out[out_1 + out_stride3]	= green3[i_help2];		// out[out_1] = green[i_help2];
+					out[out_1 + out_stride4]	= green4[i_help2];		// out[out_1] = green[i_help2];
 				}
 			}
 		}else{
@@ -836,28 +1060,41 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 				out_1		= out_start + out_plus;
 				out_1end	= out_size * out_plus  + out_start;
 				out_plus2	= 2 * out_plus;
-				for(i_help2 = 1;out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
-					out[out_1] = orange[i_help2];
+				for(i_help2 = 1;out_1 < out_1end; out_1 += out_plus2, i_help2 += 4){
+					out[out_1] 					= orange1[i_help2];		// out[out_1] = orange[i_help2];
+					out[out_1 + out_stride2]	= orange2[i_help2];		// out[out_1] = orange[i_help2];
+					out[out_1 + out_stride3]	= orange3[i_help2];		// out[out_1] = orange[i_help2];
+					out[out_1 + out_stride4]	= orange4[i_help2];		// out[out_1] = orange[i_help2];
 				}
 
 				out_1		= out_start ;
 				out_1end	= out_size * out_plus  + out_start;
-				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
-					out[out_1] = green[i_help2];
+				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 4){
+					out[out_1] 					= green1[i_help2];		// out[out_1] = green[i_help2];
+					out[out_1 + out_stride2]	= green2[i_help2];		// out[out_1] = green[i_help2];
+					out[out_1 + out_stride3]	= green3[i_help2];		// out[out_1] = green[i_help2];
+					out[out_1 + out_stride4]	= green4[i_help2];		// out[out_1] = green[i_help2];
 				}
 			}else{
 				i_help1 = 0;
 				out_1		= out_start + out_plus;
 				out_1end	= out_size * out_plus  + out_start;
 				out_plus2	= 2 * out_plus;
-				for(i_help2 = 1;out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
-					out[out_1] = orange[i_help2];
+				for(i_help2 = 1;out_1 < out_1end; out_1 += out_plus2, i_help2 += 4){
+					out[out_1] 					= orange1[i_help2];		// out[out_1] = orange[i_help2];
+					out[out_1 + out_stride2]	= orange2[i_help2];		// out[out_1] = orange[i_help2];
+					out[out_1 + out_stride3]	= orange3[i_help2];		// out[out_1] = orange[i_help2];
+					out[out_1 + out_stride4]	= orange4[i_help2];		// out[out_1] = orange[i_help2];
+
 				}
 
 				out_1		= out_start ;
 				out_1end	= out_size * out_plus + out_start;
-				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 1){
-					out[out_1] = green[i_help2];
+				for(i_help2 = 0; out_1 < out_1end; out_1 += out_plus2, i_help2 += 4){
+					out[out_1] 					= green1[i_help2];		// out[out_1] = green[i_help2];
+					out[out_1 + out_stride2]	= green2[i_help2];		// out[out_1] = green[i_help2];
+					out[out_1 + out_stride3]	= green3[i_help2];		// out[out_1] = green[i_help2];
+					out[out_1 + out_stride4]	= green4[i_help2];		// out[out_1] = green[i_help2];
 				}
 			}
 		}
