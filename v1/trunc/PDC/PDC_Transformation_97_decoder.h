@@ -40,13 +40,13 @@ START_C
 		float			*pink;
 		float			*orange;
 		float			*brown;
-
+/*
 		float			*del_workbuffer;
 		float			*del_green;
 		float			*del_pink;
 		float			*del_orange;
 		float			*del_brown;
-
+*/
 		PDC_uint32		greenSize;
 		PDC_uint32		pinkSize;
 		PDC_uint32		orangeSize;
@@ -84,12 +84,12 @@ START_C
 	PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 														PDC_Transformation_97_decoder* decoder,
 														float *out, float *in_high, float* in_low,
-														PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus,
-														PDC_uint out_stride, PDC_bool even,
+														PDC_uint out_start, PDC_uint out_size,
+														PDC_uint out_plus, PDC_bool even,
 														PDC_uint in_high_start, PDC_uint in_high_plus,
 														PDC_uint in_low_start, PDC_uint in_low_plus,
 														PDC_uint num_rows, PDC_uint high_stride, PDC_uint low_stride,
-														PDC_uint out_row_stride	);
+														PDC_uint out_stride	);
 
 
 	/*

@@ -19,6 +19,7 @@
  * */
 
 #include "PDC_Transformation_97_decoder.h"
+#include <malloc.h>
 
 START_C
 
@@ -60,7 +61,6 @@ PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception*
 {
 	PDC_Transformation_97_decoder* decoder = NULL;
 	PDC_int extrasize = 6;
-	PDC_int modpointer = 16;
 
 	decoder = malloc(sizeof(PDC_Transformation_97_decoder));
 	if(decoder == NULL){
@@ -82,46 +82,41 @@ PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception*
 	decoder->orangeSize = PDC_i_ceiling(maxSize, 2) + 4;
 
 
-
-	decoder->del_green = malloc(sizeof(float) * (decoder->greenSize + extrasize));
-	if(decoder->del_green == NULL){
+	decoder->green = (float*)memalign(16, sizeof(float) * (decoder->greenSize + extrasize));
+	if(decoder->green == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	decoder->green = (float*)((PDC_uint)(decoder->del_green) + ((PDC_uint)(decoder->del_green) % modpointer));
 
-	decoder->del_orange	= malloc(sizeof(float) * (decoder->orangeSize + extrasize));
-	if(decoder->del_orange == NULL){
+	decoder->orange	=(float*)memalign(16, sizeof(float) * (decoder->orangeSize + extrasize));
+	if(decoder->orange == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	decoder->orange = (float*) ((PDC_uint)(decoder->del_orange) + ((PDC_uint)(decoder->del_orange) % modpointer));
 
-	decoder->del_pink	= malloc(sizeof(float) * (decoder->pinkSize + extrasize));
-	if(decoder->del_pink == NULL){
+
+	decoder->pink	= (float*)memalign(16, sizeof(float) * (decoder->pinkSize + extrasize));
+	if(decoder->pink == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	decoder->pink = (float*)((PDC_uint)(decoder->del_pink) + ( (PDC_uint)(decoder->del_pink) % modpointer));
 
-	decoder->del_brown	= malloc(sizeof(float) * (decoder->brownSize +extrasize));
-	if(decoder->del_brown == NULL){
+	decoder->brown	= (float*)memalign(16, sizeof(float) * (decoder->brownSize +extrasize));
+	if(decoder->brown == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	decoder->brown = (float*) ((PDC_uint)(decoder->del_brown) + ((PDC_uint)(decoder->del_brown) % modpointer));
 
-	decoder->del_workbuffer	= malloc(sizeof(float) * (maxSize + extrasize));
-	if(decoder->del_workbuffer == NULL){
+	decoder->workbuffer	= (float*)memalign(16, sizeof(float) * (maxSize + extrasize));
+	if(decoder->workbuffer == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	decoder->workbuffer = (float*)((PDC_uint)(decoder->del_workbuffer) + ((PDC_uint)(decoder->del_workbuffer) % modpointer));
 
 	return decoder;
 }
@@ -135,19 +130,19 @@ PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(	PDC_Excepti
 {
 	if(decoder != NULL){
 		if(decoder->brown != NULL){
-			free(decoder->del_brown);
+			free(decoder->brown);
 		}
 		if(decoder->green != NULL){
-			free(decoder->del_green);
+			free(decoder->green);
 		}
 		if(decoder->orange != NULL){
-			free(decoder->del_orange);
+			free(decoder->orange);
 		}
 		if(decoder->pink != NULL){
-			free(decoder->del_pink);
+			free(decoder->pink);
 		}
 		if(decoder->workbuffer != NULL){
-			free(decoder->del_workbuffer);
+			free(decoder->workbuffer);
 		}
 
 		delete_PDC_Exception(decoder->exception);
@@ -454,12 +449,12 @@ PDC_Transformation_97_decoder* PDC_td_start_v1(	PDC_Exception* exception,
 PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 													PDC_Transformation_97_decoder* decoder,
 													float *out, float *in_high, float* in_low,
-													PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus,
-													PDC_uint out_stride, PDC_bool even,
+													PDC_uint out_start, PDC_uint out_size,
+													PDC_uint out_plus,  PDC_bool even,
 													PDC_uint in_high_start, PDC_uint in_high_plus,
 													PDC_uint in_low_start, PDC_uint in_low_plus,
 													PDC_uint num_rows, PDC_uint high_stride, PDC_uint low_stride,
-													PDC_uint out_row_stride)
+													PDC_uint out_stride)
 {
 
 	PDC_uint i_help1, i_help2, i_help1_end, greensize, orangesize, greensize_temp, orangesize_temp, out_1, out_1end, out_plus2;

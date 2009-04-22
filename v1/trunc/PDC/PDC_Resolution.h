@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -24,7 +24,7 @@
 #include "PDC_Parameter.h"
 
 START_C
-	
+
 	struct str_PDC_Resolution;
 	typedef struct str_PDC_Resolution PDC_Resolution;
 
@@ -40,7 +40,7 @@ START_C
 		PDC_Resolution*		resolution_big;
 		PDC_Resolution*		resolution_small;
 		PDC_Precinct**		precinct;
-		
+
 		PDC_Subband*		subband[3];
 		/*
 		PDC_Subband*		subband_ll;
@@ -124,28 +124,33 @@ START_C
 	 *
 	 */
 	PDC_uint PDC_Resolution_get_codeblock_position(	PDC_Exception* exception,
-													PDC_Resolution* resolution,		
+													PDC_Resolution* resolution,
 													PDC_uint pos_x,
 													PDC_uint pos_y);
-	
+
 	/*
 	 *
 	 */
 	PDC_Precinct* PDC_Resolution_get_precinct(	PDC_Exception*	exception,
 												PDC_Resolution*	resolution,
 												PDC_uint		precinct_pos);
-												
+
 	/*
 	 *
 	 */
 	PDC_Resolution* PDC_Resolution_inverse_quantization(PDC_Exception* exception,
-														PDC_Resolution* resolution);	
-														
+														PDC_Resolution* resolution);
+
 	/*
 	 *
 	 */
 	PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* exception,
-																PDC_Resolution* resolution);	
-														
+																PDC_Resolution* resolution);
+
+	/*
+	 *
+	 */
+	PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exception,
+																		PDC_Resolution* resolution);
 STOP_C
 #endif

@@ -19,7 +19,8 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.filechooser.FileFilter;
 import javax.swing.JFileChooser;
 import java.io.File;
-
+import javax.swing.JInternalFrame;
+import java.awt.Dimension;
 /**
  * The application's main frame.
  */
@@ -116,6 +117,7 @@ public class PicDatComGuiView extends FrameView {
 
         mainPanel = new javax.swing.JPanel();
         jToolBar1 = new javax.swing.JToolBar();
+        main_panel = new javax.swing.JPanel();
         menuBar = new javax.swing.JMenuBar();
         javax.swing.JMenu fileMenu = new javax.swing.JMenu();
         jMenuItem1 = new javax.swing.JMenuItem();
@@ -134,17 +136,32 @@ public class PicDatComGuiView extends FrameView {
         jToolBar1.setRollover(true);
         jToolBar1.setName("jToolBar1"); // NOI18N
 
+        main_panel.setName("main_panel"); // NOI18N
+
+        javax.swing.GroupLayout main_panelLayout = new javax.swing.GroupLayout(main_panel);
+        main_panel.setLayout(main_panelLayout);
+        main_panelLayout.setHorizontalGroup(
+            main_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 400, Short.MAX_VALUE)
+        );
+        main_panelLayout.setVerticalGroup(
+            main_panelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
+            .addGap(0, 223, Short.MAX_VALUE)
+        );
+
         javax.swing.GroupLayout mainPanelLayout = new javax.swing.GroupLayout(mainPanel);
         mainPanel.setLayout(mainPanelLayout);
         mainPanelLayout.setHorizontalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addComponent(jToolBar1, javax.swing.GroupLayout.DEFAULT_SIZE, 400, Short.MAX_VALUE)
+            .addComponent(main_panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE)
         );
         mainPanelLayout.setVerticalGroup(
             mainPanelLayout.createParallelGroup(javax.swing.GroupLayout.Alignment.LEADING)
             .addGroup(mainPanelLayout.createSequentialGroup()
                 .addComponent(jToolBar1, javax.swing.GroupLayout.PREFERRED_SIZE, 25, javax.swing.GroupLayout.PREFERRED_SIZE)
-                .addContainerGap(224, Short.MAX_VALUE))
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
+                .addComponent(main_panel, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, Short.MAX_VALUE))
         );
 
         menuBar.setName("menuBar"); // NOI18N
@@ -202,7 +219,7 @@ public class PicDatComGuiView extends FrameView {
             .addGroup(statusPanelLayout.createSequentialGroup()
                 .addContainerGap()
                 .addComponent(statusMessageLabel)
-                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 230, Short.MAX_VALUE)
+                .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED, 216, Short.MAX_VALUE)
                 .addComponent(progressBar, javax.swing.GroupLayout.PREFERRED_SIZE, javax.swing.GroupLayout.DEFAULT_SIZE, javax.swing.GroupLayout.PREFERRED_SIZE)
                 .addPreferredGap(javax.swing.LayoutStyle.ComponentPlacement.RELATED)
                 .addComponent(statusAnimationLabel)
@@ -229,15 +246,44 @@ private void openfile(java.awt.event.ActionEvent evt) {//GEN-FIRST:event_openfil
     int returnVal = fc.showOpenDialog(this.getFrame());
 
         if (returnVal == JFileChooser.APPROVE_OPTION) {
-            File file = fc.getSelectedFile(); 
+            File file = fc.getSelectedFile();
+            controller.openfile(file);
         }
 }//GEN-LAST:event_openfile
+
+public void add_JInternalFrame(JInternalFrame frame){
+    Dimension dimension = main_panel.getSize();
+    int height, width, size_height, size_width;
+
+    if(dimension.height > 50  && dimension.width > 50){
+        height = width = 30;
+        size_height = dimension.height - 30;
+        size_width  = dimension.width - 30;
+    }else{
+        height = width = 0;
+        size_height =  30;
+        size_width  =  30;
+    }
+
+    frame.setLocation(width, height);
+    frame.setSize(size_width, size_height);
+    frame.setDefaultCloseOperation(
+        JInternalFrame.DISPOSE_ON_CLOSE
+    );
+
+    main_panel.add(frame);
+    frame.setVisible(true);
+
+}
+
+
 
     // Variables declaration - do not modify//GEN-BEGIN:variables
     private javax.swing.JMenuItem jMenuItem1;
     private javax.swing.JSeparator jSeparator1;
     private javax.swing.JToolBar jToolBar1;
     private javax.swing.JPanel mainPanel;
+    private javax.swing.JPanel main_panel;
     private javax.swing.JMenuBar menuBar;
     private javax.swing.JProgressBar progressBar;
     private javax.swing.JLabel statusAnimationLabel;

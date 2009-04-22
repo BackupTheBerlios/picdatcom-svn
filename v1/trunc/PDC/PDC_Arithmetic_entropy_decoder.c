@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -27,6 +27,7 @@ START_C
 
 extern FILE* DEBUG_FILE;
 unsigned int count = 0;
+
 
 extern PDC_uint32 PDC_A_Encoder_qe[];
 extern PDC_uint32 PDC_A_Encoder_switcher[];
@@ -136,7 +137,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 						read_byte_pos = read_byte_pos_new;
 						B = B1;
 						C = C + 0xFF00 - (B << 8);
-						CT = 8;						
+						CT = 8;
 					}
 					/* BYTEIN END */
 				}
@@ -198,7 +199,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 					read_byte_pos = read_byte_pos_new;
 					B = B1;
 					C = C + 0XFF00 - (B << 8);
-					CT = 8;						
+					CT = 8;
 				}
 				/* BYTEIN END */
 			}
@@ -206,7 +207,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 			C	= C << 1;
 			CT	= CT - 1;
 		}while((A & 0x8000 ) == 0);
-		/* RENORMD END */			
+		/* RENORMD END */
 	}
 	/* DECODE END */
 
@@ -222,7 +223,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 	count += 1;
 	if(count >= 2000000 && count < 2500000)
 		fprintf(DEBUG_FILE,"%10d  %7d %4d %9X %9X \n",count, context, D, C, A);
-*/	
+*/
 	return return_decoder;
 }
 
@@ -239,6 +240,7 @@ PDC_Arithmetic_entropy_decoder* new_PDC_Arithmetic_entropy_decoder(PDC_Exception
 		PDC_Exception_error(exception,NULL, PDC_EXCEPTION_OUT_OF_MEMORY	,__LINE__, __FILE__);
 		return_decoder->decode_state = INIT_DECODER;
 	}
+
 	return return_decoder;
 }
 
@@ -256,8 +258,8 @@ PDC_Arithmetic_entropy_decoder* delete_PDC_Arithmetic_entropy_decoder(	PDC_Excep
  *
  */
 PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Exception* exception,
-													PDC_Arithmetic_entropy_decoder* decoder,
-													PDC_Buffer* in_buffer)
+														PDC_Arithmetic_entropy_decoder* decoder,
+														PDC_Buffer* in_buffer)
 {
 
 	PDC_uint32		C;
@@ -268,12 +270,14 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Exception* exception,
 	PDC_uint32		length;
 	PDC_uint32		read_byte_pos, read_byte_pos_new;
 	PDC_uint32		write_byte_pos;
-	PDC_uint32		B, B1;	
+	PDC_uint32		B, B1;
 
 	buffer			= in_buffer->buffer;
 	length			= in_buffer->length;
 	read_byte_pos	= in_buffer->read_byte_pos;
 	write_byte_pos	= in_buffer->write_byte_pos;
+
+	decoder->decode_state = DECODER_START;
 
 	if(read_byte_pos < write_byte_pos){
 		B				= buffer[read_byte_pos];
@@ -305,9 +309,9 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Exception* exception,
 				B = B1;
 				read_byte_pos = read_byte_pos_new;
 				C = C + 0XFF00 - (B << 8);
-				CT = 8;						
+				CT = 8;
 			}
-			
+
 			/* BYTEIN END */
 
 			C	= C << 7;
@@ -321,7 +325,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Exception* exception,
 			decoder->CT				= CT;
 			decoder->decode_state	= DECODE_SUCCESFULL;
 		}
-		
+
 	}else{
 		decoder->decode_state = INIT_DECODER_BUFFER_EMPTY;
 	}

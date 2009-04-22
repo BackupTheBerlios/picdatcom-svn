@@ -24,7 +24,8 @@ public class Controller {
          * Open jpeg2000 file
          */
         if(file.getAbsolutePath().endsWith("jpc")){
-            
+            Picture_jpeg2000 pic = new Picture_jpeg2000(file);
+            view.add_JInternalFrame(pic.getFrame());
         }
     }
 }

@@ -2391,15 +2391,19 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
  */
 PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword)
 {
-	PDC_uint32		max_street, max_street_rest, pos_street, pos_x, pos_x_end, pos_y_base, pos_y,
+	PDC_uint		max_street, max_street_rest, pos_street, pos_x, pos_x_end, pos_y_base, pos_y,
 					significant_size, significant_pos, sign_context_size_x,
-					significant_pos_x, *sign, sign_value,
+					significant_pos_x, context_size_y, size_x, size_y, size_y_rest,
+					sign_context_size_y, significant_pos_shift,
+					pos_value, sign_pos_base, runlengthpos, bit_plane;
+
+	PDC_uint32		*sign, sign_value,
 					sign_value_temp, *significant, significant_value, significant_value_temp,
-					context_size_y, *is_coded, is_coded_value,
-					is_coded_value_temp, runlengthpos, bit_plane, *value32, size_x, size_y, size_y_rest,
+					*is_coded, is_coded_value,
+					is_coded_value_temp,  *value32,
 					context_value, *context_address, *context_address1, *context_address2,
-					*context_address3, sign_pos_base, sign_context_value1, sign_context_value2,
-					sign_context_value3, sign_context_size_y, significant_pos_shift, pos_value,
+					*context_address3,  sign_context_value1, sign_context_value2,
+					sign_context_value3,
 					sign_context_value, have_to_coded, sign_temp;
 	PDC_uint16		*value16;
 	PDC_uint8		*value8, *context_base_address1, *context, *sign_context,
@@ -2472,6 +2476,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 		context_base_address1	= codeblock->significante_context + pos_y_base;
 
 		for(;pos_x < pos_x_end; pos_x += 1){
+
 			significant_value_temp	= (significant_value >> significant_pos_shift)& 0x0F;
 			sign_value_temp			= (sign_value >> significant_pos_shift) & 0x0F;
 			is_coded_value_temp		= (is_coded_value >> significant_pos_shift) & 0x0F;
@@ -2798,9 +2803,12 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 				is_coded[significant_pos + significant_pos_x]		= is_coded_value;
 
 				significant_pos_x		+= 1;
-				sign_value				= sign[significant_pos + significant_pos_x];
-				significant_value		= significant[significant_pos + significant_pos_x];
-				is_coded_value			= is_coded[significant_pos + significant_pos_x];
+
+				if(significant_pos_x < significant_size){
+					sign_value				= sign[significant_pos + significant_pos_x];
+					significant_value		= significant[significant_pos + significant_pos_x];
+					is_coded_value			= is_coded[significant_pos + significant_pos_x];
+				}
 				significant_pos_shift	= 0;
 
 			}
@@ -2810,10 +2818,11 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 		sign_value			|= (sign_value_temp << significant_pos_shift) ;
 		is_coded_value		|= (is_coded_value_temp << significant_pos_shift);
 		*/
-		sign[significant_pos + significant_pos_x]			= sign_value;
-		significant[significant_pos + significant_pos_x]	= significant_value;
-		is_coded[significant_pos + significant_pos_x]		= is_coded_value;
-
+		if(significant_pos_x < significant_size){
+			sign[significant_pos + significant_pos_x]			= sign_value;
+			significant[significant_pos + significant_pos_x]	= significant_value;
+			is_coded[significant_pos + significant_pos_x]		= is_coded_value;
+		}
 		*((PDC_uint32*)sign_context_address1) = sign_context_value1;
 		*((PDC_uint32*)sign_context_address2) = sign_context_value2;
 		*((PDC_uint32*)sign_context_address3) = sign_context_value3;
@@ -3033,15 +3042,19 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 				is_coded[significant_pos + significant_pos_x]		= is_coded_value;
 
 				significant_pos_x		+= 1;
-				sign_value				= sign[significant_pos + significant_pos_x];
-				significant_value		= significant[significant_pos + significant_pos_x];
-				is_coded_value			= is_coded[significant_pos + significant_pos_x];
+				if(significant_pos_x < significant_size){
+					sign_value				= sign[significant_pos + significant_pos_x];
+					significant_value		= significant[significant_pos + significant_pos_x];
+					is_coded_value			= is_coded[significant_pos + significant_pos_x];
+				}
 				significant_pos_shift	= 0;
 			}
 		}
-		sign[significant_pos + significant_pos_x]			= sign_value;
-		significant[significant_pos + significant_pos_x]	= significant_value;
-		is_coded[significant_pos + significant_pos_x]		= is_coded_value;
+		if(significant_pos_x < significant_size){
+			sign[significant_pos + significant_pos_x]			= sign_value;
+			significant[significant_pos + significant_pos_x]	= significant_value;
+			is_coded[significant_pos + significant_pos_x]		= is_coded_value;
+		}
 
 		*((PDC_uint32*)sign_context_address1) = sign_context_value1;
 		*((PDC_uint32*)sign_context_address2) = sign_context_value2;

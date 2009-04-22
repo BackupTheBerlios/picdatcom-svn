@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -63,7 +63,7 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 	tile_component->tcx1	= PDC_i_ceiling(tile->tx1, siz_segment_component->XRsiz);
 	tile_component->tcy0	= PDC_i_ceiling(tile->ty0, siz_segment_component->YRsiz);
 	tile_component->tcy1	= PDC_i_ceiling(tile->ty1, siz_segment_component->YRsiz);
-	
+
 	tile_component->mx0		= tile->tx0 - siz_segment->XOsiz;
 	tile_component->mx1		= tile->tx1 - siz_segment->XOsiz;
 	tile_component->my0		= tile->ty0 - siz_segment->YOsiz;
@@ -76,7 +76,7 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return NULL;
 	}
-	
+
 	return tile_component;
 }
 
@@ -95,7 +95,7 @@ PDC_Tile_Component* delete_PDC_Tile_Component(PDC_Exception* exception, PDC_Tile
 /*
  *
  */
-PDC_Tile_Component* PDC_Tile_Component_set_COD_Segment(	PDC_Exception* exception, 
+PDC_Tile_Component* PDC_Tile_Component_set_COD_Segment(	PDC_Exception* exception,
 														PDC_Tile_Component* tile_component,
 														PDC_COD_Segment* cod_segment)
 {
@@ -106,7 +106,7 @@ PDC_Tile_Component* PDC_Tile_Component_set_COD_Segment(	PDC_Exception* exception
 /*
  *
  */
-PDC_Tile_Component* PDC_Tile_Component_set_QCD_Segment(	PDC_Exception* exception, 
+PDC_Tile_Component* PDC_Tile_Component_set_QCD_Segment(	PDC_Exception* exception,
 														PDC_Tile_Component* tile_component,
 														PDC_QCD_Segment* qcd_segment)
 {
@@ -129,7 +129,7 @@ PDC_Tile_Component* PDC_Tile_Component_set_Resolution(	PDC_Exception* exception,
 	}else{
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 	}
-	
+
 	return tile_component;
 }
 
@@ -175,7 +175,7 @@ PDC_Tile_Component* PDC_Tile_Component_inverse_transformation(	PDC_Exception* ex
 			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 			return tile_component;
 		}else{
-			PDC_Resolution_inverse_transformation_97(exception, tile_component->resolution);
+			PDC_Resolution_inverse_transformation_97_v2(exception, tile_component->resolution);
 			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 				return tile_component;
 			}
@@ -183,14 +183,14 @@ PDC_Tile_Component* PDC_Tile_Component_inverse_transformation(	PDC_Exception* ex
 	}
 	return tile_component;
 }
-																		
+
 /*
  *
  */
 PDC_Tile_Component* PDC_Tile_Component_interpolation(	PDC_Exception* exception,
 														PDC_Tile_Component* tile_component)
 {
-	
+
 	if(	tile_component->siz_segment_component->XRsiz == 1 &&
 		tile_component->siz_segment_component->YRsiz == 1){
 		return tile_component;
@@ -198,7 +198,7 @@ PDC_Tile_Component* PDC_Tile_Component_interpolation(	PDC_Exception* exception,
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 		return tile_component;
 	}
-			
+
 	return tile_component;
 }
 

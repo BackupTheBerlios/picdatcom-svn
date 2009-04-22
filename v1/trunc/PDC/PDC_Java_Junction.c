@@ -47,7 +47,7 @@ JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur
 	if(decoder == NULL){
 		return pointer;
 	}
-	pointer = (jlong)(unsigned int)decoder;
+	pointer = (jlong)(POINTER)decoder;
 
 	return pointer;
 }
@@ -80,7 +80,7 @@ JNIEXPORT jint JNICALL Java_PicDatCom_PicDatComImage_get_1width
 		return width;
 	}
 
-	decoder = (PDC_Decoder	*)(unsigned int)in_pointer;
+	decoder = (PDC_Decoder	*)(POINTER)in_pointer;
 	if(decoder == NULL){
 		return width;
 	}
@@ -115,7 +115,7 @@ JNIEXPORT jint JNICALL Java_PicDatCom_PicDatComImage_get_1height
 		return height;
 	}
 
-	decoder = (PDC_Decoder	*)(unsigned int)in_pointer;
+	decoder = (PDC_Decoder	*)(POINTER)in_pointer;
 	if(decoder == NULL){
 		return height;
 	}
@@ -148,7 +148,7 @@ JNIEXPORT jfloatArray JNICALL Java_PicDatCom_PicDatComImage_get_1RGB__J_3F
 	float*		data;
 	PDC_uint	size;
 
-	decoder = (PDC_Decoder*)(unsigned int)in_pointer;
+	decoder = (PDC_Decoder*)(POINTER)in_pointer;
 	if(decoder == NULL){
 		return NULL;
 	}
@@ -178,7 +178,7 @@ JNIEXPORT jintArray JNICALL Java_PicDatCom_PicDatComImage_get_1RGB__J_3I
 	int*		data;
 	PDC_uint	size;
 
-	decoder = (PDC_Decoder*)(unsigned int)in_pointer;
+	decoder = (PDC_Decoder*)(POINTER)in_pointer;
 	if(decoder == NULL){
 		return NULL;
 	}

@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
- *      Contact Email: 
- * 
+ * Copyright (C) 2008  Uwe Brï¿½nen
+ *      Contact Email:
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -21,12 +21,14 @@
 #ifndef __PDC_PARAMETER_H__
 #define __PDC_PARAMETER_H__
 
-#ifdef __cplusplus     
+#include <inttypes.h>
+
+#ifdef __cplusplus
 	#define START_C extern "C" {
 	#define STOP_C }
 #else
-	#define START_C 
-	#define STOP_C 
+	#define START_C
+	#define STOP_C
 #endif
 
 #if defined(PDC_IMPORT)
@@ -48,19 +50,22 @@
 
 START_C
 
-#define MAX_INT 0x7FFFFFFF	
+#define MAX_INT 0x7FFFFFFF
 
 	typedef enum{PDC_true = 1, PDC_false = 0}PDC_bool;
-	typedef unsigned char	PDC_uchar;
-	typedef unsigned int	PDC_uint;
-	typedef unsigned int	PDC_uint32;
-	typedef unsigned char	PDC_decision;
-	typedef unsigned char	PDC_context;
+	typedef unsigned char		PDC_uchar;
+	typedef unsigned long		PDC_uint;
+	typedef uint32_t			PDC_uint32;
+	typedef uint8_t				PDC_decision;
+	typedef uint8_t				PDC_context;
 	typedef int				PDC_int;
-	typedef unsigned short	PDC_uint16;
-	typedef unsigned char	PDC_uint8;
-	typedef float			PDC_float32;
-	typedef unsigned char	PDC_bit;
+	typedef uint16_t			PDC_uint16;
+	typedef uint8_t				PDC_uint8;
+	typedef float				PDC_float32;
+	typedef uint8_t				PDC_bit;
+
+	typedef unsigned long POINTER;
+
 
 	PDC_int PDC_i_ceiling( PDC_int , PDC_int);
 	PDC_int PDC_i_floor( PDC_int , PDC_int);
