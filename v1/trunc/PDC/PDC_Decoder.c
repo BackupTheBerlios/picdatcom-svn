@@ -167,6 +167,7 @@ DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception, PDC_Decoder* decod
 }
 
 FILE* DEBUG_FILE;
+FILE* DEBUG_FILE2;
 /*
  *
  */
@@ -175,7 +176,8 @@ DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decod
 
 	PDC_READING_STATE	reading_state;
 
-	DEBUG_FILE = fopen("debug_file.txt", "w");
+	DEBUG_FILE 	= fopen("debug_file1.txt", "w");
+	DEBUG_FILE2 = fopen("debug_file2.txt", "w");
 	reading_state	= decoder->reading_state;
 
 	do{
@@ -211,6 +213,7 @@ DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decod
 	}while(decoder->data_situation == PDC_HAS_DATA);
 
 	fclose(DEBUG_FILE);
+	fclose(DEBUG_FILE2);
 	return decoder;
 }
 

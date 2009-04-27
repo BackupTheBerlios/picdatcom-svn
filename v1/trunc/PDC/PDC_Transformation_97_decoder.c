@@ -20,8 +20,13 @@
 
 #include "PDC_Transformation_97_decoder.h"
 #include <malloc.h>
+#include <stdio.h>
 
 START_C
+
+
+extern FILE* DEBUG_FILE;
+extern FILE* DEBUG_FILE2;
 
 #define d_ALPHA	-1.586134342f
 #define d_BETA	-0.05298011854f
@@ -82,14 +87,14 @@ PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception*
 	decoder->orangeSize = PDC_i_ceiling(maxSize, 2) + 4;
 
 
-	decoder->green = (float*)memalign(16, sizeof(float) * (decoder->greenSize + extrasize));
+	decoder->green = (float*)memalign(16, sizeof(float) * (decoder->greenSize + extrasize) * 4);
 	if(decoder->green == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
 
-	decoder->orange	=(float*)memalign(16, sizeof(float) * (decoder->orangeSize + extrasize));
+	decoder->orange	=(float*)memalign(16, sizeof(float) * (decoder->orangeSize + extrasize) * 4);
 	if(decoder->orange == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
@@ -152,6 +157,9 @@ PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(	PDC_Excepti
 
 	return NULL;
 }
+
+
+extern int uwe_count;
 
 /*
  *
@@ -342,6 +350,21 @@ PDC_Transformation_97_decoder* PDC_td_start_v1(	PDC_Exception* exception,
 			}
 		}
 
+
+		if(uwe_count == 0){
+			for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
+				fprintf(DEBUG_FILE,"%6d green   %13.2f \n",i_help1, green[i_help1]);
+			}
+
+			for(i_help1 = 0; i_help1 < orangesize; i_help1 += 1){
+				fprintf(DEBUG_FILE,"%6d orange   %13.2f \n",i_help1, orange[i_help1]);
+			}
+			uwe_count += 1;
+		}
+
+
+
+
 		for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
 			green[i_help1] *= K1;
 		}
@@ -375,7 +398,6 @@ PDC_Transformation_97_decoder* PDC_td_start_v1(	PDC_Exception* exception,
 			i_help1 = i_help2;
 			i_help2 += 1;
 		}
-
 
 		if(even){
 			if(out_size % 2 == 0){
@@ -569,8 +591,8 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 		if(out_size > 4){
 			if(even){
 				if(out_size % 2 == 0){
-					i_help1		= 1;
-					i_help1_end	= (i_help1 + out_size / 2) * 4;
+					i_help1		= 4;								//i_help1		= 1;
+					i_help1_end	= (1 + out_size / 2) * 4;
 					i_help2		= in_low_start;
 					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_low_plus){
 						orange1[i_help1] = in_low1[i_help2];
@@ -595,8 +617,8 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 					orange4[i_help1 + 4]	= orange4[i_help1 - 8];		// orange[i_help1 + 1]	= orange[i_help1 - 2];
 
 
-					i_help1		= 2;
-					i_help1_end	= (i_help1 + out_size / 2) * 4;
+					i_help1 	= 8; 									//i_help1		= 2;
+					i_help1_end	= (2 + out_size / 2) * 4;
 					i_help2		= in_high_start;
 					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_high_plus){
 						green1[i_help1] = in_high1[i_help2];
@@ -684,7 +706,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 			}else{
 				if(out_size % 2 == 0){
 					i_help1		= 8;
-					i_help1_end	= (i_help1 + out_size / 2) * 4;
+					i_help1_end	= (2 + out_size / 2) * 4;
 					i_help2		= in_low_start;
 					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_low_plus){
 						orange1[i_help1] = in_low1[i_help2];
@@ -711,7 +733,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 
 
 					i_help1		= 8;
-					i_help1_end	= (i_help1 + out_size / 2) * 4;
+					i_help1_end	= (2 + out_size / 2) * 4;
 					i_help2		= in_high_start;
 					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_high_plus){
 						green1[i_help1] = in_high1[i_help2];
@@ -743,7 +765,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 					orangesize			= greensize - 1;
 				}else{
 					i_help1		= 8;
-					i_help1_end	= (i_help1 + PDC_i_floor(out_size, 2)) * 4;
+					i_help1_end	= (2 + PDC_i_floor(out_size, 2)) * 4;
 					i_help2		= in_low_start;
 					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_low_plus){
 						orange1[i_help1] = in_low1[i_help2];
@@ -772,7 +794,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 					orange4[i_help1 + 4]	= orange4[i_help1 - 8];			// orange[i_help1 + 1]	= orange[i_help1 - 2];
 
 					i_help1		= 8;
-					i_help1_end	= (i_help1 + PDC_i_ceiling(out_size, 2)) * 4;
+					i_help1_end	= (2 + PDC_i_ceiling(out_size, 2)) * 4;
 					i_help2		= in_high_start;
 					for(;i_help1 < i_help1_end; i_help1 += 4, i_help2 += in_high_plus){
 						green1[i_help1] = in_high1[i_help2];
@@ -952,6 +974,17 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 			}
 		}
 
+		if(uwe_count == 0){
+			for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
+				fprintf(DEBUG_FILE2,"%6d green   %13.2f \n",i_help1, green2[i_help1 * 4]);
+			}
+
+			for(i_help1 = 0; i_help1 < orangesize; i_help1 += 1){
+				fprintf(DEBUG_FILE2,"%6d orange   %13.2f \n",i_help1, orange2[i_help1 * 4]);
+			}
+			uwe_count += 1;
+		}
+
 		orangesize_temp	= orangesize * 4;
 		greensize_temp	= greensize	* 4;
 		for(i_help1 = 0; i_help1 < greensize_temp; i_help1 += 4){
@@ -989,7 +1022,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 		}
 
 		orangesize_temp = greensize_temp - 4;
-		for(i_help1 = 0, i_help2 = 4; i_help1 < orangesize;){
+		for(i_help1 = 0, i_help2 = 4; i_help1 < orangesize_temp;){
 			orange1[i_help1] = orange1[i_help2] - beta * ( green1[i_help1] + green1[i_help2]);
 			orange2[i_help1] = orange2[i_help2] - beta * ( green2[i_help1] + green2[i_help2]);
 			orange3[i_help1] = orange3[i_help2] - beta * ( green3[i_help1] + green3[i_help2]);
@@ -998,8 +1031,8 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 			i_help2 += 4;
 		}
 
-		greensize_temp = orangesize_temp - 1;
-		for(i_help1 = 0, i_help2 = 4; i_help1 < greensize;){
+		greensize_temp = orangesize_temp - 4;
+		for(i_help1 = 0, i_help2 = 4; i_help1 < greensize_temp;){
 			green1[i_help1] = green1[i_help2] - alpha * ( orange1[i_help1] + orange1[i_help2]);
 			green2[i_help1] = green2[i_help2] - alpha * ( orange2[i_help1] + orange2[i_help2]);
 			green3[i_help1] = green3[i_help2] - alpha * ( orange3[i_help1] + orange3[i_help2]);
@@ -1007,7 +1040,6 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 			i_help1 = i_help2;
 			i_help2 += 4;
 		}
-
 
 		if(even){
 			if(out_size % 2 == 0){

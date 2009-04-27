@@ -175,7 +175,7 @@ PDC_Tile_Component* PDC_Tile_Component_inverse_transformation(	PDC_Exception* ex
 			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 			return tile_component;
 		}else{
-			PDC_Resolution_inverse_transformation_97_v2(exception, tile_component->resolution);
+			PDC_Resolution_inverse_transformation_97(exception, tile_component->resolution);
 			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 				return tile_component;
 			}

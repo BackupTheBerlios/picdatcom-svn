@@ -23,7 +23,7 @@
 START_C
 
 extern FILE* DEBUG_FILE;
-
+extern FILE* DEBUG_FILE2;
 /*
  *
  */
@@ -369,7 +369,8 @@ PDC_Resolution* PDC_Resolution_inverse_quantization(PDC_Exception* exception,
 }
 
 
-int uwe_count = 0;
+int uwe_count = -1;
+
 /*
  *
  */
@@ -380,7 +381,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* excepti
 
 	float		*out, *in_high,*in_low;
 	PDC_uint	out_start, out_size, out_plus, in_high_start, in_hight_plus,
-				in_low_start, in_low_plus, pos0, pos1, m_size; // pos_y, pos_y_end, pos_x, pos_x_end;
+				in_low_start, in_low_plus, pos0, pos1, m_size, pos_y, pos_y_end, pos_x, pos_x_end;
 	PDC_bool	even;
 
 	if(resolution->r != 1){
@@ -405,6 +406,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* excepti
 	}
 
 	for(pos0 = 0, pos1 = resolution->my1 - resolution->my0; pos0 < pos1; pos0 += 1){
+		uwe_count += 1;
 		PDC_td_start_v1(	exception, transformer, out, in_high, in_low,
 							out_start + pos0 * m_size, out_size,out_plus, even,
 							in_high_start + pos0 * m_size, in_hight_plus,
@@ -426,6 +428,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* excepti
 	}
 
 	for(pos0 = 0, pos1 = resolution->mx1 - resolution->mx0; pos0 < pos1; pos0 += 1){
+
 		PDC_td_start_v1(	exception, transformer, out, in_high, in_low,
 							out_start + pos0, out_size,out_plus, even,
 							in_high_start + pos0, in_hight_plus,
@@ -434,17 +437,17 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* excepti
 			return resolution;
 		}
 	}
-	/*
-	if(uwe_count == 9){
+/*
+	if(uwe_count == 0){
 		out_start = resolution->mx0 + resolution->my0 * m_size;
 		for(pos_y = 0, pos_y_end = resolution->my1 - resolution->my0; pos_y < pos_y_end; pos_y += 1, out_start += m_size){
 			for(pos_x = 0, pos_x_end = resolution->mx1 - resolution->mx0; pos_x < pos_x_end; pos_x += 1){
-				fprintf(DEBUG_FILE,"%13.2f \n", out[out_start + pos_x]);
+				fprintf(DEBUG_FILE,"%5d   %13.2f \n",pos_y, out[out_start + pos_x]);
 			}
 		}
 	}
 	uwe_count += 1;
-	*/
+*/
 	return resolution;
 }
 
@@ -459,7 +462,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 
 	float		*out, *in_high,*in_low;
 	PDC_uint	out_start, out_size, out_plus, in_high_start, in_hight_plus,
-				in_low_start, in_low_plus, pos0, pos1, pos1_rest, m_size; // pos_y, pos_y_end, pos_x, pos_x_end;
+				in_low_start, in_low_plus, pos0, pos1, pos1_rest, m_size, pos_y, pos_y_end, pos_x, pos_x_end;
 	PDC_bool	even;
 
 	if(resolution->r != 1){
@@ -488,6 +491,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 	pos1 = pos1 - pos1_rest;
 
 	for(pos0 = 0; pos0 < pos1; pos0 += 4){
+		uwe_count += 1;
 		PDC_td_start_v2(	exception, transformer, out, in_high, in_low,
 							out_start + pos0 * m_size, out_size,out_plus, even,
 							in_high_start + pos0 * m_size, in_hight_plus,
@@ -509,6 +513,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 		}
 	}
 
+
 	out_plus = in_hight_plus = in_low_plus = resolution->tile_component->msizex;
 	out_start		= resolution->mx0 + resolution->my0 * m_size;
 	in_low_start	= out_start;
@@ -524,7 +529,10 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 	pos1_rest = pos1 % 4;
 	pos1 = pos1 - pos1_rest;
 
+
+
 	for(pos0 = 0; pos0 < pos1; pos0 += 4){
+
 		PDC_td_start_v2(	exception, transformer, out, in_high, in_low,
 							out_start + pos0, out_size,out_plus, even,
 							in_high_start + pos0, in_hight_plus,
@@ -544,18 +552,18 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 			return resolution;
 		}
 	}
-
-	/*
-	if(uwe_count == 9){
+/*
+	if(uwe_count == 0){
 		out_start = resolution->mx0 + resolution->my0 * m_size;
 		for(pos_y = 0, pos_y_end = resolution->my1 - resolution->my0; pos_y < pos_y_end; pos_y += 1, out_start += m_size){
 			for(pos_x = 0, pos_x_end = resolution->mx1 - resolution->mx0; pos_x < pos_x_end; pos_x += 1){
-				fprintf(DEBUG_FILE,"%13.2f \n", out[out_start + pos_x]);
+				fprintf(DEBUG_FILE2,"%5d   %13.2f \n",pos_y, out[out_start + pos_x]);
 			}
 		}
 	}
 	uwe_count += 1;
-	*/
+*/
+
 	return resolution;
 }
 
