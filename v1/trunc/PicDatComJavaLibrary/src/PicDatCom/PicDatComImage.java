@@ -21,8 +21,8 @@ import java.awt.image.DataBufferInt;
 public class PicDatComImage{
     
     //private static String dll_path = "C:\\Dokumente und Einstellungen\\uwe_work\\Eigene Dateien\\Visual Studio 2008\\Projects\\PicDatCom\\v1\\trunc\\Debug\\PDC.dll";
-    private static String dll_path = "/home/uwe/programmieren/eclipse/PicDatCom/Debug/libPicDatCom.so";
-    //private static String dll_path = "/home/uwe/EclipseProjects/picdatcom/Debug/libpicdatcom.so";
+    //private static String dll_path = "/home/uwe/programmieren/eclipse/PicDatCom/Debug/libPicDatCom.so";
+    private static String dll_path = "/home/uwe/EclipseProjects/picdatcom/Debug/libpicdatcom.so";
 
     static { 
         System.load(dll_path);
