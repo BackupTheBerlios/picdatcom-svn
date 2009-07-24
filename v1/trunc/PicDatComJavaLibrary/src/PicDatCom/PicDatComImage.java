@@ -34,6 +34,8 @@ public class PicDatComImage{
     private DataBufferFloat databuffer;
     
     private static native long create_structur(String path);
+
+    private static native long create_structur(byte bytes[]);
     
     private static native long delete_structur(long pointer);
     
@@ -60,10 +62,15 @@ public class PicDatComImage{
         width   = get_width(pointer);
         height  = get_height(pointer);
         size    = width * height;
-        
-
     }
-    
+
+    public PicDatComImage(byte byte_stream[]){
+        pointer = create_structur(byte_stream);
+        width   = get_width(pointer);
+        height  = get_height(pointer);
+        size    = width * height;
+    }
+
     public BufferedImage getImage(){
        BufferedImage image;
        
