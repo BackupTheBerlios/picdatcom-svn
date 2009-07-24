@@ -153,6 +153,8 @@ PDC_Picture* PDC_Picture_set_SIZ_Segment(	PDC_Exception* exception,
 				return picture;
 			}
 		}
+	}else{
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_DAMAGED_CODE, __LINE__, __FILE__);
 	}
 	return picture;
 }
