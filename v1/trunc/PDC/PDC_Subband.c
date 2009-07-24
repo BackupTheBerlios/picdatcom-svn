@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -36,6 +36,7 @@ PDC_Subband* new_PDC_Subband_01(PDC_Exception* exception)
 	}
 
 	subband->resolution		= NULL;
+	subband->codeblocks		= NULL;
 	subband->tbx0			= 0;
 	subband->tbx1			= 0;
 	subband->tby0			= 0;
@@ -168,6 +169,15 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
  */
 PDC_Subband* delete_PDC_Subband(PDC_Exception* exception, PDC_Subband* subband)
 {
+	PDC_uint pos;
+	if(subband != NULL){
+		for(pos = 0; pos < subband->number_codeblocks; pos += 1){
+			delete_PDC_Codeblock(exception, subband->codeblocks[pos]);
+			subband->codeblocks[pos] = NULL;
+		}
+		free(subband->codeblocks);
+		free(subband);
+	}
 	return NULL;
 }
 
@@ -179,18 +189,18 @@ PDC_Subband* PDC_Subband_inverse_quantization(	PDC_Exception* exception,
 {
 	PDC_uint pos_codeblock, num_codeblock;
 	PDC_Codeblock* codeblock;
-	
+
 	num_codeblock = subband->number_codeblocks;
-	
+
 	for(pos_codeblock = 0; pos_codeblock < num_codeblock; pos_codeblock += 1){
 		codeblock = subband->codeblocks[pos_codeblock];
 		PDC_Codeblock_inverse_quantization(exception, codeblock);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return subband;
-		}	
+		}
 	}
 	return subband;
-}												
+}
 
 STOP_C
 

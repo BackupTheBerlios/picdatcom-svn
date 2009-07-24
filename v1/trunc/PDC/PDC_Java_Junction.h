@@ -13,8 +13,16 @@ extern "C" {
  * Method:    create_structur
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur
+JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur__Ljava_lang_String_2
   (JNIEnv *, jclass, jstring);
+
+/*
+ * Class:     PicDatCom_PicDatComImage
+ * Method:    create_structur
+ * Signature: ([B)J
+ */
+JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur___3B
+  (JNIEnv *, jclass, jbyteArray);
 
 /*
  * Class:     PicDatCom_PicDatComImage

@@ -132,7 +132,7 @@ START_C
 		PDC_Codeword_List*	first_codedword;
 		PDC_Codeword_List*	last_codedword;
 		PDC_Codeword_List*  next_codedword;
-		PDC_uint*			coding_passes_per_layer;
+		//PDC_uint*			coding_passes_per_layer;
 
 		PDC_Buffer* codeword;
 		PDC_uint	coding_pass_from;

@@ -89,7 +89,7 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uchar* byte, PDC_uint numbytes);
+	PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Exception* exception, PDC_Buffer* buffer, const PDC_uchar* byte, PDC_uint numbytes);
 
 	/*
 	 *

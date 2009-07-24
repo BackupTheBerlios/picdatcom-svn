@@ -43,6 +43,34 @@ DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 
 	decoder->exception		= exception;
 
+	decoder->cod_segments	= NULL;
+	decoder->qcd_segments	= NULL;
+	decoder->com_segments	= NULL;
+	decoder->sot_segments	= NULL;
+
+	decoder->cod_segments	= new_PDC_Pointer_Buffer_02(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Decoder(exception, decoder);
+		return NULL;
+	}
+
+	decoder->qcd_segments	= new_PDC_Pointer_Buffer_02(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Decoder(exception, decoder);
+		return NULL;
+	}
+
+	decoder->com_segments	= new_PDC_Pointer_Buffer_02(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Decoder(exception, decoder);
+		return NULL;
+	}
+
+	decoder->sot_segments	= new_PDC_Pointer_Buffer_02(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Decoder(exception, decoder);
+		return NULL;
+	}
 
 	decoder->in_data = new_PDC_Buffer_1( exception, PDC_FIRST_LENGTH);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
@@ -68,12 +96,12 @@ DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
  */
 DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
 {
-	PDC_Decoder	*decoder		= NULL;
-	PDC_Exception *exception	= NULL;
-	FILE *fp					= NULL;
-	unsigned int read_byte		= 0;
+	PDC_Decoder	*decoder			= NULL;
+	PDC_Exception *exception		= NULL;
+	FILE *fp						= NULL;
+	unsigned int read_byte			= 0;
 	unsigned int data_read_plus	= 1048576;
-	unsigned char*	data		= NULL;
+	unsigned char*	data			= NULL;
 
 
 	data = malloc(data_read_plus);
@@ -94,6 +122,7 @@ DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
 	decoder		= new_PDC_Decoder(exception);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		delete_PDC_Decoder(exception, decoder);
+		delete_PDC_Exception(exception);
 		free(data);
 		fclose(fp);
 		return NULL;
@@ -104,6 +133,7 @@ DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
 		PDC_Decoder_add_Data_01(exception, decoder, data, read_byte, PDC_DATA_MORE_DATA);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			delete_PDC_Decoder(exception, decoder);
+			delete_PDC_Exception(exception);
 			free(data);
 			fclose(fp);
 			return NULL;
@@ -118,12 +148,39 @@ DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
 	return decoder;
 }
 
+
+/*
+ *
+ */
+DLL PDC_Decoder* new_PDC_Decoder_03(const unsigned char *byte_stream, unsigned int length)
+{
+	PDC_Decoder	*decoder			= NULL;
+	PDC_Exception *exception		= NULL;
+
+	exception	= new_PDC_Exception();
+	if(exception == NULL){
+		return NULL;
+	}
+
+	decoder		= new_PDC_Decoder(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Decoder(exception, decoder);
+		delete_PDC_Exception(exception);
+		return NULL;
+	}
+
+	PDC_Decoder_add_Data_01(exception, decoder, byte_stream, length, PDC_DATA_END);
+	PDC_Decoder_decode(exception, decoder);
+
+	return decoder;
+}
+
 /*
  *
  */
 DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
 											PDC_Decoder* decoder,
-											PDC_uchar* data,
+											const PDC_uchar* data,
 											PDC_uint32 length,
 											PDC_DECODER_DATA_END end)
 {
@@ -162,6 +219,11 @@ DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception, PDC_Decoder* decod
 		delete_PDC_Buffer(exception, decoder->in_data);
 		delete_PDC_Buffer(exception, decoder->in_data_save);
 		delete_PDC_Picture(exception, decoder->picture);
+		delete_PDC_Exception(decoder->exception);
+
+
+		free(decoder);
+
 	}
 	return NULL;
 }
@@ -291,7 +353,9 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_De
 		decoder->picture = PDC_Picture_set_SIZ_Segment(	exception,
 														decoder->picture,
 														siz_segment);
-
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return decoder;
+		}
 		decoder->reading_state = PDC_MAIN_HEADER;
 	}else{
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_FALSE_SYMBOL, __LINE__, __FILE__);
@@ -414,7 +478,7 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
  *
  */
 PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
-												 PDC_Decoder* decoder)
+													 PDC_Decoder* decoder)
 {
 	PDC_uint16			symbol;
 	PDC_Buffer*			buffer;

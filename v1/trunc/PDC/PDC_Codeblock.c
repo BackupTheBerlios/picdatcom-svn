@@ -399,6 +399,66 @@ PDC_Codeblock* PDC_Codeblock_init_bit_modeling_variable(PDC_Exception* exception
 PDC_Codeblock* delete_PDC_Codeblock(PDC_Exception* exception, PDC_Codeblock* codeblock)
 {
 	if(codeblock != NULL){
+		if(codeblock->coding_passes_per_layer != NULL){
+			free(codeblock->coding_passes_per_layer);
+			codeblock->coding_passes_per_layer = NULL;
+		}
+
+		if(codeblock->value8 != NULL){
+			free(codeblock->value8);
+			codeblock->value8 = NULL;
+		}
+
+		if(codeblock->value16 != NULL){
+			free(codeblock->value16);
+			codeblock->value16 = NULL;
+		}
+
+		if(codeblock->value32 != NULL) {
+			free(codeblock->value32);
+			codeblock->value32 = NULL;
+		}
+
+
+		if(codeblock->is_coded != NULL){
+			free(codeblock->is_coded);
+			codeblock->is_coded = NULL;
+		}
+
+		if(codeblock->sign != NULL){
+			free(codeblock->sign);
+			codeblock->sign = NULL;
+		}
+
+		if(codeblock->significant != NULL){
+			free(codeblock->significant);
+			codeblock->significant = NULL;
+		}
+
+		if(codeblock->first_refinement != NULL){
+			free(codeblock->first_refinement);
+			codeblock->first_refinement = NULL;
+		}
+
+		if(codeblock->significante_context_delete != NULL){
+			free(codeblock->significante_context_delete);
+			codeblock->significante_context_delete = NULL;
+		}
+
+		if(codeblock->sign_context_delete != NULL){
+			free(codeblock->sign_context_delete);
+			codeblock->sign_context_delete = NULL;
+		}
+
+		delete_PDC_Codeword_List(exception, codeblock->read_codeword);
+		codeblock->read_codeword = NULL;
+
+		delete_PDC_Codeword_List(exception, codeblock->write_codeword);
+		codeblock->write_codeword = NULL;
+
+		delete_PDC_Arithmetic_entropy_decoder(exception, codeblock->decoder);
+		codeblock->decoder = NULL;
+
 		free(codeblock);
 	}
 	return NULL;
@@ -486,7 +546,9 @@ PDC_Codeword_List* delete_PDC_Codeword_List(PDC_Exception* exception, PDC_Codewo
 
 	if(codeword_list != NULL){
 		delete_PDC_Codeword_List(exception, codeword_list->next_codedword);
+		codeword_list->next_codedword = NULL;
 		delete_PDC_Buffer(exception, codeword_list->codeword);
+		codeword_list->codeword = NULL;
 
 		free(codeword_list);
 

@@ -26,7 +26,7 @@
 
 char PDC_error_code[][25]	= {	"No Error", "Out of memory", "NULL Pointer", "out_size > maxSize ", "Out of Range.",
 								"NULL-Pointer not allowed", "No code found", "False symbol no valid jpc",
-								"Unkow code", "Decoderexception"};
+								"Unkow code", "Decoderexception", "Damaged jpc code"};
 PDC_Exception exception[]	= {{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0},{0,0}};
 unsigned int exception_pos	= 0;
 

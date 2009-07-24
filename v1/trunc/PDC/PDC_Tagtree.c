@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -22,7 +22,7 @@
 
 START_C
 
-/* 
+/*
  *
  */
 PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
@@ -66,7 +66,7 @@ PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
 		tagtree->size_x[pos] = PDC_ui_ceiling(tagtree->size_x[pos1], 2);
 		tagtree->size_y [pos] = PDC_ui_ceiling(tagtree->size_y[pos1], 2);
 	}
-	
+
 	tagtree->item = malloc(sizeof(PDC_Tagtree_item**) * tagtree->level) ;
 	if(tagtree->size_y == NULL){
 		delete_PDC_Tagtree_01(exception, tagtree);
@@ -88,7 +88,7 @@ PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
 		for(pos_x = 0; pos_x < tagtree->size_x[pos]; pos_x += 1){
 			tagtree->item[pos][pos_x] = NULL;
 		}
-		
+
 		for(pos_x = 0; pos_x < tagtree->size_x[pos]; pos_x += 1){
 			tagtree->item[pos][pos_x] = malloc(sizeof(PDC_Tagtree_item) * tagtree->size_y[pos]);
 			if(tagtree->item[pos][pos_x] == NULL){
@@ -128,14 +128,14 @@ PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
 					tagtree->item[pos][pos_x][pos_y].child2 = NULL;
 					tagtree->item[pos][pos_x][pos_y].child3 = NULL;
 					tagtree->item[pos][pos_x][pos_y].child4 = NULL;
-				}	
+				}
 			}
 			for(pos_y = 0; pos_y < tagtree->size_y[pos]; pos_y += 1){
 				tagtree->item[pos][pos_x][pos_y].value			= 0;
 				tagtree->item[pos][pos_x][pos_y].decode			= PDC_false;
 				tagtree->item[pos][pos_x][pos_y].parent			= NULL;
 				tagtree->item[pos][pos_x][pos_y].value_noted	= 0;
-			}	
+			}
 		}
 	}
 
@@ -147,6 +147,8 @@ PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
 				tagtree->item[pos][pos_x][pos_y].parent = &(tagtree->item[pos + 1][pos_x1][pos_y1]);
 			}
 		}
+		free(tagtree->item[pos]);
+		tagtree->item[pos] = NULL;
 	}
 
 	return tagtree;
@@ -156,9 +158,36 @@ PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
  *
  */
 PDC_Tagtree* delete_PDC_Tagtree_01(	PDC_Exception* exception,
-									PDC_Tagtree* tagtree)
+										PDC_Tagtree* tagtree)
 {
-	
+	PDC_uint level, pos_x;
+
+	if(tagtree != NULL){
+		if(tagtree->level > 0){
+			for(level = 0; level < tagtree->level; level += 1){
+				for(pos_x = 0; pos_x < tagtree->size_x[level]; pos_x += 1){
+					free(tagtree->item[level][pos_x]);
+					tagtree->item[level][pos_x] = NULL;
+				}
+
+				free(tagtree->item[level]);
+				tagtree->item[level] = NULL;
+			}
+
+		}
+
+		free(tagtree->item);
+		tagtree->item = NULL;
+
+		free(tagtree->size_y);
+		tagtree->size_y = NULL;
+
+		free(tagtree->size_x);
+		tagtree->size_x = NULL;
+
+		free(tagtree);
+	}
+
 	return NULL;
 }
 
@@ -166,7 +195,7 @@ PDC_Tagtree* delete_PDC_Tagtree_01(	PDC_Exception* exception,
  *
  */
 PDC_Tagtree* PDC_Tagtree_set_value(	PDC_Exception* exception,
-									PDC_Tagtree* tagtree, 
+									PDC_Tagtree* tagtree,
 									PDC_uint pos_x,
 									PDC_uint pos_y,
 									PDC_int	value)
@@ -201,7 +230,7 @@ PDC_Tagtree* PDC_Tagtree_create_tree(	PDC_Exception* exception,
 				if(item->child2 != NULL){
 					if(item->value > item->child2->value){
 						item->value = item->child2->value;
-					}	
+					}
 				}
 				if(item->child3 != NULL)
 				{
@@ -221,7 +250,7 @@ PDC_Tagtree* PDC_Tagtree_create_tree(	PDC_Exception* exception,
 
 	return tagtree;
 }
-	
+
 /*
  *
  */
@@ -345,16 +374,16 @@ PDC_bool PDC_Tagtree_decode_item(	PDC_Exception* exception,
 {
 	PDC_bool decode = PDC_false;
 	PDC_bit bit;
-	
+
 	if(item->decode == PDC_true){
 		return PDC_true;
 	}
 
 	if(item->parent != NULL){
 		if(item->parent->decode == PDC_false){
-			decode = PDC_Tagtree_decode_item(	exception, 
-												tagtree, 
-												buffer,	
+			decode = PDC_Tagtree_decode_item(	exception,
+												tagtree,
+												buffer,
 												item->parent,
 												max_value);
 			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
@@ -390,7 +419,7 @@ void PDC_Tagtree_push(	PDC_Exception* exception,
 						PDC_Tagtree* tagtree)
 {
 	PDC_uint pos, pos_x, pos_y, size_x, size_y, size;
-	PDC_Tagtree_item* item; 
+	PDC_Tagtree_item* item;
 
 	if(tagtree != NULL){
 		size = tagtree->level;
@@ -400,7 +429,7 @@ void PDC_Tagtree_push(	PDC_Exception* exception,
 				size_x = tagtree->size_x[pos];
 				for(pos_x = 0; pos_x < size_x; pos_x += 1){
 					item = &(tagtree->item[pos][pos_x][pos_y]);
-					
+
 					item->save_decode		= item->decode;
 					item->save_value		= item->value;
 					item->save_value_noted	= item->value_noted;
@@ -417,7 +446,7 @@ void PDC_Tagtree_pop(	PDC_Exception* exception,
 						PDC_Tagtree* tagtree)
 {
 	PDC_uint pos, pos_x, pos_y, size_x, size_y, size;
-	PDC_Tagtree_item* item; 
+	PDC_Tagtree_item* item;
 
 	if(tagtree != NULL){
 		size = tagtree->level;
@@ -427,7 +456,7 @@ void PDC_Tagtree_pop(	PDC_Exception* exception,
 				size_x = tagtree->size_x[pos];
 				for(pos_x = 0; pos_x < size_x; pos_x += 1){
 					item = &(tagtree->item[pos][pos_x][pos_y]);
-					
+
 					item->decode		= item->save_decode;
 					item->value			= item->save_value;
 					item->value_noted	= item->save_value_noted;
@@ -447,7 +476,7 @@ PDC_int PDC_Tagtree_get_value(		PDC_Exception* exception,
 {
 	PDC_Tagtree_item*	item;
 	PDC_int				value = 0;
-	
+
 	if(pos_x < tagtree->size_x[0] && pos_y < tagtree->size_y[0]){
 		item	= &(tagtree->item[0][pos_x][pos_y]);
 		value	= item->value;

@@ -71,7 +71,7 @@ PDC_Resolution* new_PDC_Resolution_01(PDC_Exception* exception)
  *
  */
 PDC_Resolution* new_PDC_Resolution_02(	PDC_Exception* exception,
-										PDC_Tile_Component* tile_component)
+											PDC_Tile_Component* tile_component)
 {
 	PDC_Resolution* resolution = NULL;
 	resolution = new_PDC_Resolution_01(exception);
@@ -140,6 +140,30 @@ PDC_Resolution* new_PDC_Resolution_03(	PDC_Exception* exception,
 PDC_Resolution* delete_PDC_Resolution(	PDC_Exception* exception,
 										PDC_Resolution* resolution)
 {
+	PDC_uint32		precinct_pos_x;
+	PDC_uint32		precinct_pos_y;
+	PDC_uint32		pos;
+
+	if(resolution != NULL){
+		delete_PDC_Resolution(exception, resolution->resolution_small);
+
+		delete_PDC_Subband(exception, resolution->subband[0]);
+		delete_PDC_Subband(exception, resolution->subband[1]);
+		delete_PDC_Subband(exception, resolution->subband[2]);
+
+		for(precinct_pos_y = resolution->precinct_y0, pos = 0; precinct_pos_y < resolution->precinct_y1; precinct_pos_y += 1){
+			for(precinct_pos_x = resolution->precinct_x0; precinct_pos_x < resolution->precinct_y1; precinct_pos_x += 1){
+				delete_PDC_Precinct(exception, resolution->precinct[pos]);
+				resolution->precinct[pos] = NULL;
+				pos += 1;
+			}
+		}
+
+		free(resolution->precinct);
+		resolution->precinct = NULL;
+
+		free(resolution);
+	}
 	return NULL;
 }
 
@@ -229,6 +253,11 @@ PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return in_resolution;
 	}
+
+	for(pos = 0; pos < precinct_number_xy; pos += 1){
+		in_resolution->precinct[pos] = NULL;
+	}
+
 
 	if(in_resolution->r == 0){
 		in_resolution->subband[0] = new_PDC_Subband_02(exception, SUBBAND_LL, in_resolution);
@@ -381,7 +410,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* excepti
 
 	float		*out, *in_high,*in_low;
 	PDC_uint	out_start, out_size, out_plus, in_high_start, in_hight_plus,
-				in_low_start, in_low_plus, pos0, pos1, m_size, pos_y, pos_y_end, pos_x, pos_x_end;
+				in_low_start, in_low_plus, pos0, pos1, m_size;// pos_y, pos_y_end, pos_x, pos_x_end;
 	PDC_bool	even;
 
 	if(resolution->r != 1){
@@ -437,6 +466,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* excepti
 		}
 	}
 
+	/*
 	uwe_count += 2;
 	if(uwe_count == 0){
 		out_start = resolution->mx0 + resolution->my0 * m_size;
@@ -447,7 +477,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* excepti
 		}
 	}
 	uwe_count += 1;
-
+*/
 	return resolution;
 }
 
@@ -462,8 +492,10 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 
 	float		*out, *in_high,*in_low;
 	PDC_uint	out_start, out_size, out_plus, in_high_start, in_hight_plus,
-				in_low_start, in_low_plus, pos0, pos1, pos1_rest, m_size, pos_y, pos_y_end, pos_x, pos_x_end;
+				in_low_start, in_low_plus, pos0, pos1, pos1_rest, m_size, SSE2; // pos_y, pos_y_end, pos_x, pos_x_end;
 	PDC_bool	even;
+
+	SSE2 = 1;
 
 	if(resolution->r != 1){
 		PDC_Resolution_inverse_transformation_97_v2(exception, resolution->resolution_small);
@@ -472,7 +504,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 		}
 	}
 
-	m_size		= resolution->tile_component->msizex;
+	m_size	= resolution->tile_component->msizex;
 	out = in_high = in_low = resolution->tile_component->memory;
 
 	out_plus 		= in_hight_plus = in_low_plus = 1;
@@ -490,31 +522,56 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 	pos1_rest = pos1 % 4;
 	pos1 = pos1 - pos1_rest;
 
-	for(pos0 = 0; pos0 < pos1; pos0 += 4){
+	if(SSE2 == 1){
+		for(pos0 = 0; pos0 < pos1; pos0 += 4){
 
-		PDC_td_start_v2(	exception, transformer, out, in_high, in_low,
-							out_start + pos0 * m_size, out_size,out_plus, even,
-							in_high_start + pos0 * m_size, in_hight_plus,
-							in_low_start + pos0 * m_size, in_low_plus,
-							4, m_size, m_size, m_size);
-		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
-			return resolution;
+			PDC_td_start_v2_sse2(	exception, transformer, out, in_high, in_low,
+									out_start + pos0 * m_size, out_size,out_plus, even,
+									in_high_start + pos0 * m_size, in_hight_plus,
+									in_low_start + pos0 * m_size, in_low_plus,
+									4, m_size, m_size, m_size);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return resolution;
+			}
+		}
+
+		if(pos1_rest != 0){
+			PDC_td_start_v2_sse2(	exception, transformer, out, in_high, in_low,
+									out_start + pos0 * m_size, out_size,out_plus, even,
+									in_high_start + pos0 * m_size, in_hight_plus,
+									in_low_start + pos0 * m_size, in_low_plus,
+									pos1_rest, m_size, m_size, m_size);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return resolution;
+			}
+		}
+	}else{
+		for(pos0 = 0; pos0 < pos1; pos0 += 4){
+
+			PDC_td_start_v2(	exception, transformer, out, in_high, in_low,
+								out_start + pos0 * m_size, out_size,out_plus, even,
+								in_high_start + pos0 * m_size, in_hight_plus,
+								in_low_start + pos0 * m_size, in_low_plus,
+								4, m_size, m_size, m_size);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return resolution;
+			}
+		}
+
+		if(pos1_rest != 0){
+			PDC_td_start_v2(	exception, transformer, out, in_high, in_low,
+								out_start + pos0 * m_size, out_size,out_plus, even,
+								in_high_start + pos0 * m_size, in_hight_plus,
+								in_low_start + pos0 * m_size, in_low_plus,
+								pos1_rest, m_size, m_size, m_size);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return resolution;
+			}
 		}
 	}
 
-	if(pos1_rest != 0){
-		PDC_td_start_v2(	exception, transformer, out, in_high, in_low,
-							out_start + pos0 * m_size, out_size,out_plus, even,
-							in_high_start + pos0 * m_size, in_hight_plus,
-							in_low_start + pos0 * m_size, in_low_plus,
-							pos1_rest, m_size, m_size, m_size);
-		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
-			return resolution;
-		}
-	}
 
-
-	out_plus = in_hight_plus = in_low_plus = resolution->tile_component->msizex;
+	out_plus 		= in_hight_plus = in_low_plus = resolution->tile_component->msizex;
 	out_start		= resolution->mx0 + resolution->my0 * m_size;
 	in_low_start	= out_start;
 	in_high_start	= resolution->subband[1]->mx0 + resolution->subband[1]->my0 * m_size;
@@ -530,29 +587,54 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 	pos1 = pos1 - pos1_rest;
 
 
+	if(SSE2 == 1){
+		for(pos0 = 0; pos0 < pos1; pos0 += 4){
+			PDC_td_start_v2_sse2(	exception, transformer, out, in_high, in_low,
+									out_start + pos0, out_size,out_plus, even,
+									in_high_start + pos0, in_hight_plus,
+									in_low_start + pos0, in_low_plus,
+									4, 1, 1, 1);
 
-	for(pos0 = 0; pos0 < pos1; pos0 += 4){
 
-		PDC_td_start_v2_sse2(	exception, transformer, out, in_high, in_low,
-							out_start + pos0, out_size,out_plus, even,
-							in_high_start + pos0, in_hight_plus,
-							in_low_start + pos0, in_low_plus,
-							4, 1, 1, 1);
-		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
-			return resolution;
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return resolution;
+			}
+		}
+		if(pos1_rest != 0){
+			PDC_td_start_v2_sse2(	exception, transformer, out, in_high, in_low,
+									out_start + pos0, out_size,out_plus, even,
+									in_high_start + pos0, in_hight_plus,
+									in_low_start + pos0, in_low_plus,
+									pos1_rest, 1, 1, 1);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return resolution;
+			}
+		}
+	}else{
+		for(pos0 = 0; pos0 < pos1; pos0 += 4){
+			PDC_td_start_v2(	exception, transformer, out, in_high, in_low,
+								out_start + pos0, out_size,out_plus, even,
+								in_high_start + pos0, in_hight_plus,
+								in_low_start + pos0, in_low_plus,
+								4, 1, 1, 1);
+
+
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return resolution;
+			}
+		}
+		if(pos1_rest != 0){
+			PDC_td_start_v2(	exception, transformer, out, in_high, in_low,
+								out_start + pos0, out_size,out_plus, even,
+								in_high_start + pos0, in_hight_plus,
+								in_low_start + pos0, in_low_plus,
+								pos1_rest, 1, 1, 1);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				return resolution;
+			}
 		}
 	}
-	if(pos1_rest != 0){
-		PDC_td_start_v2_sse2(	exception, transformer, out, in_high, in_low,
-							out_start + pos0, out_size,out_plus, even,
-							in_high_start + pos0, in_hight_plus,
-							in_low_start + pos0, in_low_plus,
-							pos1_rest, 1, 1, 1);
-		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
-			return resolution;
-		}
-	}
-
+/*
 	uwe_count += 2;
 	if(uwe_count == 0){
 		out_start = resolution->mx0 + resolution->my0 * m_size;
@@ -563,7 +645,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 		}
 	}
 	uwe_count += 1;
-
+*/
 
 	return resolution;
 }

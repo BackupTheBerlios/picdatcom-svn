@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -28,7 +28,7 @@ START_C
 PDC_SIZ_Segment* new_PDC_SIZ_Segment_01(PDC_Exception* exception)
 {
 	PDC_SIZ_Segment* siz_segment = NULL;
-	
+
 	siz_segment = malloc(sizeof(PDC_SIZ_Segment));
 	if(siz_segment == NULL){
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
@@ -91,13 +91,13 @@ void delete_PDC_SIZ_Segment_01(PDC_Exception* exception, PDC_SIZ_Segment* siz_se
 	if(siz_segment != NULL){
 		if(siz_segment->componente_part != NULL){
 			if(siz_segment->componente_part->full){
-				for(pos = 0; pos < siz_segment->componente_part->last_pointer; pos += 1){
+				for(pos = 0; pos < siz_segment->componente_part->last_pointer + 1; pos += 1){
 					delete_PDC_SIZ_Segment_Componente(exception, (PDC_SIZ_Segment_Componente*)siz_segment->componente_part->pointer[pos]);
 				}
 			}
 			delete_PDC_Pointer_Buffer_01(exception, siz_segment->componente_part);
 		}
-		delete_PDC_Exception(siz_segment->exception);
+		//delete_PDC_Exception(siz_segment->exception);
 		free(siz_segment);
 	}
 }
@@ -105,8 +105,8 @@ void delete_PDC_SIZ_Segment_01(PDC_Exception* exception, PDC_SIZ_Segment* siz_se
 /*
  *
  */
-PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception, 
-												PDC_SIZ_Segment* siz_segment, 
+PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception,
+												PDC_SIZ_Segment* siz_segment,
 												PDC_Buffer* buffer)
 {
 	PDC_uint32 read_byte_pos, csiz_pos_delete;
@@ -149,7 +149,7 @@ PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception,
 					delete_PDC_SIZ_Segment_Componente(exception, siz_segment->componente_part->pointer[csiz_pos_delete]);
 				}
 			}
-			return siz_segment;			
+			return siz_segment;
 		}
 		PDC_Pointer_Buffer_add_pointer(exception, siz_segment->componente_part, siz_segment_com);
 	}

@@ -176,7 +176,7 @@ PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(	PDC_Excepti
 			free(decoder->workbuffer);
 		}
 
-		delete_PDC_Exception(decoder->exception);
+		//delete_PDC_Exception(decoder->exception);
 
 		free(decoder);
 	}
@@ -376,6 +376,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v1(	PDC_Exception* exception,
 			}
 		}
 
+		/*
 		if(uwe_count == 0){
 			for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
 				fprintf(DEBUG_FILE,"%6d green   %13.2f \n",i_help1, green[i_help1]);
@@ -386,7 +387,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v1(	PDC_Exception* exception,
 			}
 			uwe_count += 1;
 		}
-
+		 */
 		for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
 			green[i_help1] *= K1;
 		}
@@ -500,7 +501,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 													PDC_uint num_rows, PDC_uint high_stride, PDC_uint low_stride,
 													PDC_uint out_stride)
 {
-	PDC_uint temp_numLoops, temp_numLoopsunrolled, tem_restLoop;
+	// PDC_uint temp_numLoops, temp_numLoopsunrolled, tem_restLoop;
 	PDC_uint i_help1, i_help2, i_help1_end, greensize, orangesize, greensize_temp, orangesize_temp, out_1, out_1end, out_plus2;
 	PDC_uint low_stride2, low_stride3, low_stride4;
 	PDC_uint high_stride2, high_stride3, high_stride4;
@@ -607,7 +608,6 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 	orangeSize	= decoder->orangeSize;
 	brownSize	= decoder->brownSize;
 	maxSize		= decoder->maxSize;
-
 
 	if(out_size <= maxSize){
 		if(out_size > 4){
@@ -996,6 +996,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 			}
 		}
 
+		/*
 		if(uwe_count == 0){
 			for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
 				fprintf(DEBUG_FILE2,"%6d green   %13.2f \n",i_help1, green2[i_help1 * 4]);
@@ -1006,6 +1007,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 			}
 			uwe_count += 1;
 		}
+		 */
 
 		orangesize_temp	= orangesize * 4;
 		greensize_temp	= greensize	* 4;
@@ -1665,6 +1667,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2_sse2(	PDC_Exception* exception,
 			}
 		}
 
+		/*
 		if(uwe_count == 0){
 			for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
 				fprintf(DEBUG_FILE2,"%6d green   %13.2f \n",i_help1, green2[i_help1 * 4]);
@@ -1675,6 +1678,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2_sse2(	PDC_Exception* exception,
 			}
 			uwe_count += 1;
 		}
+		 */
 
 	asm volatile (
 	"	mov		rcx,	%2					/* 			*/" "\n\t"

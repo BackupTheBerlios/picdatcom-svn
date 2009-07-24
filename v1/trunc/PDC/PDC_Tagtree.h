@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -40,9 +40,9 @@ START_C
 		PDC_uint*	size_x;
 		PDC_uint*	size_y;
 		PDC_uint	level;
-		
+
 		PDC_Tagtree_item***  item;
-		
+
 	};
 
 	struct str_PDC_Tagtree_item
@@ -60,7 +60,7 @@ START_C
 		PDC_bool			save_decode;
 	};
 
-	/* 
+	/*
 	 *
 	 */
 	PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
@@ -71,14 +71,14 @@ START_C
 	 *
 	 */
 	PDC_Tagtree* delete_PDC_Tagtree_01(	PDC_Exception* exception,
-										PDC_Tagtree* tagtree);
+											PDC_Tagtree* tagtree);
 
 
 	/*
 	 *
 	 */
 	PDC_Tagtree* PDC_Tagtree_set_value(	PDC_Exception* exception,
-										PDC_Tagtree* tagtree, 
+										PDC_Tagtree* tagtree,
 										PDC_uint pos_x,
 										PDC_uint pos_y,
 										PDC_int	value);
@@ -108,7 +108,7 @@ START_C
 										PDC_Tagtree_item* item,
 										PDC_Tagtree_item* root_item,
 										PDC_int max_value);
-	
+
 	/*
 	 *
 	 */
@@ -139,7 +139,7 @@ START_C
 	 */
 	void PDC_Tagtree_pop(	PDC_Exception* exception,
 							PDC_Tagtree* tagtree);
-							
+
 	/*
 	 *
 	 */

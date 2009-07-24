@@ -31,12 +31,13 @@
  * Method:    create_structur
  * Signature: (Ljava/lang/String;)J
  */
-JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur
+JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur__Ljava_lang_String_2
   (JNIEnv *env, jclass in_class, jstring in_path)
 {
 	const char *path		= NULL;
 	jlong pointer			= 0;
 	PDC_Decoder	*decoder	= NULL;
+
 
 	path = (*env)->GetStringUTFChars(env, in_path, 0);
 	if(path == NULL){
@@ -52,6 +53,33 @@ JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur
 	return pointer;
 }
 
+ /*
+  * Class:     PicDatCom_PicDatComImage
+  * Method:    create_structur
+  * Signature: ([B)J
+  */
+ JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur___3B
+   (JNIEnv *env, jclass in_class, jbyteArray in_byte){
+	 jlong pointer			= 0;
+	 PDC_Decoder *decoder	= NULL;
+	 unsigned char *data	= NULL;
+	 unsigned int	 length	= 0;
+		jboolean 	isCopy;
+
+	 data 	= (unsigned char*) ((*env)->GetByteArrayElements(env, in_byte, &isCopy));
+	 length	= (unsigned int) ((*env)->GetArrayLength(env, in_byte));
+
+	decoder = new_PDC_Decoder_03(data, length);
+	if(decoder == NULL){
+		return pointer;
+	}
+	pointer = (jlong)(POINTER)decoder;
+
+	(*env)->ReleaseByteArrayElements(env, in_byte, (jbyte*) data, 0);
+
+	return pointer;
+ }
+
 /*
  * Class:     PicDatCom_PicDatComImage
  * Method:    delete_structur
@@ -60,8 +88,16 @@ JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_create_1structur
 JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_delete_1structur
   (JNIEnv *env, jclass in_class, jlong in_pointer)
 {
+	PDC_Decoder	*decoder	= NULL;
 
-	return in_pointer;
+
+	if(in_pointer == 0){
+		return NULL;
+	}
+	decoder = (PDC_Decoder	*)(POINTER)in_pointer;
+
+	delete_PDC_Decoder(NULL, decoder);
+	return NULL;
 }
 
 /*

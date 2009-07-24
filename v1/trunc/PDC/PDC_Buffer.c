@@ -138,7 +138,7 @@ PDC_Buffer* PDC_Buffer_add_byte_1(PDC_Exception* exception, PDC_Buffer* buffer, 
 /*
  *
  */
-PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uchar* byte, PDC_uint numbytes)
+PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Exception* exception, PDC_Buffer* buffer, const PDC_uchar* byte, PDC_uint numbytes)
 {
 	PDC_uint32	plus_length, i, i2;
 	PDC_uchar*	data;

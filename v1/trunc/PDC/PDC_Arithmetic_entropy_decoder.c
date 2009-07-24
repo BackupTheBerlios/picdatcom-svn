@@ -250,7 +250,9 @@ PDC_Arithmetic_entropy_decoder* new_PDC_Arithmetic_entropy_decoder(PDC_Exception
 PDC_Arithmetic_entropy_decoder* delete_PDC_Arithmetic_entropy_decoder(	PDC_Exception* exception,
 																		PDC_Arithmetic_entropy_decoder* decoder)
 {
-	free(decoder);
+	if(decoder != NULL){
+		free(decoder);
+	}
 	return NULL;
 }
 

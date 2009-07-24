@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -24,7 +24,7 @@ START_C
 
 
 /*
- * 
+ *
  */
 PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_01(PDC_Exception* exception )
 {
@@ -43,7 +43,7 @@ PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_01(PDC_Exception* exc
 }
 
 /*
- * 
+ *
  */
 PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_02(PDC_Exception* exception, PDC_Buffer* buffer)
 {
@@ -64,7 +64,7 @@ PDC_SIZ_Segment_Componente* new_PDC_SIZ_Segment_Componente_02(PDC_Exception* exc
 void delete_PDC_SIZ_Segment_Componente(PDC_Exception* exception, PDC_SIZ_Segment_Componente* siz_segment_com)
 {
 	if(siz_segment_com != NULL){
-		delete_PDC_Exception(siz_segment_com->exception);
+		//delete_PDC_Exception(siz_segment_com->exception);
 		free(siz_segment_com);
 	}
 }
@@ -72,7 +72,7 @@ void delete_PDC_SIZ_Segment_Componente(PDC_Exception* exception, PDC_SIZ_Segment
 /*
  *
  */
-PDC_SIZ_Segment_Componente* PDC_SIZ_Segment_Componente_read_buffer(	PDC_Exception* exception, 
+PDC_SIZ_Segment_Componente* PDC_SIZ_Segment_Componente_read_buffer(	PDC_Exception* exception,
 																	PDC_SIZ_Segment_Componente* siz_segment_com,
 																	PDC_Buffer* buffer)
 {

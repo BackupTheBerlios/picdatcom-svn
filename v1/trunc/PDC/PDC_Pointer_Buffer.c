@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -28,6 +28,8 @@ START_C
 PDC_Pointer_Buffer* new_PDC_Pointer_Buffer_01(PDC_Exception* exception, PDC_uint size)
 {
 	PDC_Pointer_Buffer* buffer;
+	PDC_uint pos;
+
 
 	buffer = malloc(sizeof(PDC_Pointer_Buffer));
 	if(buffer == NULL){
@@ -41,6 +43,9 @@ PDC_Pointer_Buffer* new_PDC_Pointer_Buffer_01(PDC_Exception* exception, PDC_uint
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		delete_PDC_Pointer_Buffer_01(exception, buffer);
 		return NULL;
+	}
+	for(pos = 0; pos < size; pos += 1){
+		buffer->pointer[pos] = NULL;
 	}
 
 	buffer->last_pointer	= 0;
@@ -66,6 +71,7 @@ PDC_Pointer_Buffer* delete_PDC_Pointer_Buffer_01(PDC_Exception* exception,  PDC_
 	if(buffer != NULL){
 		if(buffer->pointer != NULL){
 			free(buffer->pointer);
+			buffer->pointer = NULL;
 		}
 		free(buffer);
 	}
@@ -77,7 +83,7 @@ PDC_Pointer_Buffer* delete_PDC_Pointer_Buffer_01(PDC_Exception* exception,  PDC_
  */
 void* PDC_Pointer_Buffer_get_pointer(PDC_Exception* exception, PDC_Pointer_Buffer* buffer, PDC_uint pos)
 {
-	
+
 	if(buffer->full && buffer->last_pointer >= pos){
 		return buffer->pointer[pos];
 	}else{
@@ -91,17 +97,21 @@ void* PDC_Pointer_Buffer_get_pointer(PDC_Exception* exception, PDC_Pointer_Buffe
  */
 PDC_Pointer_Buffer* PDC_Pointer_Buffer_add_pointer(PDC_Exception* exception, PDC_Pointer_Buffer* buffer, void* pointer)
 {
-	PDC_uint	new_size;
+	PDC_uint	new_size, pos;
 	void**		pointer1;
 
-	
+
 	if(buffer->last_pointer + 1 >= buffer->size){
-		new_size = buffer->size + PDC_POINTER_BUFFER_RESIZE;	
+		new_size = buffer->size + PDC_POINTER_BUFFER_RESIZE;
 		pointer1 = realloc(buffer->pointer, sizeof(void*) * new_size);
 		if(pointer1 == NULL){
 			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 			return buffer;
 		}
+		for(pos = buffer->last_pointer + 1; pos < new_size; pos += 1){
+			pointer1[pos] = NULL;
+		}
+
 		buffer->pointer	= pointer1;
 		buffer->size	= new_size;
 	}
@@ -111,7 +121,7 @@ PDC_Pointer_Buffer* PDC_Pointer_Buffer_add_pointer(PDC_Exception* exception, PDC
 		buffer->pointer[buffer->last_pointer] = pointer;
 	}else{
 		buffer->pointer[0]		= pointer;
-		buffer->last_pointer	= 0;	
+		buffer->last_pointer	= 0;
 		buffer->full			= PDC_true;
 	}
 

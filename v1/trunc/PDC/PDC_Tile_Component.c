@@ -56,6 +56,7 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 	tile_component->tile					= tile;
 	tile_component->resolution				= NULL;
 	tile_component->qcd_segment				= NULL;
+	tile_component->cod_segment				= NULL;
 	tile_component->siz_segment_component	= siz_segment_component;
 	tile_component->transformer_97_decoder	= NULL;
 
@@ -86,6 +87,8 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile
 PDC_Tile_Component* delete_PDC_Tile_Component(PDC_Exception* exception, PDC_Tile_Component* tile_component)
 {
 	if(tile_component != NULL){
+		delete_PDC_Resolution(exception, tile_component->resolution);
+		delete_PDC_Transformation_97_decoder(exception, tile_component->transformer_97_decoder);
 		free(tile_component);
 	}
 
@@ -96,8 +99,8 @@ PDC_Tile_Component* delete_PDC_Tile_Component(PDC_Exception* exception, PDC_Tile
  *
  */
 PDC_Tile_Component* PDC_Tile_Component_set_COD_Segment(	PDC_Exception* exception,
-														PDC_Tile_Component* tile_component,
-														PDC_COD_Segment* cod_segment)
+															PDC_Tile_Component* tile_component,
+															PDC_COD_Segment* cod_segment)
 {
 	tile_component->cod_segment = cod_segment;
 	return tile_component;
@@ -107,8 +110,8 @@ PDC_Tile_Component* PDC_Tile_Component_set_COD_Segment(	PDC_Exception* exception
  *
  */
 PDC_Tile_Component* PDC_Tile_Component_set_QCD_Segment(	PDC_Exception* exception,
-														PDC_Tile_Component* tile_component,
-														PDC_QCD_Segment* qcd_segment)
+															PDC_Tile_Component* tile_component,
+															PDC_QCD_Segment* qcd_segment)
 {
 	tile_component->qcd_segment = qcd_segment;
 	return tile_component;

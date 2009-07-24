@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -35,7 +35,7 @@ START_C
 
 	#include "PDC_Buffer.h"
 	#include "PDC_Picture.h"
-	
+
 	#define PDC_FIRST_LENGTH 204800
 
 	#define PDC_SOC 0xFF4F
@@ -68,59 +68,73 @@ START_C
 		PDC_DATA_SITUATION	data_situation;
 		PDC_Tile*			current_tile;
 		PDC_Exception*		exception;
-	};
-	
-	/*
-	 * 
-	 */
-	DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception);
-	
-	/*
-	 * 
-	 */
-	DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath);
 
-	/*
-	 * 
-	 */
-	DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception,
-										PDC_Decoder* decoder);
+		/*
+		 * For delete reasons this pointer a necessary
+		 */
+		PDC_Pointer_Buffer*	cod_segments;
+		PDC_Pointer_Buffer*	qcd_segments;
+		PDC_Pointer_Buffer*	com_segments;
+		PDC_Pointer_Buffer*	sot_segments;
+
+	};
 
 	/*
 	 *
 	 */
-	DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
-												PDC_Decoder* decoder, 
-												PDC_uchar* data, 
-												PDC_uint32 length, 
+	DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception);
+
+	/*
+	 *
+	 */
+	DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath);
+
+	/*
+	 *
+	 */
+	DLL PDC_Decoder* new_PDC_Decoder_03(const unsigned char *byte_stream, unsigned int length);
+
+	/*
+	 *
+	 */
+	DLL PDC_Decoder* delete_PDC_Decoder(	PDC_Exception* exception,
+											PDC_Decoder* decoder);
+
+	/*
+	 *
+	 */
+	DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception	*exception,
+												PDC_Decoder		*decoder,
+												const PDC_uchar		*data,
+												PDC_uint32 		length,
 												PDC_DECODER_DATA_END end);
 
 	/*
-	 * 
+	 *
 	 */
 	DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception,
 										PDC_Decoder* decoder);
 
 	/*
-	 * 
+	 *
 	 */
 	PDC_Decoder* PDC_Decoder_decode_unknow(	PDC_Exception* exception,
 											PDC_Decoder* decoder);
 
 	/*
-	 * 
+	 *
 	 */
 	PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception,
 													PDC_Decoder* decoder);
 
 	/*
-	 * 
+	 *
 	 */
 	PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception,
 												PDC_Decoder* decoder);
 
 	/*
-	 * 
+	 *
 	 */
 	PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
 													 PDC_Decoder* decoder);

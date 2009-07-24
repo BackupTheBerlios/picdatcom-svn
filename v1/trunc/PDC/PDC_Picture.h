@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -60,46 +60,46 @@ START_C
 	PDC_Picture* new_PDC_Picture(PDC_Exception* exception);
 
 	/*
-	 * 
+	 *
 	 */
 	void delete_PDC_Picture(PDC_Exception* exception,
 							PDC_Picture* picture);
-	
+
 
 
 	/*
 	 *
 	 */
 	PDC_Picture* PDC_Picture_set_SIZ_Segment(	PDC_Exception* exception,
-												PDC_Picture* picture, 
-												PDC_SIZ_Segment* siz_segment);
+													PDC_Picture* picture,
+													PDC_SIZ_Segment* siz_segment);
 
 	/*
 	 *
 	 */
 	PDC_Picture* PDC_Picture_set_COD_Segment(	PDC_Exception* exception,
-												PDC_Picture* picture,
-												PDC_COD_Segment* cod_segment);
-												
+													PDC_Picture* picture,
+													PDC_COD_Segment* cod_segment);
+
 	/*
 	 *
 	 */
 	PDC_Picture* PDC_Picture_set_QCD_Segment(	PDC_Exception* exception,
-												PDC_Picture* picture,
-												PDC_QCD_Segment* qcd_segment);
-		
+													PDC_Picture* picture,
+													PDC_QCD_Segment* qcd_segment);
+
 	/*
 	 *
 	 */
 	PDC_uint32 PDC_Picture_get_width(	PDC_Exception *excption,
 										PDC_Picture *picture);
-										
+
 	/*
 	 *
 	 */
 	PDC_uint32 PDC_Picture_get_height(	PDC_Exception *excption,
-										PDC_Picture *picture);	
-										
+										PDC_Picture *picture);
+
 	/*
 	 *
 	 */
@@ -107,7 +107,7 @@ START_C
 											PDC_Picture *picture,
 											PDC_float32 *out_Vector,
 											PDC_uint out_line_feed);
-											
+
 	/*
 	 *
 	 */
@@ -115,8 +115,8 @@ START_C
 											PDC_Picture *picture,
 											PDC_uint32 *out_Vector,
 											PDC_uint out_line_feed);
-													
-									
-	
+
+
+
 STOP_C
 #endif
