@@ -72,6 +72,7 @@ START_C
 		/*
 		 * For delete reasons this pointer a necessary
 		 */
+		PDC_Pointer_Buffer*	siz_segments;
 		PDC_Pointer_Buffer*	cod_segments;
 		PDC_Pointer_Buffer*	qcd_segments;
 		PDC_Pointer_Buffer*	com_segments;

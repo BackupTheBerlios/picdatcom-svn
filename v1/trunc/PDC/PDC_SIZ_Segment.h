@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe Brï¿½nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -36,7 +36,7 @@ START_C
 	#define DEFAULT_NUMBER_COMPONENTEN 3
 
 	struct str_PDC_SIZ_Segment{
-		PDC_Exception*	exception;
+		//PDC_Exception*	exception;
 		PDC_uint16		Lsiz;
 		PDC_uint16		Rsiz;
 		PDC_uint32		Xsiz;
@@ -48,7 +48,7 @@ START_C
 		PDC_uint32		XTOsiz;
 		PDC_uint32		YTOsiz;
 		PDC_uint16		Csiz;
-		
+
 		PDC_Pointer_Buffer* componente_part;
 	};
 
@@ -70,8 +70,8 @@ START_C
 	/*
 	 *
 	 */
-	PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception, 
-													PDC_SIZ_Segment* siz_segment, 
+	PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception,
+													PDC_SIZ_Segment* siz_segment,
 													PDC_Buffer* buffer);
 
 STOP_C

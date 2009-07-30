@@ -77,6 +77,13 @@ PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception*
 	decoder->orange		= NULL;
 	decoder->brown		= NULL;
 
+	decoder->alpha		= NULL;
+	decoder->beta		= NULL;
+	decoder->gamma		= NULL;
+	decoder->delta		= NULL;
+	decoder->K			= NULL;
+	decoder->K1			= NULL;
+
 	decoder->maxSize = maxSize;
 	decoder->pinkSize =
 	decoder->brownSize =
@@ -175,6 +182,31 @@ PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(	PDC_Excepti
 		if(decoder->workbuffer != NULL){
 			free(decoder->workbuffer);
 		}
+
+		if(decoder->alpha != NULL){
+			free(decoder->alpha);
+		}
+
+		if(decoder->beta != NULL){
+			free(decoder->beta);
+		}
+
+		if(decoder->gamma != NULL){
+			free(decoder->gamma);
+		}
+
+		if(decoder->delta != NULL){
+			free(decoder->delta);
+		}
+
+		if(decoder->K != NULL){
+			free(decoder->K);
+		}
+
+		if(decoder->K1 != NULL){
+			free(decoder->K1);
+		}
+
 
 		//delete_PDC_Exception(decoder->exception);
 

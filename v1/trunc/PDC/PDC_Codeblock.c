@@ -152,6 +152,8 @@ PDC_uint8 BDK_context_states[3][256] = {{	  2,  3,  3,  4,  3,  4,  4,  4,  3,  
 												 15, 13, 15, 13, 12, 12, 12, 12, 12, 12, 12, 12, 13, 15, 13, 15,
 												 15, 14, 14, 13, 12, 11, 11, 12, 12, 11, 11, 12, 13, 14, 14, 15	};
 
+	// struct str_PDC_Codeword_List empty_Codeword_list = {NULL, NULL, NULL, NULL, 0, 0, 0, 0, 0, PDC_true};
+
 /*
  *
  */
@@ -189,20 +191,21 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 	codeblock->decoder						= NULL;
 	codeblock->coding_passes_per_layer		= NULL;
 	codeblock->BDK_context_states			= NULL;
+	codeblock->read_codeword				= NULL;
+	codeblock->write_codeword				= NULL;
 	codeblock->pass_state					= CLEANUP_PASS;
 	codeblock->pos_x						= 0;
 	codeblock->init_decoder					= PDC_false;
 	codeblock->zero_bitplanes				= 0;
 
-
+/*
 	codeblock->read_codeword	= new_PDC_Codeword_List_01( exception);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		delete_PDC_Codeblock(exception, codeblock);
 		return NULL;
 	}
 	codeblock->write_codeword	= codeblock->read_codeword;
-
-
+*/
 
 	return codeblock;
 }
@@ -253,6 +256,8 @@ PDC_Codeblock* new_PDC_Codeblock_02(PDC_Exception* exception, PDC_Subband* subba
 	codeblock->mx1 = subband->mx0 + codeblock->cx1 - subband->tbx0;
 	codeblock->my0 = subband->my0 + codeblock->cy0 - subband->tby0;
 	codeblock->my1 = subband->my0 + codeblock->cy1 - subband->tby0;
+
+	//delete_PDC_Codeword_List(codeblock->read_codeword);
 
 	codeblock->read_codeword	= NULL;
 	codeblock->write_codeword	= new_PDC_Codeword_List_01(exception);

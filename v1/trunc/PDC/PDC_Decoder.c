@@ -43,10 +43,17 @@ DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 
 	decoder->exception		= exception;
 
+	decoder->siz_segments	= NULL;
 	decoder->cod_segments	= NULL;
 	decoder->qcd_segments	= NULL;
 	decoder->com_segments	= NULL;
 	decoder->sot_segments	= NULL;
+
+	decoder->siz_segments	= new_PDC_Pointer_Buffer_02(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		delete_PDC_Decoder(exception, decoder);
+		return NULL;
+	}
 
 	decoder->cod_segments	= new_PDC_Pointer_Buffer_02(exception);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
@@ -215,12 +222,87 @@ DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
  */
 DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception, PDC_Decoder* decoder)
 {
+
+	PDC_COD_Segment*	cod_segment;
+	PDC_SIZ_Segment*	siz_segment;
+	PDC_QCD_Segment*	qcd_segment;
+	PDC_COM_Segment*	com_segment;
+	PDC_SOT_Segment*	sot_segment;
+
 	if(decoder != NULL){
 		delete_PDC_Buffer(exception, decoder->in_data);
 		delete_PDC_Buffer(exception, decoder->in_data_save);
 		delete_PDC_Picture(exception, decoder->picture);
-		delete_PDC_Exception(decoder->exception);
 
+		if(decoder->cod_segments != NULL){
+			if(decoder->cod_segments->full == PDC_true){
+				PDC_Pointer_Buffer_set_start(exception, decoder->cod_segments);
+				for(cod_segment = PDC_Pointer_Buffer_get_next(exception, decoder->cod_segments);
+					cod_segment != NULL;
+					cod_segment = PDC_Pointer_Buffer_get_next(exception, decoder->cod_segments)){
+
+						delete_PDC_COD_Segment(exception, cod_segment);
+				}
+			}
+			delete_PDC_Pointer_Buffer_01(exception, decoder->cod_segments);
+			decoder->cod_segments = NULL;
+		}
+
+		if(decoder->siz_segments != NULL){
+			if(decoder->siz_segments->full == PDC_true){
+				PDC_Pointer_Buffer_set_start(exception, decoder->siz_segments);
+				for(siz_segment = PDC_Pointer_Buffer_get_next(exception, decoder->siz_segments);
+					siz_segment != NULL;
+					siz_segment = PDC_Pointer_Buffer_get_next(exception, decoder->siz_segments)){
+
+						delete_PDC_SIZ_Segment_01(exception, siz_segment);
+				}
+			}
+			delete_PDC_Pointer_Buffer_01(exception, decoder->siz_segments);
+			decoder->siz_segments = NULL;
+		}
+
+		if(decoder->qcd_segments != NULL){
+			if(decoder->qcd_segments->full == PDC_true){
+				PDC_Pointer_Buffer_set_start(exception, decoder->qcd_segments);
+				for(qcd_segment = PDC_Pointer_Buffer_get_next(exception, decoder->qcd_segments);
+					qcd_segment != NULL;
+					qcd_segment = PDC_Pointer_Buffer_get_next(exception, decoder->qcd_segments)){
+
+						delete_PDC_QCD_Segment(exception, qcd_segment);
+				}
+			}
+			delete_PDC_Pointer_Buffer_01(exception, decoder->qcd_segments);
+			decoder->qcd_segments = NULL;
+		}
+
+		if(decoder->com_segments != NULL){
+			if(decoder->com_segments->full == PDC_true){
+				PDC_Pointer_Buffer_set_start(exception, decoder->com_segments);
+				for(com_segment = PDC_Pointer_Buffer_get_next(exception, decoder->com_segments);
+					com_segment != NULL;
+					com_segment = PDC_Pointer_Buffer_get_next(exception, decoder->com_segments)){
+
+						delete_PDC_COM_Segment(exception, com_segment);
+				}
+			}
+			delete_PDC_Pointer_Buffer_01(exception, decoder->com_segments);
+			decoder->com_segments = NULL;
+		}
+
+		if(decoder->sot_segments != NULL){
+			if(decoder->sot_segments->full == PDC_true){
+				PDC_Pointer_Buffer_set_start(exception, decoder->sot_segments);
+				for(sot_segment = PDC_Pointer_Buffer_get_next(exception, decoder->sot_segments);
+					sot_segment != NULL;
+					sot_segment = PDC_Pointer_Buffer_get_next(exception, decoder->sot_segments)){
+
+						delete_PDC_SOT_Segment(exception, sot_segment);
+				}
+			}
+			delete_PDC_Pointer_Buffer_01(exception, decoder->sot_segments);
+			decoder->sot_segments = NULL;
+		}
 
 		free(decoder);
 
@@ -350,6 +432,16 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_De
 			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 			return decoder;
 		}
+
+		/*
+		 * Only to deconstruct and free the memory the pointer is saved.
+		 */
+		PDC_Pointer_Buffer_add_pointer(exception, decoder->siz_segments, siz_segment);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			delete_PDC_SIZ_Segment_01(exception, siz_segment);
+			return decoder;
+		}
+
 		decoder->picture = PDC_Picture_set_SIZ_Segment(	exception,
 														decoder->picture,
 														siz_segment);
@@ -357,6 +449,9 @@ PDC_Decoder* PDC_Decoder_decode_main_header_siz(PDC_Exception* exception, PDC_De
 			return decoder;
 		}
 		decoder->reading_state = PDC_MAIN_HEADER;
+
+
+
 	}else{
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_FALSE_SYMBOL, __LINE__, __FILE__);
 	}
@@ -406,6 +501,13 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 					if(qcd_segment != NULL){
 						PDC_QCD_Segment_read_buffer(exception, qcd_segment, buffer, cod_segment);
 					}
+					PDC_Pointer_Buffer_add_pointer(exception, decoder->cod_segments, cod_segment);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						delete_PDC_COD_Segment(exception, cod_segment);
+						return decoder;
+					}
+
+
 					PDC_Picture_set_COD_Segment(exception, decoder->picture, cod_segment);
 					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 						return decoder;
@@ -422,6 +524,11 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 				if(qcd_segment == NULL){
 					qcd_segment = new_PDC_QCD_Segment_02(exception, buffer, cod_segment);
 					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						return decoder;
+					}
+					PDC_Pointer_Buffer_add_pointer(exception, decoder->qcd_segments, qcd_segment);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						delete_PDC_QCD_Segment(exception, qcd_segment);
 						return decoder;
 					}
 					PDC_Picture_set_QCD_Segment(exception, decoder->picture, qcd_segment);
@@ -446,6 +553,11 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 					return decoder;
 				}
+				PDC_Pointer_Buffer_add_pointer(exception, decoder->com_segments, com_segment);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					delete_PDC_COM_Segment(exception, com_segment);
+					return decoder;
+				}
 
 				break;
 			case PDC_SOT:
@@ -453,6 +565,12 @@ PDC_Decoder* PDC_Decoder_decode_main_header(PDC_Exception* exception, PDC_Decode
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 					return decoder;
 				}
+				PDC_Pointer_Buffer_add_pointer(exception, decoder->sot_segments, sot_segment);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					delete_PDC_SOT_Segment(exception, sot_segment);
+					return decoder;
+				}
+
 				t_tile = sot_segment->Isot;
 				decoder->current_tile = PDC_Pointer_Buffer_get_pointer(exception, decoder->picture->tiles, t_tile);
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
@@ -514,6 +632,12 @@ PDC_Decoder* PDC_Decoder_decode_tile_part_header(PDC_Exception* exception,
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 					return decoder;
 				}
+				PDC_Pointer_Buffer_add_pointer(exception, decoder->cod_segments, cod_segment);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					delete_PDC_COD_Segment(exception, cod_segment);
+					return decoder;
+				}
+
 				PDC_Tile_set_COD_Segment(exception, tile, cod_segment);
 				break;
 			case PDC_SOD:

@@ -25,9 +25,9 @@ START_C
 /*
  *
  */
-PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
-								PDC_uint size_x,
-								PDC_uint size_y)
+PDC_Tagtree* new_PDC_Tagtree_01(	PDC_Exception* exception,
+									PDC_uint size_x,
+									PDC_uint size_y)
 {
 	PDC_Tagtree*	tagtree;
 	PDC_uint		max, value, pos, pos1, pos_y, pos_x, pos_x1, pos_y1;
@@ -147,8 +147,6 @@ PDC_Tagtree* new_PDC_Tagtree_01(PDC_Exception* exception,
 				tagtree->item[pos][pos_x][pos_y].parent = &(tagtree->item[pos + 1][pos_x1][pos_y1]);
 			}
 		}
-		free(tagtree->item[pos]);
-		tagtree->item[pos] = NULL;
 	}
 
 	return tagtree;
@@ -416,7 +414,7 @@ PDC_bool PDC_Tagtree_decode_item(	PDC_Exception* exception,
  *
  */
 void PDC_Tagtree_push(	PDC_Exception* exception,
-						PDC_Tagtree* tagtree)
+							PDC_Tagtree* tagtree)
 {
 	PDC_uint pos, pos_x, pos_y, size_x, size_y, size;
 	PDC_Tagtree_item* item;

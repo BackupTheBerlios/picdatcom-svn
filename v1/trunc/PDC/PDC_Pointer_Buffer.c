@@ -68,8 +68,14 @@ PDC_Pointer_Buffer* new_PDC_Pointer_Buffer_02(PDC_Exception* exception )
  */
 PDC_Pointer_Buffer* delete_PDC_Pointer_Buffer_01(PDC_Exception* exception,  PDC_Pointer_Buffer* buffer)
 {
+	PDC_uint pos, size;
 	if(buffer != NULL){
 		if(buffer->pointer != NULL){
+			size = buffer->size;
+			for(pos = 0; pos < size; pos += 1){
+				buffer->pointer[pos] = NULL;
+			}
+
 			free(buffer->pointer);
 			buffer->pointer = NULL;
 		}
@@ -135,9 +141,11 @@ PDC_Pointer_Buffer* PDC_Pointer_Buffer_add_pointer(PDC_Exception* exception, PDC
 void*  PDC_Pointer_Buffer_get_next(PDC_Exception* exception, PDC_Pointer_Buffer* buffer)
 {
 	void* pointer = NULL;
-	if(buffer->pos <= buffer->last_pointer){
-		pointer = buffer->pointer[buffer->pos];
-		buffer->pos += 1;
+	if(buffer->full == PDC_true){
+		if(buffer->pos <= buffer->last_pointer){
+			pointer = buffer->pointer[buffer->pos];
+			buffer->pos += 1;
+		}
 	}
 
 	return pointer;

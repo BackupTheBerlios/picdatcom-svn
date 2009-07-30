@@ -140,6 +140,7 @@ START_C
 		PDC_uint	coding_pass_next;
 		PDC_uint	number_of_coding_passes;
 		PDC_uint	number_of_byte;
+		PDC_bool	empty;
 	};
 
 

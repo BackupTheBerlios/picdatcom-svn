@@ -60,10 +60,10 @@ void delete_PDC_Picture(PDC_Exception* exception, PDC_Picture* picture)
 	PDC_Tile*	tempTile;
 
 	if(picture != NULL){
-		delete_PDC_SIZ_Segment_01(exception, picture->siz_segment);
-		delete_PDC_COD_Segment(exception, picture->cod_segment);
-		delete_PDC_QCD_Segment(exception, picture->qcd_segment);
-		delete_PDC_COM_Segment(exception, picture->com_segment);
+		//delete_PDC_SIZ_Segment_01(exception, picture->siz_segment);
+		//delete_PDC_COD_Segment(exception, picture->cod_segment);
+		//delete_PDC_QCD_Segment(exception, picture->qcd_segment);
+		//delete_PDC_COM_Segment(exception, picture->com_segment);
 
 		if(picture->componentes != NULL){
 			numComponent = picture->componentes->last_pointer + 1;
@@ -80,6 +80,7 @@ void delete_PDC_Picture(PDC_Exception* exception, PDC_Picture* picture)
 				tempTile = (PDC_Tile*)PDC_Pointer_Buffer_get_pointer(exception, picture->tiles, posTile);
 				delete_PDC_Tile(exception, tempTile);
 			}
+			delete_PDC_Pointer_Buffer_01(exception, picture->tiles);
 		}
 
 		free(picture);

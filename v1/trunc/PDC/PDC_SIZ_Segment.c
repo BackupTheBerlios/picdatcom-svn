@@ -36,7 +36,7 @@ PDC_SIZ_Segment* new_PDC_SIZ_Segment_01(PDC_Exception* exception)
 	}
 	siz_segment->componente_part	= NULL;
 
-	siz_segment->exception = new_PDC_Exception();
+	//siz_segment->exception = new_PDC_Exception();
 
 	siz_segment->Lsiz	= 0;
 	siz_segment->Rsiz	= 0;
@@ -106,8 +106,8 @@ void delete_PDC_SIZ_Segment_01(PDC_Exception* exception, PDC_SIZ_Segment* siz_se
  *
  */
 PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception,
-												PDC_SIZ_Segment* siz_segment,
-												PDC_Buffer* buffer)
+													PDC_SIZ_Segment* siz_segment,
+													PDC_Buffer* buffer)
 {
 	PDC_uint32 read_byte_pos, csiz_pos_delete;
 	PDC_uint16 csiz_pos;
@@ -141,7 +141,7 @@ PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception,
 	for(csiz_pos = 0;csiz_pos < siz_segment->Csiz; csiz_pos += 1){
 		siz_segment_com = new_PDC_SIZ_Segment_Componente_02(exception, buffer);
 		if(siz_segment_com == NULL){
-			PDC_Exception_error(	siz_segment->exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 			buffer->read_byte_pos = read_byte_pos;
 			delete_PDC_SIZ_Segment_01(exception, siz_segment);
 			if(siz_segment->componente_part->full){

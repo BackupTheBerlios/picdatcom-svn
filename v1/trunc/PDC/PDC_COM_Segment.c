@@ -71,6 +71,10 @@ PDC_COM_Segment* delete_PDC_COM_Segment(	PDC_Exception*		exception,
 											PDC_COM_Segment*	com_segment)
 {
 	if(com_segment != NULL){
+		if(com_segment->Ccom != NULL){
+			free(com_segment->Ccom);
+			com_segment->Ccom = NULL;
+		}
 		free(com_segment);
 	}
 	return NULL;
