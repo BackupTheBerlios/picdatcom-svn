@@ -14,6 +14,10 @@
 	<resources os="Linux" arch="i386">
 		<nativelib href="PicDatCom_native_linux_x86.jar"/>
 	</resources>
+   
+	<resources os="Linux" arch="amd64">
+		<nativelib href="PicDatCom_native_linux_x86_64.jar"/>
+	</resources>
      
 	<applet-desc 
 		name="picdatcomview"
