@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+
+<jnlp>
+	<information>
+		<title>jpeg2000 viewer</title>
+		<vendor>Uwe B.</vendor>
+		<offline-allowed />
+	</information>
+	<resources>
+		<j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
+		<jar href="PicDatCom_Applet.jar" main="true" download="eager" />
+	</resources>
+     
+	<resources os="Linux" arch="i386">
+		<nativelib href="PicDatCom_native_linux_x86.jar"/>
+	</resources>
+     
+	<applet-desc 
+		name="picdatcomview"
+		main-class="PicDatCom.Applet.picdatcomview"
+		width="300"
+		height="300">
+	</applet-desc>
+</jnlp>

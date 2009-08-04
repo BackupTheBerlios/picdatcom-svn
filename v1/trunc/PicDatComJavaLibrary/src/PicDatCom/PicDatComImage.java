@@ -22,10 +22,18 @@ public class PicDatComImage{
     
     //private static String dll_path = "C:\\Dokumente und Einstellungen\\uwe_work\\Eigene Dateien\\Visual Studio 2008\\Projects\\PicDatCom\\v1\\trunc\\Debug\\PDC.dll";
     //private static String dll_path = "/home/uwe/programmieren/eclipse/PicDatCom/Debug/libPicDatCom.so";
-    private static String dll_path = "/home/uwe/EclipseProjects/picdatcom/Debug/libpicdatcom.so";
-
+    //private static String dll_path = "/home/uwe/EclipseProjects/picdatcom/Debug/libpicdatcom.so";
+	//private static String dll_path ="/home/uwe/programmieren/eclipse35/PicDatCom/Debug/libpicdatcom.so";
+	
+	/*
     static { 
         System.load(dll_path);
+    } 
+    */
+	
+    private static String dll_path ="picdatcom";
+        static { 
+        System.loadLibrary(dll_path);
     } 
     
     private long pointer = 0;
@@ -95,5 +103,13 @@ public class PicDatComImage{
        get_RGB(pointer, databufferint.getData());
        
        return image;
+    }
+    
+    public void delete_PicDatComImage(){
+    	delete_structur(pointer);
+    }
+    
+    public int getSize(){
+    	return size;
     }
 }

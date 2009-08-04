@@ -2720,11 +2720,11 @@ PDC_Transformation_97_decoder* PDC_td_start_v2_sse2(	PDC_Exception* exception,
 
 		if(uwe_count == 0){
 			for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
-				fprintf(DEBUG_FILE2,"%6d green   %13.2f \n",i_help1, green2[i_help1 * 4]);
+				fprintf(DEBUG_FILE2,"%6d green   %13.2f \n",(int)i_help1, green2[i_help1 * 4]);
 			}
 
 			for(i_help1 = 0; i_help1 < orangesize; i_help1 += 1){
-				fprintf(DEBUG_FILE2,"%6d orange   %13.2f \n",i_help1, orange2[i_help1 * 4]);
+				fprintf(DEBUG_FILE2,"%6d orange   %13.2f \n",(int)i_help1, orange2[i_help1 * 4]);
 			}
 			uwe_count += 1;
 		}
@@ -3131,7 +3131,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2_sse2(	PDC_Exception* exception,
 	"/*( %0 orange),( %1 green), (%2 greensize), (%3 k), (%4 k1), (%5 temp_numLoops), (%6 temp_numLoopsunrolled), (%7 tem_restLoop), (%8 delta), (%9 gamma) (%10 beta) (%11 alpha) */" "\n\t"
 		 :
 		 :	"m"(orange1), "m"(green1), "m"(greensize), "m"(decoder->K ), "m"(decoder->K1), "m"(temp_numLoops),  "m"(temp_numLoopsunrolled), "m"(temp_restLoop), "m"(decoder->delta), "m"(decoder->gamma), "m"(decoder->beta), "m"(decoder->alpha)
-		 : 	"memory", "ebx", "esi", "edx", "eax", "ecx", "xmm6", "xmm7", "xmm0", "xmm1"
+		 : 	"memory",  "esi", "edx", "eax", "ecx", "xmm6", "xmm7", "xmm0", "xmm1"
 		);
 
 		if(even){
@@ -3240,7 +3240,15 @@ PDC_Transformation_97_decoder* PDC_td_start_v2_sse2(	PDC_Exception* exception,
 														PDC_uint num_rows, PDC_uint high_stride, PDC_uint low_stride,
 														PDC_uint out_stride){
 
-
+	return PDC_td_start_v2( 	exception,
+								decoder,
+								out, in_high,  in_low,
+								out_start, out_size,
+								out_plus,  even,
+								in_high_start, in_high_plus,
+								in_low_start, in_low_plus,
+								num_rows, high_stride, low_stride,
+								out_stride);
 
 }
 

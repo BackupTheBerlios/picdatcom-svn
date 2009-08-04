@@ -92,12 +92,12 @@ JNIEXPORT jlong JNICALL Java_PicDatCom_PicDatComImage_delete_1structur
 
 
 	if(in_pointer == 0){
-		return NULL;
+		return 0;
 	}
 	decoder = (PDC_Decoder	*)(POINTER)in_pointer;
 
 	delete_PDC_Decoder(NULL, decoder);
-	return NULL;
+	return 0;
 }
 
 /*
