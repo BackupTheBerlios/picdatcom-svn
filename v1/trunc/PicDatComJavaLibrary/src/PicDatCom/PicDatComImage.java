@@ -24,17 +24,29 @@ public class PicDatComImage{
     //private static String dll_path = "/home/uwe/programmieren/eclipse/PicDatCom/Debug/libPicDatCom.so";
     //private static String dll_path = "/home/uwe/EclipseProjects/picdatcom/Debug/libpicdatcom.so";
 	//private static String dll_path ="/home/uwe/programmieren/eclipse35/PicDatCom/Debug/libpicdatcom.so";
+	//private static String dll_path = "C:\\Dokumente und Einstellungen\\uwe_work\\Eigene Dateien\\eclipse35\\PicDatCom\\Debug\\picdatcom.dll";
+	//private static String dll_pthread = "C:\\Dokumente und Einstellungen\\uwe_work\\Eigene Dateien\\eclipse35\\PicDatCom\\Debug\\pthreadGC2.dll";
 	
 	/*
     static { 
-        System.load(dll_path);
+    	if(System.getProperty("os.name").equals("Windows XP")){
+    		System.load(dll_pthread);
+    	}
+    	
+        System.load(dll_path);  
     } 
     */
 	
-    private static String dll_path ="picdatcom";
-        static { 
+    private static String dll_path		= "picdatcom";
+    private static String dll_pthread	= "pthreadGC2";
+    static {
+    	if(System.getProperty("os.name").equals("Windows XP")){
+    		System.loadLibrary(dll_pthread);
+    	}
+    	 
         System.loadLibrary(dll_path);
     } 
+    
     
     private long pointer = 0;
     

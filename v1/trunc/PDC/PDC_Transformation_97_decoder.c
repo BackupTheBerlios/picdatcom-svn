@@ -60,6 +60,8 @@ PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception*
 {
 	long i;
 
+	unsigned long temp_add;
+
 	PDC_Transformation_97_decoder* decoder = NULL;
 	PDC_int extrasize = 6;
 
@@ -84,6 +86,16 @@ PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception*
 	decoder->K			= NULL;
 	decoder->K1			= NULL;
 
+	decoder->delete_green		= NULL;
+	decoder->delete_orange		= NULL;
+
+	decoder->delete_alpha		= NULL;
+	decoder->delete_beta		= NULL;
+	decoder->delete_gamma		= NULL;
+	decoder->delete_delta		= NULL;
+	decoder->delete_K			= NULL;
+	decoder->delete_K1			= NULL;
+
 	decoder->maxSize = maxSize;
 	decoder->pinkSize =
 	decoder->brownSize =
@@ -91,61 +103,82 @@ PDC_Transformation_97_decoder* new_PDC_Transformation_97_decoder(	PDC_Exception*
 	decoder->orangeSize = PDC_i_ceiling(maxSize, 2) + 4;
 
 
-	decoder->green = (float*)memalign(16, sizeof(float) * (decoder->greenSize + extrasize) * 4);
-	if(decoder->green == NULL){
+	decoder->delete_green = (float*)malloc(16 + sizeof(float) * (decoder->greenSize + extrasize) * 4);
+	if(decoder->delete_green == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
+	temp_add = (unsigned long)decoder->delete_green;
+	decoder->green = (float*)(temp_add + 16 - (temp_add % 16));
 
-	decoder->orange	=(float*)memalign(16, sizeof(float) * (decoder->orangeSize + extrasize) * 4);
-	if(decoder->orange == NULL){
+	decoder->delete_orange	=(float*)malloc(16 + sizeof(float) * (decoder->orangeSize + extrasize) * 4);
+	if(decoder->delete_orange == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
+	temp_add = (unsigned long)decoder->delete_orange;
+	decoder->orange = (float*)(temp_add + 16 - (temp_add % 16));
 
-	decoder->alpha	= (float*)memalign(16, sizeof(float) * 4);
-	if(decoder->alpha == NULL){
-		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
-		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-		return NULL;
-	}
 
-	decoder->beta	= (float*)memalign(16, sizeof(float) * 4);
-	if(decoder->beta == NULL){
+	decoder->delete_alpha	= (float*)malloc(16 + sizeof(float) * 4);
+	if(decoder->delete_alpha == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
+	temp_add = (unsigned long)decoder->delete_alpha;
+	decoder->alpha = (float*)(temp_add + 16 - (temp_add % 16));
 
-	decoder->gamma	= (float*)memalign(16, sizeof(float) * 4);
-	if(decoder->gamma == NULL){
-		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
-		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-		return NULL;
-	}
 
-	decoder->delta	= (float*)memalign(16, sizeof(float) * 4);
-	if(decoder->delta == NULL){
+	decoder->delete_beta	= (float*)malloc(16 + sizeof(float) * 4);
+	if(decoder->delete_beta == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
+	temp_add = (unsigned long)decoder->delete_beta;
+	decoder->beta = (float*)(temp_add + 16 - (temp_add % 16));
 
-	decoder->K	= (float*)memalign(16, sizeof(float) * 4);
-	if(decoder->K == NULL){
-		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
-		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-		return NULL;
-	}
 
-	decoder->K1	= (float*)memalign(16, sizeof(float) * 4);
-	if(decoder->K1 == NULL){
+	decoder->delete_gamma	= (float*)malloc(16 + sizeof(float) * 4);
+	if(decoder->delete_gamma == NULL){
 		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
 		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
+	temp_add = (unsigned long)decoder->delete_gamma;
+	decoder->gamma = (float*)(temp_add + 16 - (temp_add % 16));
+
+	decoder->delete_delta	= (float*)malloc(16 + sizeof(float) * 4);
+	if(decoder->delete_delta == NULL){
+		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	}
+	temp_add = (unsigned long)decoder->delete_delta;
+	decoder->delta = (float*)(temp_add + 16 - (temp_add % 16));
+
+
+	decoder->delete_K	= (float*)malloc(16 + sizeof(float) * 4);
+	if(decoder->delete_K == NULL){
+		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	}
+	temp_add = (unsigned long)decoder->delete_K;
+	decoder->K = (float*)(temp_add + 16 - (temp_add % 16));
+
+	decoder->delete_K1	= (float*)malloc(16 + sizeof(float) * 4);
+	if(decoder->delete_K1 == NULL){
+		decoder = delete_PDC_Transformation_97_decoder(exception, decoder);
+		PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	}
+	temp_add = (unsigned long)decoder->delete_K1;
+	decoder->K1 = (float*)(temp_add + 16 - (temp_add % 16));
+
 
 	for(i = 0; i < 4; i++){
 		decoder->alpha[i]	=	d_ALPHA;
@@ -170,11 +203,11 @@ PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(	PDC_Excepti
 		if(decoder->brown != NULL){
 			free(decoder->brown);
 		}
-		if(decoder->green != NULL){
-			free(decoder->green);
+		if(decoder->delete_green != NULL){
+			free(decoder->delete_green);
 		}
-		if(decoder->orange != NULL){
-			free(decoder->orange);
+		if(decoder->delete_orange != NULL){
+			free(decoder->delete_orange);
 		}
 		if(decoder->pink != NULL){
 			free(decoder->pink);
@@ -183,28 +216,28 @@ PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(	PDC_Excepti
 			free(decoder->workbuffer);
 		}
 
-		if(decoder->alpha != NULL){
-			free(decoder->alpha);
+		if(decoder->delete_alpha != NULL){
+			free(decoder->delete_alpha);
 		}
 
-		if(decoder->beta != NULL){
-			free(decoder->beta);
+		if(decoder->delete_beta != NULL){
+			free(decoder->delete_beta);
 		}
 
-		if(decoder->gamma != NULL){
-			free(decoder->gamma);
+		if(decoder->delete_gamma != NULL){
+			free(decoder->delete_gamma);
 		}
 
-		if(decoder->delta != NULL){
-			free(decoder->delta);
+		if(decoder->delete_delta != NULL){
+			free(decoder->delete_delta);
 		}
 
-		if(decoder->K != NULL){
-			free(decoder->K);
+		if(decoder->delete_K != NULL){
+			free(decoder->delete_K);
 		}
 
-		if(decoder->K1 != NULL){
-			free(decoder->K1);
+		if(decoder->delete_K1 != NULL){
+			free(decoder->delete_K1);
 		}
 
 

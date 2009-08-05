@@ -69,7 +69,7 @@ typedef struct str_PDC_Exception PDC_Exception;
 	/*
 	 *
 	 */
-	PDC_Exception* new_PDC_Exception();
+	DLL PDC_Exception* new_PDC_Exception();
 
 	/*
 	 *

@@ -41,12 +41,22 @@ START_C
 		float			*orange;
 		float			*brown;
 
+		float			*delete_green;
+		float			*delete_orange;
+
 		float			*alpha;
 		float			*beta;
 		float			*gamma;
 		float			*delta;
 		float			*K;
 		float 			*K1;
+
+		float			*delete_alpha;
+		float			*delete_beta;
+		float			*delete_gamma;
+		float			*delete_delta;
+		float			*delete_K;
+		float 			*delete_K1;
 
 		PDC_uint		greenSize;
 		PDC_uint		pinkSize;

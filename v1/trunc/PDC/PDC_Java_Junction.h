@@ -7,7 +7,6 @@
 #ifdef __cplusplus
 extern "C" {
 #endif
-/* Inaccessible static: dll_path */
 /*
  * Class:     PicDatCom_PicDatComImage
  * Method:    create_structur

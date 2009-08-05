@@ -21,7 +21,7 @@
 #ifndef __PDC_PARAMETER_H__
 #define __PDC_PARAMETER_H__
 
-#include <inttypes.h>
+
 
 
 #ifdef __cplusplus
@@ -48,6 +48,13 @@
 	#endif
 #endif
 
+#if defined(_MSC_VER)
+	typedef unsigned int uint32_t;
+	typedef unsigned char uint8_t;
+	typedef unsigned short uint16_t;
+#else
+	#include <inttypes.h>
+#endif
 
 START_C
 
