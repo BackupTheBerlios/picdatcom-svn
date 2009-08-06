@@ -1220,7 +1220,6 @@ PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
 	return decoder;
 }
 
-
 #if defined(AMD64)
 
 /*
