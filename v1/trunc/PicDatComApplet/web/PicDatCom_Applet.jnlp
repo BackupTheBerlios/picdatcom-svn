@@ -8,19 +8,19 @@
 	</information>
 	<resources>
 		<j2se version="1.6+" href="http://java.sun.com/products/autodl/j2se" />
-		<jar href="PicDatCom_Applet.jar" main="true" download="eager" />
+		<jar version="0.1" href="PicDatCom_Applet.jar" main="true" download="eager" />
 	</resources>
      
 	<resources os="Linux" arch="i386">
-		<nativelib href="PicDatCom_native_linux_x86.jar"/>
+		<nativelib version="0.1" href="PicDatCom_native_linux_x86.jar"/>
 	</resources>
    
 	<resources os="Linux" arch="amd64">
-		<nativelib href="PicDatCom_native_linux_x86_64.jar"/>
+		<nativelib version="0.1" href="PicDatCom_native_linux_x86_64.jar"/>
 	</resources>
  
  	<resources os="Windows XP" arch="x86">
-		<nativelib href="PicDatCom_native_Windows_XP_x86.jar"/>
+		<nativelib version="0.1" href="PicDatCom_native_Windows_XP_x86.jar"/>
 	</resources>
      
 	<applet-desc 
