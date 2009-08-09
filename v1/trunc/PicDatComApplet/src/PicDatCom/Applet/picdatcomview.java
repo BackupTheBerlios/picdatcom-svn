@@ -111,7 +111,7 @@ public final class picdatcomview extends JApplet implements Runnable {
 				progressbar.setValue(byte_buffer_offset);
 				progressbar.validate();
 			}
-			//try{
+			try{
 				image 	= new PicDatComImage(byte_buffer);
 				jimage 	= image.getdirectImage();
 				image.delete_PicDatComImage();
@@ -125,11 +125,11 @@ public final class picdatcomview extends JApplet implements Runnable {
 				contentPane.remove(progressbar);
 				contentPane.add(new JLabel(icon));
 				contentPane.validate();
-			//}catch(UnsatisfiedLinkError e){
-			//	contentPane.remove(progressbar);
-			//	contentPane.add(new JLabel("Your OS or Architektur is not supported. "));
-			//	contentPane.validate();
-			//}
+			}catch(UnsatisfiedLinkError e){
+				contentPane.remove(progressbar);
+				contentPane.add(new JLabel("Your OS or Architektur is not supported. "));
+				contentPane.validate();
+			}
 			
 		}catch(IOException e){
 			
