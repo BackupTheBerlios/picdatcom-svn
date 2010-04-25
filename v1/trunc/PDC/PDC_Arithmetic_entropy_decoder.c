@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -26,6 +26,9 @@ START_C
 #define RESIZE_BUFFER 10
 
 extern FILE* DEBUG_FILE;
+extern FILE* DEBUG_FILE3;
+extern int uwe_count;
+
 unsigned int count = 0;
 
 
@@ -218,6 +221,11 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 		return_decoder->CT			= CT;
 		return_decoder->B			= B;
 		return_decoder->D			= D;
+
+		count += 1;
+		if(uwe_count == 1){
+			fprintf(DEBUG_FILE3,"%6d A= %10d  C = %13d  context = %10d D = %3d \n",count, A, C, context,D);
+		}
 	}
 /*
 	count += 1;

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
@@ -24,17 +24,22 @@
 #include <stdlib.h>
 #include "PDC_Parameter.h"
 
+
 START_C
 
 	struct str_PDC_COM_Segment;
 	typedef struct str_PDC_COM_Segment PDC_COM_Segment;
 
+	typedef enum{PDC_COM_SEGMENT_READING_STATE1, PDC_COM_SEGMENT_READING_STATE2} PDC_COM_SEGMENT_READING_STATE;
+
 	#include "PDC_Buffer.h"
+	#include "PDC_Decoder.h"
 
 	struct str_PDC_COM_Segment{
-		PDC_uint16	Lcom;
-		PDC_uint16	Rcom;
-		PDC_uint8*	Ccom;
+		PDC_uint16						Lcom;
+		PDC_uint16						Rcom;
+		PDC_uint8*						Ccom;
+		PDC_COM_SEGMENT_READING_STATE	reading_state;
 	};
 
 	/*
@@ -61,6 +66,12 @@ START_C
 													PDC_COM_Segment*	com_segment,
 													PDC_Buffer*			buffer);
 
-
+	/*
+	 *
+	 */
+	PDC_COM_Segment* PDC_COM_Segment_read_buffer_01(PDC_Exception*		exception,
+													PDC_COM_Segment*	com_segment,
+													PDC_Buffer*			buffer,
+													PDC_Decoder*		decoder);
 STOP_C
 #endif

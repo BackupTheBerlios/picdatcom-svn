@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -22,11 +22,16 @@
 #define __PDC_RESOLUTION_H__
 
 #include "PDC_Parameter.h"
+#include <pthread.h>
 
 START_C
 
 	struct str_PDC_Resolution;
 	typedef struct str_PDC_Resolution PDC_Resolution;
+
+	struct str_PDC_Threadcall;
+	typedef struct str_PDC_Threadcall PDC_Threadcall;
+
 
 	#include "PDC_Tile_Component.h"
 	#include "PDC_Subband.h"
@@ -70,10 +75,10 @@ START_C
 		PDC_uint			precinct_y0;
 		PDC_uint			precinct_y1;
 
-		PDC_uint32			mx0;
-		PDC_uint32			mx1;
-		PDC_uint32			my0;
-		PDC_uint32			my1;
+		PDC_int				mx0;
+		PDC_int				mx1;
+		PDC_int				my0;
+		PDC_int				my1;
 	};
 
 	/*
@@ -151,6 +156,100 @@ START_C
 	 *
 	 */
 	PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exception,
-																		PDC_Resolution* resolution);
+																	PDC_Resolution* resolution);
+
+	/*
+	 *
+	 */
+	PDC_Resolution* PDC_Resolution_inverse_transformation_97_v3(	PDC_Exception* exception,
+																	PDC_Resolution* resolution);
+
+
+	/*
+	 *
+	 */
+	void extend_vertical_low(  PDC_Threadcall *variable);
+
+	/*
+	 *
+	 */
+	void extend_vertical_high(	 PDC_Threadcall *variable);
+
+	/*
+	 *
+	 */
+	void extend_horizontal_low(	 PDC_Threadcall *variable);
+
+	/*
+	 *
+	 */
+	void extend_horizontal_high(	 PDC_Threadcall *variable);
+
+
+	struct str_PDC_Threadcall{
+		PDC_Exception	*exception;
+		PDC_Resolution	*resolution;
+		PDC_int			thread_id;
+		PDC_int			thread_number;
+		PDC_int			*thread_counter;
+		pthread_t		pthread_id;
+		pthread_mutex_t	*mutex_counter;
+		pthread_cond_t	*cond_counter;
+
+
+
+
+
+		float			*sub1_data;
+		float			*sub2_data;
+		float			*sub3_data;
+		float			*sub4_data;
+		float			*out_data1;
+		PDC_int			linestride_float;
+
+		PDC_int			size_low_horizontal;
+		PDC_int			size_high_horizontal;
+		PDC_int			start_row;
+		PDC_int			end_row;
+		PDC_bool		evenhl;
+		PDC_bool		evenhr;
+
+		PDC_int			size_low_vertical;
+		PDC_int			size_high_vertical;
+		PDC_int			start_col;
+		PDC_int			end_col;
+		PDC_bool		evenvl;
+		PDC_bool		evenvr;
+
+		PDC_Transformation_97_decoder* 	decoder;
+		PDC_int 						out_size_horizontal;
+		PDC_int 						out_size_vertical;
+
+
+	};
+
+	/*
+	 *
+	 */
+	PDC_Threadcall* new_PDC_Threadcall_01(PDC_Exception	*exception);
+
+	/*
+	 *
+	 */
+	PDC_Threadcall* new_PDC_Threadcall_02(	PDC_Exception	*exception,
+											PDC_int thread_id,
+											PDC_int thread_number,
+											PDC_int maxSize);
+
+	/*
+	 *
+	 */
+	void delete_PDC_Threadcall(PDC_Exception *exception, PDC_Threadcall* threadcall);
+
+	/*
+	 *
+	 */
+	void *PDC_threadcall_func(void *in);
+
 STOP_C
 #endif

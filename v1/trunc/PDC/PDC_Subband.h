@@ -1,9 +1,9 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  * Contact Email: bruenen.u@web.de
- * 
+ *
  * This file is part of PicDatCom.
- * 
+ *
  * PicDatCom is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
  * the Free Software Foundation, either version 3 of the License, or
@@ -13,7 +13,7 @@
  * but WITHOUT ANY WARRANTY; without even the implied warranty of
  * MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
  * GNU General Public License for more details.
- * 
+ *
  * You should have received a copy of the GNU General Public License
  * along with PicDatCom.  If not, see <http://www.gnu.org/licenses/>.
  * */
@@ -24,33 +24,34 @@
 #include "PDC_Parameter.h"
 
 START_C
-	
+
 	struct str_PDC_Subband;
 	typedef struct str_PDC_Subband PDC_Subband;
 	typedef enum{SUBBAND_LL, SUBBAND_HL, SUBBAND_LH, SUBBAND_HH, SUBBAND_UNKNOW} SUBBAND_TYPE;
 
 	#include "PDC_Resolution.h"
 	#include "PDC_Codeblock.h"
-	
+
 
 	struct str_PDC_Subband{
 		PDC_Resolution* resolution;
 		PDC_Codeblock**	codeblocks;
 		PDC_uint		number_codeblocks;
 		SUBBAND_TYPE	type;
-		
+
 
 		PDC_uint		tbx0;
 		PDC_uint		tbx1;
 		PDC_uint		tby0;
 		PDC_uint		tby1;
 
-		PDC_uint32		mx0;
-		PDC_uint32		mx1;
-		PDC_uint32		my0;
-		PDC_uint32		my1;
+		PDC_int			mx0;
+		PDC_int			mx1;
+		PDC_int			my0;
+		PDC_int			my1;
+		PDC_float32*	memory;
 	};
-	
+
 	/*
 	 *
 	 */
@@ -65,7 +66,7 @@ START_C
 	 *
 	 */
 	PDC_Subband* delete_PDC_Subband(PDC_Exception* exception, PDC_Subband* subband);
-	
+
 	/*
 	 *
 	 */

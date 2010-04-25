@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
@@ -28,8 +28,10 @@ START_C
 	
 	struct str_PDC_COD_Segment;
 	typedef struct str_PDC_COD_Segment PDC_COD_Segment;
+	typedef enum{PDC_COD_SEGMENT_READING_STATE1, PDC_COD_SEGMENT_READING_STATE2} PDC_COD_SEGMENT_READING_STATE;
 
 	#include "PDC_Buffer.h"
+	#include "PDC_Decoder.h"
 
 	#define LAYER_RESOLUTION_LEVEL_COMPONENT_POSITION 0x00
 	#define	RESOLUTION_LEVEL_LAYER_COMPONENT_POSITION 0x01
@@ -61,6 +63,8 @@ START_C
 		PDC_uint8	code_block_style;
 		PDC_uint8	transformation;
 		PDC_Buffer*	precinct_size;
+
+		PDC_COD_SEGMENT_READING_STATE	reading_state;
 	};
 
 	/*
@@ -87,6 +91,12 @@ START_C
 													PDC_COD_Segment* cod_segment,
 													PDC_Buffer* buffer);
 
-
+	/*
+	 *
+	 */
+	PDC_COD_Segment* PDC_COD_Segment_read_buffer_01(PDC_Exception* exception,
+													PDC_COD_Segment* cod_segment,
+													PDC_Buffer* buffer,
+													PDC_Decoder* decoder);
 STOP_C
 #endif

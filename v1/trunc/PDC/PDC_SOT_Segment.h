@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
@@ -60,7 +60,8 @@ START_C
 	 */
 	PDC_SOT_Segment* PDC_SOT_Segment_read_buffer(	PDC_Exception* exception,
 													PDC_SOT_Segment* sot_segment,
-													PDC_Buffer* buffer);
+													PDC_Buffer* buffer,
+													PDC_Decoder* decoder);
 
 STOP_C
 #endif

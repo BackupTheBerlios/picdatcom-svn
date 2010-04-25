@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
@@ -27,6 +27,11 @@
 START_C
 	struct str_PDC_Tile;
 	typedef struct str_PDC_Tile PDC_Tile;
+	typedef enum{	PDC_READ_SOD_INIT,
+					PDC_READ_SOD_COUNTER_ADD,
+					PDC_READ_SOD_PACKAGEHEADER,
+					PDC_READ_SOD_DEQUANTIZATION
+					}PDC_READ_SOD_STATE;
 
 	#include "PDC_Pointer_Buffer.h"
 	#include "PDC_Buffer.h"
@@ -36,7 +41,8 @@ START_C
 	#include "PDC_COD_Segment.h"
 	#include "PDC_Resolution.h"
 	#include "PDC_Precinct.h"
-
+	#include "PDC_QCD_Segment.h"
+	#include "PDC_Worker.h"
 
 	struct str_PDC_Tile{
 		PDC_Picture*		picture;
@@ -51,6 +57,14 @@ START_C
 		PDC_Pointer_Buffer*	tile_component;
 		PDC_COD_Segment*	cod_segment;
 		PDC_QCD_Segment*	qcd_segment;
+		PDC_Worker*			worker;
+		PDC_Worker_thread 	**worker_threads;		// The number of threads is equal to PDC_max_thread().
+
+		PDC_READ_SOD_STATE	read_sod_state;
+
+		PDC_int				cod_segment_number;
+		PDC_uint 			r, l, i, k;
+		PDC_uint16			symbol;
 	};
 
 	/*
@@ -194,7 +208,28 @@ START_C
 										PDC_uint32 *out_vector,
 										PDC_uint out_line_feed);
 
+
+	/*
+	 *
+	 */
+	void PDC_Tile_read_package_header_02(	PDC_Exception* exception,
+											PDC_Tile* tile,
+											PDC_Buffer* buffer,
+											PDC_uint component_pos,
+											PDC_uint resolution_pos,
+											PDC_uint precinct_pos,
+											PDC_uint layer_pos,
+											PDC_Decoder* decoder);
 	
+	/*
+	 *
+	 */
+	PDC_Tile* PDC_Tile_read_Packageheader_02(	PDC_Exception* exception,
+												PDC_Tile* tile,
+												PDC_COD_Segment* cod_segment,
+												PDC_Buffer* buffer,
+												PDC_Decoder* decoder);
+
 STOP_C
 #endif
 	

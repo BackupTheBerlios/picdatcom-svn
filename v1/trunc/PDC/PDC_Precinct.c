@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -429,6 +429,414 @@ PDC_Precinct* PDC_Precinct_read_package_header(	PDC_Exception* exception,
 	return precinct;
 }
 
+void PDC_Precinct_print(PDC_Exception* exception, FILE *file, PDC_Precinct* precinct, PDC_uint layer_pos)
+{
+	PDC_uint			pos_subband, size_subband, pos_codeblock, pos_codeblock_x, pos_codeblock_y, size_codeblock_x, size_codeblock_y;
+	PDC_uint			pos_x, pos_y, size_x;
+	PDC_Subband*		subband;
+
+	PDC_Codeblock*		codeblock;
+
+	if(precinct->resolution->r == 0){
+		size_subband = 1;
+	}else{
+		size_subband = 3;
+	}
+
+	if(precinct->bit1 == 1){
+		fprintf(file,"Precinct inclusion at resolution r = %lu and layer = %lu \n", precinct->resolution->r , layer_pos);
+		for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
+			fprintf(file,"Subband %lu\n", pos_subband);
+			subband = precinct->resolution->subband[pos_subband];
+			subband = precinct->resolution->subband[pos_subband];
+			pos_codeblock = 0;
+			size_codeblock_x = precinct->codeblock_x1;
+			size_codeblock_y = precinct->codeblock_y1;
+			for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
+				for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
+					pos_x	= pos_codeblock_x - precinct->codeblock_x0;
+					pos_y	= pos_codeblock_y - precinct->codeblock_y0;
+					size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
+					pos_codeblock = PDC_Resolution_get_codeblock_position(exception, precinct->resolution, pos_codeblock_x, pos_codeblock_y);
+					codeblock = subband->codeblocks[pos_codeblock];
+					if(codeblock->codeblock_inclusion == PDC_false){
+						fprintf(file,"Codeblock not inclusion pos_x = %5lu pos_y = %5lu \n", pos_x, pos_y );
+					}else{
+						fprintf(file,"Codeblock inclusion  pos_x = %5lu pos_y = %5lu \n", pos_x, pos_y );
+					}
+
+					codeblock = subband->codeblocks[pos_codeblock];
+					if(codeblock->layer_inclusion == PDC_true){
+						fprintf(file,"	Layer inclusion\n");
+						fprintf(file,"	codeblock->zero_bitplanes 				= %5u \n",codeblock->zero_bitplanes);
+						fprintf(file,"	codeblock->number_of_codingpasses 		= %5lu \n", codeblock->number_of_codingpasses);
+						fprintf(file,"	codeblock->number_of_codeword_segment 	= %5lu \n", codeblock->number_of_codeword_segment);
+						fprintf(file,"	codeblock->Lblock 						= %5lu \n", codeblock->Lblock);
+						fprintf(file,"	codeblock->codewordlength				= %5lu \n", codeblock->codewordlength);
+					}else{
+						fprintf(file,"	Layer not inclusion\n");
+					}
+
+				}
+			}
+		}
+
+
+
+	}else{
+		fprintf(file,"Precinct not inclusion \n" );
+	}
+
+	fprintf(file,"\n\n" );
+}
+
+
+/*
+ *
+ */
+PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
+													PDC_Precinct* precinct,
+													PDC_Buffer*	buffer,
+													PDC_uint layer_pos,
+													PDC_Decoder* decoder)
+{
+	PDC_bit				bit;
+	PDC_uint			pos_subband, size_subband, pos_codeblock, pos_codeblock_x, pos_codeblock_y, size_codeblock_x, size_codeblock_y;
+	PDC_uint			pos_x, pos_y, size_x;
+	PDC_Subband*		subband;
+	PDC_Codeblock*		codeblock;
+	PDC_uint			number_of_codingpasses, number_of_codeword_segment, codeword_segment_pos;
+	PDC_Codeword_List*	codeword_list;
+	PDC_uint			num_bits, codewordlength, codewordslength_total;
+	PDC_bool			layer_inclusion;
+	PDC_bool			new_job;
+	PDC_Worker			*worker;
+
+	codewordslength_total = 0;
+	worker	= precinct->resolution->tile_component->tile->worker;
+
+	PDC_Buffer_push_state(exception, buffer);
+	PDC_Precinct_push(exception, precinct);
+
+
+	if(precinct->resolution->r == 0){
+		size_subband = 1;
+	}else{
+		size_subband = 3;
+	}
+
+
+	bit = PDC_Buffer_get_next_bit(exception, buffer);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		PDC_Buffer_pop_state(exception, buffer);
+		PDC_Precinct_pop(exception, precinct);
+
+		if(buffer->end_state == END_OF_BUFFER){
+			PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			return precinct;
+		}else{
+			PDC_Exception_unset_exception(exception);
+			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			return precinct;
+		}
+		return precinct;
+	}
+	precinct->bit1 = bit;
+	if(bit == 1){
+		for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
+			subband = precinct->resolution->subband[pos_subband];
+			pos_codeblock = 0;
+			size_codeblock_x = precinct->codeblock_x1;
+			size_codeblock_y = precinct->codeblock_y1;
+			for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
+				for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
+					pos_x	= pos_codeblock_x - precinct->codeblock_x0;
+					pos_y	= pos_codeblock_y - precinct->codeblock_y0;
+					size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
+					pos_codeblock = PDC_Resolution_get_codeblock_position(exception, precinct->resolution, pos_codeblock_x, pos_codeblock_y);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						PDC_Buffer_pop_state(exception, buffer);
+						PDC_Precinct_pop(exception, precinct);
+						if(buffer->end_state == END_OF_BUFFER){
+							PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+							decoder->data_situation = PDC_WAIT_FOR_DATA;
+							return precinct;
+						}else{
+							PDC_Exception_unset_exception(exception);
+							decoder->data_situation = PDC_WAIT_FOR_DATA;
+							return precinct;
+						}
+						return precinct;
+					}
+					codeblock = subband->codeblocks[pos_codeblock];
+					codeblock = PDC_Worker_get_Codeblock_by_pointer(exception,
+																	worker,
+																	codeblock);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						PDC_Buffer_pop_state(exception, buffer);
+						PDC_Precinct_pop(exception, precinct);
+						return precinct;
+					}
+
+					layer_inclusion = PDC_false;
+					if(codeblock->codeblock_inclusion == PDC_false){
+						codeblock->codeblock_inclusion = PDC_Tagtree_decode_pos(exception,
+																				precinct->codeblock_inclusion[pos_subband],
+																				buffer,
+																				pos_x,
+																				pos_y,
+																				layer_pos + 1);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							PDC_Buffer_pop_state(exception, buffer);
+							PDC_Precinct_pop_unlock(exception, precinct);
+							if(buffer->end_state == END_OF_BUFFER){
+								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}else{
+								PDC_Exception_unset_exception(exception);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}
+							return precinct;
+						}
+						if(codeblock->codeblock_inclusion == PDC_true){
+							layer_inclusion = PDC_true;
+						}
+
+					}else{
+						bit = PDC_Buffer_get_next_bit(exception, buffer);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							PDC_Buffer_pop_state(exception, buffer);
+							PDC_Precinct_pop_unlock(exception, precinct);
+							if(buffer->end_state == END_OF_BUFFER){
+								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}else{
+								PDC_Exception_unset_exception(exception);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}
+							return precinct;
+						}
+
+						if(bit != 0){
+							layer_inclusion = PDC_true;
+						}
+
+					}
+
+					codeblock->layer_inclusion = layer_inclusion;
+
+					if(layer_inclusion == PDC_true){
+						if(codeblock->zero_bit_plane_inclusion	!= PDC_true){
+							codeblock->zero_bit_plane_inclusion = PDC_Tagtree_decode_pos(	exception,
+																							precinct->zero_bitplane[pos_subband],
+																							buffer,
+																							pos_x,
+																							pos_y,
+																							MAX_INT);
+							if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+								PDC_Buffer_pop_state(exception, buffer);
+								PDC_Precinct_pop_unlock(exception, precinct);
+								if(buffer->end_state == END_OF_BUFFER){
+									PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									return precinct;
+								}else{
+									PDC_Exception_unset_exception(exception);
+									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									return precinct;
+								}
+								return precinct;
+							}
+							codeblock->zero_bit_plane_inclusion	= PDC_true;
+							codeblock->zero_bitplanes			= PDC_Tagtree_get_value(	exception,
+																							precinct->zero_bitplane[pos_subband],
+																							pos_x,
+																							pos_y);
+							if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+								PDC_Buffer_pop_state(exception, buffer);
+								PDC_Precinct_pop_unlock(exception, precinct);
+								if(buffer->end_state == END_OF_BUFFER){
+									PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									return precinct;
+								}else{
+									PDC_Exception_unset_exception(exception);
+									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									return precinct;
+								}
+								return precinct;
+							}
+						}
+						number_of_codingpasses = PDC_Buffer_get_number_of_codingpasses(exception, buffer);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							PDC_Buffer_pop_state(exception, buffer);
+							PDC_Precinct_pop_unlock(exception, precinct);
+							if(buffer->end_state == END_OF_BUFFER){
+								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}else{
+								PDC_Exception_unset_exception(exception);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}
+							return precinct;
+						}
+
+						number_of_codeword_segment = PDC_Codeblock_set_number_of_coding_passes(	exception,
+																								codeblock,
+																								number_of_codingpasses,
+																								layer_pos);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							PDC_Buffer_pop_state(exception, buffer);
+							PDC_Precinct_pop_unlock(exception, precinct);
+							if(buffer->end_state == END_OF_BUFFER){
+								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}else{
+								PDC_Exception_unset_exception(exception);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}
+							return precinct;
+						}
+						codeblock->number_of_codingpasses		= number_of_codingpasses;
+						codeblock->number_of_codeword_segment	= number_of_codeword_segment;
+
+
+						codeblock->Lblock += PDC_Buffer_get_Lblock_increase(	exception,
+																				buffer);
+						if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+							PDC_Buffer_pop_state(exception, buffer);
+							PDC_Precinct_pop_unlock(exception, precinct);
+							if(buffer->end_state == END_OF_BUFFER){
+								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}else{
+								PDC_Exception_unset_exception(exception);
+								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								return precinct;
+							}
+							return precinct;
+						}
+						for(codeword_segment_pos = 0; codeword_segment_pos < number_of_codeword_segment; codeword_segment_pos++){
+							codeword_list = codeblock->write_codeword;
+							number_of_codingpasses = codeword_list->number_of_coding_passes;
+							num_bits = PDC_floor_log2( number_of_codingpasses);
+
+							num_bits += codeblock->Lblock;
+							codewordlength = PDC_Buffer_read_bits(	exception,
+																	buffer,
+																	num_bits);
+							if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+								PDC_Buffer_pop_state(exception, buffer);
+								PDC_Precinct_pop_unlock(exception, precinct);
+								if(buffer->end_state == END_OF_BUFFER){
+									PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									return precinct;
+								}else{
+									PDC_Exception_unset_exception(exception);
+									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									return precinct;
+								}
+								return precinct;
+							}
+
+							codewordslength_total += codewordlength;
+							codeblock->codewordlength = codewordlength;
+							codeword_list->number_of_byte = codewordlength;
+							if(codeword_list->next_codedword != NULL){
+								codeword_list = codeword_list->next_codedword;
+							}
+						}
+					}
+				}
+			}
+		}
+
+		PDC_Buffer_padding_read(exception, buffer);
+		/* Start reading codewordsegments. */
+
+		if(buffer->read_byte_pos + codewordslength_total > buffer->write_byte_pos){
+			PDC_Buffer_pop_state(exception, buffer);
+			PDC_Precinct_pop_unlock(exception, precinct);
+			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			return precinct;
+		}
+
+		for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
+			subband = precinct->resolution->subband[pos_subband];
+			for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
+				for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
+					pos_x	= pos_codeblock_x - precinct->codeblock_x0;
+					pos_y	= pos_codeblock_y - precinct->codeblock_y0;
+					size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
+					pos_codeblock = PDC_Resolution_get_codeblock_position(exception, precinct->resolution, pos_codeblock_x, pos_codeblock_y);
+					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+						PDC_Buffer_pop_state(exception, buffer);
+						PDC_Precinct_pop_unlock(exception, precinct);
+						if(buffer->end_state == END_OF_BUFFER){
+							PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+							decoder->data_situation = PDC_WAIT_FOR_DATA;
+							return precinct;
+						}else{
+							PDC_Exception_unset_exception(exception);
+							decoder->data_situation = PDC_WAIT_FOR_DATA;
+							return precinct;
+						}
+						return precinct;
+					}
+					codeblock = subband->codeblocks[pos_codeblock];
+					new_job = PDC_false;
+					if(codeblock->codeblock_inclusion == PDC_true){
+						codeword_list = codeblock->write_codeword;
+						new_job = PDC_true;
+
+						while(codeword_list != NULL){
+							if(codeword_list->number_of_byte != 0){
+								PDC_Buffer_copy_bytes_01(	exception,
+															buffer,
+															codeword_list->codeword,
+															codeword_list->number_of_byte);
+								codeword_list->number_of_byte = 0;
+								if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+									PDC_Buffer_pop_state(exception, buffer);
+									PDC_Precinct_pop_unlock(exception, precinct);
+									if(buffer->end_state == END_OF_BUFFER){
+										PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+										decoder->data_situation = PDC_WAIT_FOR_DATA;
+										return precinct;
+									}else{
+										PDC_Exception_unset_exception(exception);
+										decoder->data_situation = PDC_WAIT_FOR_DATA;
+										return precinct;
+									}
+									return precinct;
+								}
+							}
+							codeword_list = codeword_list->next_codedword;
+						}
+					}
+					PDC_Worker_add_02(	exception,
+										worker,
+										codeblock,
+										new_job);
+				}
+			}
+		}
+	}
+	PDC_Precinct_print(exception, DEBUG_FILE, precinct, layer_pos);
+
+	return precinct;
+}
 
 /*
  *
@@ -467,6 +875,7 @@ PDC_Precinct* PDC_Precinct_decode_package_01(	PDC_Exception *exception,
 				codeblock = PDC_Codeblock_coefficient_bit_moddeling_decode(	exception,
 																			codeblock,
 																			layer_pos);
+
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 					return precinct;
 				}
@@ -486,6 +895,8 @@ PDC_Precinct* PDC_Precinct_decode_package_02(	PDC_Exception *exception,
 	PDC_uint		pos_x, pos_y, size_x;
 	PDC_Subband*	subband;
 	PDC_Codeblock*	codeblock;
+
+	PDC_uint32		write_byte_pos; // write_byte_pos1;
 
 	if(precinct->resolution->r == 0){
 		size_subband = 1;
@@ -509,8 +920,26 @@ PDC_Precinct* PDC_Precinct_decode_package_02(	PDC_Exception *exception,
 				}
 				codeblock = subband->codeblocks[pos_codeblock];
 
+				write_byte_pos = codeblock->write_codeword->codeword->write_byte_pos;
+
 				codeblock = PDC_Codeblock_coefficient_bit_moddeling_decode_01(	exception,
 																				codeblock);
+				/*
+				for(write_byte_pos1 = 0; write_byte_pos1 <= write_byte_pos; write_byte_pos1 += 1){
+
+
+					codeblock->write_codeword->codeword->write_byte_pos	= write_byte_pos1;
+					codeblock->write_codeword->codeword->end_state		= MORE_DATA_EXPECTED;
+					if(write_byte_pos1 == write_byte_pos){
+						codeblock->write_codeword->codeword->end_state = END_OF_BUFFER;
+					}
+
+					codeblock = PDC_Codeblock_coefficient_bit_moddeling_decode_01(	exception,
+																					codeblock);
+
+				}
+				*/
+
 				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 					return precinct;
 				}
@@ -518,7 +947,6 @@ PDC_Precinct* PDC_Precinct_decode_package_02(	PDC_Exception *exception,
 		}
 	}
 	return precinct;
-
 }
 
 
@@ -564,5 +992,149 @@ PDC_Precinct* PDC_Precinct_set_End_of_Buffer(	PDC_Exception *exception,
 	}
 	return precinct;
 }
+
+/*
+ *
+ */
+PDC_Precinct* PDC_Precinct_push(PDC_Exception* exception,
+								PDC_Precinct* precinct)
+{
+	PDC_uint			pos_subband, size_subband, pos_codeblock, pos_codeblock_x, pos_codeblock_y, size_codeblock_x, size_codeblock_y;
+//	PDC_uint			pos_x, pos_y, size_x;
+	PDC_Subband*		subband;
+
+	PDC_Codeblock*		codeblock;
+
+	if(precinct->resolution->r == 0){
+		size_subband = 1;
+	}else{
+		size_subband = 3;
+	}
+
+	for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
+		subband = precinct->resolution->subband[pos_subband];
+		pos_codeblock = 0;
+		size_codeblock_x = precinct->codeblock_x1;
+		size_codeblock_y = precinct->codeblock_y1;
+		for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
+			for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
+				// pos_x	= pos_codeblock_x - precinct->codeblock_x0;
+				// pos_y	= pos_codeblock_y - precinct->codeblock_y0;
+				// size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
+				pos_codeblock = PDC_Resolution_get_codeblock_position(exception, precinct->resolution, pos_codeblock_x, pos_codeblock_y);
+				codeblock = subband->codeblocks[pos_codeblock];
+				PDC_Codeblock_push(exception, codeblock);
+			}
+		}
+	}
+
+	PDC_Tagtree_push(exception, precinct->codeblock_inclusion[0]);
+	PDC_Tagtree_push(exception, precinct->codeblock_inclusion[1]);
+	PDC_Tagtree_push(exception, precinct->codeblock_inclusion[2]);
+	PDC_Tagtree_push(exception, precinct->zero_bitplane[0]);
+	PDC_Tagtree_push(exception, precinct->zero_bitplane[1]);
+	PDC_Tagtree_push(exception, precinct->zero_bitplane[2]);
+
+
+	return precinct;
+}
+
+/*
+ *
+ */
+PDC_Precinct* PDC_Precinct_pop(PDC_Exception* exception,
+								PDC_Precinct* precinct)
+{
+	PDC_uint			pos_subband, size_subband, pos_codeblock, pos_codeblock_x, pos_codeblock_y, size_codeblock_x, size_codeblock_y;
+//	PDC_uint			pos_x, pos_y, size_x;
+	PDC_Subband*		subband;
+
+	PDC_Codeblock*		codeblock;
+
+	if(precinct->resolution->r == 0){
+		size_subband = 1;
+	}else{
+		size_subband = 3;
+	}
+
+	for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
+		subband = precinct->resolution->subband[pos_subband];
+		pos_codeblock = 0;
+		size_codeblock_x = precinct->codeblock_x1;
+		size_codeblock_y = precinct->codeblock_y1;
+		for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
+			for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
+				// pos_x	= pos_codeblock_x - precinct->codeblock_x0;
+				// pos_y	= pos_codeblock_y - precinct->codeblock_y0;
+				// size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
+				pos_codeblock = PDC_Resolution_get_codeblock_position(exception, precinct->resolution, pos_codeblock_x, pos_codeblock_y);
+				codeblock = subband->codeblocks[pos_codeblock];
+				PDC_Codeblock_pop(exception, codeblock);
+			}
+		}
+	}
+
+
+	PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[0]);
+	PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[1]);
+	PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[2]);
+	PDC_Tagtree_pop(exception, precinct->zero_bitplane[0]);
+	PDC_Tagtree_pop(exception, precinct->zero_bitplane[1]);
+	PDC_Tagtree_pop(exception, precinct->zero_bitplane[2]);
+
+	return precinct;
+}
+
+/*
+ *
+ */
+PDC_Precinct* PDC_Precinct_pop_unlock(	PDC_Exception* exception,
+										PDC_Precinct* precinct)
+{
+	PDC_uint			pos_subband, size_subband, pos_codeblock, pos_codeblock_x, pos_codeblock_y, size_codeblock_x, size_codeblock_y;
+//	PDC_uint			pos_x, pos_y, size_x;
+	PDC_Subband			*subband;
+
+	PDC_Codeblock		*codeblock;
+	PDC_Worker			*worker = precinct->resolution->tile_component->tile->worker;
+	if(precinct->resolution->r == 0){
+		size_subband = 1;
+	}else{
+		size_subband = 3;
+	}
+
+	for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
+		subband = precinct->resolution->subband[pos_subband];
+		pos_codeblock = 0;
+		size_codeblock_x = precinct->codeblock_x1;
+		size_codeblock_y = precinct->codeblock_y1;
+		for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
+			for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
+				// pos_x	= pos_codeblock_x - precinct->codeblock_x0;
+				// pos_y	= pos_codeblock_y - precinct->codeblock_y0;
+				// size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
+				pos_codeblock = PDC_Resolution_get_codeblock_position(exception, precinct->resolution, pos_codeblock_x, pos_codeblock_y);
+				codeblock = subband->codeblocks[pos_codeblock];
+				PDC_Codeblock_pop(exception, codeblock);
+				PDC_Worker_add_02(	exception,
+									worker,
+									codeblock,
+									PDC_false);
+			}
+		}
+	}
+
+
+	PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[0]);
+	PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[1]);
+	PDC_Tagtree_pop(exception, precinct->codeblock_inclusion[2]);
+	PDC_Tagtree_pop(exception, precinct->zero_bitplane[0]);
+	PDC_Tagtree_pop(exception, precinct->zero_bitplane[1]);
+	PDC_Tagtree_pop(exception, precinct->zero_bitplane[2]);
+
+	return precinct;
+}
+
+
 STOP_C
 

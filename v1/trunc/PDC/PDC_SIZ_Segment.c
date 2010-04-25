@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -106,8 +106,8 @@ void delete_PDC_SIZ_Segment_01(PDC_Exception* exception, PDC_SIZ_Segment* siz_se
  *
  */
 PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception,
-													PDC_SIZ_Segment* siz_segment,
-													PDC_Buffer* buffer)
+												PDC_SIZ_Segment* siz_segment,
+												PDC_Buffer* buffer)
 {
 	PDC_uint32 read_byte_pos, csiz_pos_delete;
 	PDC_uint16 csiz_pos;
@@ -135,6 +135,84 @@ PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception,
 		buffer->read_byte_pos = read_byte_pos;
 		PDC_Exception_error(	exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
 		return siz_segment;
+	}
+
+
+	for(csiz_pos = 0;csiz_pos < siz_segment->Csiz; csiz_pos += 1){
+		siz_segment_com = new_PDC_SIZ_Segment_Componente_02(exception, buffer);
+		if(siz_segment_com == NULL){
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+			buffer->read_byte_pos = read_byte_pos;
+			delete_PDC_SIZ_Segment_01(exception, siz_segment);
+			if(siz_segment->componente_part->full){
+				for(csiz_pos_delete = 0; csiz_pos_delete < siz_segment->componente_part->last_pointer; csiz_pos_delete += 1){
+					delete_PDC_SIZ_Segment_Componente(exception, siz_segment->componente_part->pointer[csiz_pos_delete]);
+				}
+			}
+			return siz_segment;
+		}
+		PDC_Pointer_Buffer_add_pointer(exception, siz_segment->componente_part, siz_segment_com);
+	}
+
+	return siz_segment;
+}
+
+PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer_01(	PDC_Exception* exception,
+													PDC_Buffer* buffer,
+													PDC_Decoder* decoder)
+{
+	PDC_SIZ_Segment* siz_segment;
+
+
+	siz_segment = decoder->siz_segment;
+
+	if(buffer->read_byte_pos + 38 >= buffer->write_byte_pos){
+		if(buffer->end_state == END_OF_BUFFER){
+			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			return siz_segment;
+		}else{
+			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			return siz_segment;
+		}
+	}
+
+	PDC_Buffer_read_uint16(exception, buffer, &(siz_segment->Lsiz));
+	PDC_Buffer_read_uint16(exception, buffer, &(siz_segment->Rsiz));
+	PDC_Buffer_read_uint32(exception, buffer, &(siz_segment->Xsiz));
+	PDC_Buffer_read_uint32(exception, buffer, &(siz_segment->Ysiz));
+	PDC_Buffer_read_uint32(exception, buffer, &(siz_segment->XOsiz));
+	PDC_Buffer_read_uint32(exception, buffer, &(siz_segment->YOsiz));
+	PDC_Buffer_read_uint32(exception, buffer, &(siz_segment->XTsiz));
+	PDC_Buffer_read_uint32(exception, buffer, &(siz_segment->YTsiz));
+	PDC_Buffer_read_uint32(exception, buffer, &(siz_segment->XTOsiz));
+	PDC_Buffer_read_uint32(exception, buffer, &(siz_segment->YTOsiz));
+	PDC_Buffer_read_uint16(exception, buffer, &(siz_segment->Csiz));
+
+	return siz_segment;
+}
+
+PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer_02(	PDC_Exception* exception,
+													PDC_Buffer* buffer,
+													PDC_Decoder* decoder)
+{
+	PDC_SIZ_Segment* siz_segment;
+	PDC_uint32 read_byte_pos, csiz_pos_delete;
+	PDC_uint16 csiz_pos;
+	PDC_SIZ_Segment_Componente* siz_segment_com;
+
+	siz_segment = decoder->siz_segment;
+
+
+	if((PDC_uint32)(siz_segment->Csiz * 3) > (buffer->write_byte_pos - buffer->read_byte_pos)){
+		if(buffer->end_state == END_OF_BUFFER){
+			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			return siz_segment;
+		}else{
+			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			return siz_segment;
+		}
 	}
 
 

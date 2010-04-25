@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -27,11 +27,14 @@
 
 
 
+
 START_C
 
 	struct str_PDC_Transformation_97_decoder;
 	typedef struct str_PDC_Transformation_97_decoder PDC_Transformation_97_decoder;
 	typedef enum{USE_32, USE_64}PDC_Datatype;
+
+	#include "PDC_Resolution.h"
 
 	struct str_PDC_Transformation_97_decoder{
 		PDC_Exception*	exception;
@@ -93,14 +96,14 @@ START_C
 	 *
 	 */
 	PDC_Transformation_97_decoder* PDC_td_start_v2(	PDC_Exception* exception,
-														PDC_Transformation_97_decoder* decoder,
-														float *out, float *in_high, float* in_low,
-														PDC_uint out_start, PDC_uint out_size,
-														PDC_uint out_plus, PDC_bool even,
-														PDC_uint in_high_start, PDC_uint in_high_plus,
-														PDC_uint in_low_start, PDC_uint in_low_plus,
-														PDC_uint num_rows, PDC_uint high_stride, PDC_uint low_stride,
-														PDC_uint out_stride	);
+													PDC_Transformation_97_decoder* decoder,
+													float *out, float *in_high, float* in_low,
+													PDC_uint out_start, PDC_uint out_size,
+													PDC_uint out_plus, PDC_bool even,
+													PDC_uint in_high_start, PDC_uint in_high_plus,
+													PDC_uint in_low_start, PDC_uint in_low_plus,
+													PDC_uint num_rows, PDC_uint high_stride, PDC_uint low_stride,
+													PDC_uint out_stride	);
 
 	/*
 	 *
@@ -115,6 +118,16 @@ START_C
 															PDC_uint num_rows, PDC_uint high_stride, PDC_uint low_stride,
 															PDC_uint out_stride);
 
+
+	/*
+	 *
+	 */
+	PDC_Transformation_97_decoder* PDC_td_start_v3_vertical(	PDC_Threadcall *variable );
+
+	/*
+	 *
+	 */
+	PDC_Transformation_97_decoder* PDC_td_start_v3_horizontal(	PDC_Threadcall *variable );
 
 STOP_C
 #endif

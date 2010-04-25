@@ -9,7 +9,7 @@
 #include <PicDatCom.h>
 #include <PDC_Exception.h>
 
-#define data_read_plus 2000
+#define data_read_plus 1
 #define test_file "/home/uwe/programmieren/picdatcom/prototype/bdk/image.jpc"
 
 
@@ -22,7 +22,7 @@ int main(int argc, char* argv[]){
 	PDC_Exception*	exception;
 
 
-	printf("Hallo Picdatcom %lld \n", sizeof(unsigned long));
+	printf("Hallo Picdatcom  new %d \n", sizeof(unsigned long));
 
 	data = (unsigned char*)malloc(data_read_plus);
 
@@ -37,6 +37,7 @@ int main(int argc, char* argv[]){
 	do{
 		read_byte = fread(data, 1, data_read_plus, fp);
 		PDC_Decoder_add_Data_01(exception, decoder, data, read_byte, PDC_DATA_MORE_DATA);
+		PDC_Decoder_decode(exception, decoder);
 	}while(read_byte > 0) ;//data_read_plus);
 	fclose(fp);
 	PDC_Decoder_add_Data_01(exception, decoder, NULL, 0, PDC_DATA_END);

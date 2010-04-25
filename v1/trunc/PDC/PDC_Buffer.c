@@ -206,7 +206,7 @@ PDC_Buffer* PDC_Buffer_read_uint32(PDC_Exception* exception, PDC_Buffer* buffer,
 	PDC_uint32 temp_value = 0;
 	*value = 0;
 
-	if(buffer->read_byte_pos + 4 < buffer->write_byte_pos){
+	if(buffer->read_byte_pos + 3 < buffer->write_byte_pos){
 		temp_value = buffer->buffer[buffer->read_byte_pos];
 		buffer->read_byte_pos += 1;
 		*value = temp_value << 24;
@@ -240,7 +240,7 @@ PDC_Buffer* PDC_Buffer_read_uint8(PDC_Exception* exception, PDC_Buffer* buffer, 
 	PDC_uint8 temp_value = 0;
 	*value = 0;
 
-	if(buffer->read_byte_pos + 1 < buffer->write_byte_pos){
+	if(buffer->read_byte_pos < buffer->write_byte_pos){
 		temp_value = buffer->buffer[buffer->read_byte_pos];
 		buffer->read_byte_pos += 1;
 		*value = temp_value;
@@ -544,7 +544,7 @@ void PDC_Buffer_copy_bytes_01(	PDC_Exception* exception,
 {
 	PDC_uint	length_add, read_pos, write_pos, read_end;
 	PDC_uchar*	source, *destination;
-	if(buffer_source->read_byte_pos + num_bytes < buffer_source->write_byte_pos){
+	if(buffer_source->read_byte_pos + num_bytes <= buffer_source->write_byte_pos){
 		if(buffer_destination->write_byte_pos + num_bytes >= buffer_destination->length){
 			length_add = buffer_destination->write_byte_pos + num_bytes + 5 - buffer_destination->length;
 			PDC_Buffer_realloc(exception, buffer_destination, length_add);

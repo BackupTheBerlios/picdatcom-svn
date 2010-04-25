@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  *      Contact Email: 
  * 
  * This file is part of PicDatCom.
@@ -135,6 +135,12 @@ PDC_uint PDC_floor_log2( PDC_uint in)
 		in >>= 1;
 	}
 	return back;
+}
+
+
+PDC_int PDC_max_thread()
+{
+	return 4;
 }
 
 STOP_C

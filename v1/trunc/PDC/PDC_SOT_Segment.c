@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
@@ -57,7 +57,7 @@ PDC_SOT_Segment* new_PDC_SOT_Segment_02(PDC_Exception* exception, PDC_Buffer* bu
 		return NULL;
 	}
 	
-	sot_segment = PDC_SOT_Segment_read_buffer(exception,  sot_segment, buffer);
+//	sot_segment = PDC_SOT_Segment_read_buffer(exception,  sot_segment, buffer);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		delete_PDC_SOT_Segment(exception, sot_segment);
 		return NULL;
@@ -83,12 +83,19 @@ void delete_PDC_SOT_Segment(PDC_Exception* exception, PDC_SOT_Segment* sot_segme
  */
 PDC_SOT_Segment* PDC_SOT_Segment_read_buffer(	PDC_Exception* exception,
 												PDC_SOT_Segment* sot_segment,
-												PDC_Buffer* buffer)
+												PDC_Buffer* buffer,
+												PDC_Decoder* decoder)
 {
 	
-	if(buffer->read_byte_pos + 10 >= buffer->write_byte_pos){
-		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
-		return sot_segment;
+	if(buffer->read_byte_pos + 10 > buffer->write_byte_pos){
+		if(buffer->end_state == END_OF_BUFFER){
+			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			return sot_segment;
+		}else{
+			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			return sot_segment;
+		}
 	}
 	
 	PDC_Buffer_read_uint16(exception, buffer, &(sot_segment->Lsot));

@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -22,8 +22,11 @@
 #define __PDC_CODEBLOCK_H__
 
 #include <stdlib.h>
+#include <pthread.h>
+#include <errno.h>
 #include "PDC_Parameter.h"
 #include "PDC_Arithmetic_entropy_decoder.h"
+
 
 START_C
 
@@ -64,6 +67,21 @@ START_C
 
 	typedef enum{ STATE_BIT_8, STATE_BIT_16, STATE_BIT_32}PDC_STATE_BIT;
 	typedef enum{ CLEANUP_PASS, SIGNIFICANCE_PASS,MAGNITUDE_PASS, NO_PASS = 76} PDC_PASS_STATE;
+	typedef enum{
+		MARK_00, MARK_01, MARK_02, MARK_03, MARK_04, MARK_05, MARK_06, MARK_07,
+		MARK_08, MARK_09, MARK_10, MARK_11, MARK_12, MARK_13, MARK_14, MARK_15,
+		MARK_16, MARK_17, MARK_18, MARK_19, MARK_20, MARK_21, MARK_22, MARK_23,
+		MARK_24, MARK_25, MARK_26, MARK_27, MARK_28, MARK_29, MARK_30, MARK_31,
+		MARK_32, MARK_33, MARK_34, MARK_35, MARK_36, MARK_37, MARK_38, MARK_39,
+		MARK_40, MARK_41, MARK_42, MARK_43, MARK_44, MARK_45, MARK_46, MARK_47,
+		MARK_48, MARK_49, MARK_50, MARK_51, MARK_52, MARK_53, MARK_54, MARK_55,
+		MARK_56, MARK_57, MARK_58, MARK_59, MARK_60, MARK_61, MARK_62, MARK_63,
+		MARK_64, MARK_65, MARK_66, MARK_67, MARK_68, MARK_69, MARK_70, MARK_71, MARK_72,
+		MARK_73, MARK_74, MARK_75, MARK_76, MARK_77, MARK_78, MARK_79, MARK_80,
+		MARK_81, MARK_82, MARK_83, MARK_84, MARK_85, MARK_86, MARK_87, MARK_88,
+		MARK_89, MARK_90, MARK_91, MARK_92, MARK_93, MARK_94, MARK_95, MARK_96,
+		MARK_97, MARK_98, MARK_99, MARK_100, MARK_101, MARK_102, MARK_103, MARK_104,
+		MARK_105, MARK_106, MARK_107, MARK_108, MARK_109, MARK_110, MARK_111, MARK_112} PDC_MARK;
 
 	#define DEFAULT_RESIZE_CODEWORD 5
 
@@ -71,7 +89,7 @@ START_C
 	#include "PDC_Resolution.h"
 	#include "PDC_Tile_Component.h"
 	#include "PDC_COD_Segment.h"
-
+	#include "PDC_Worker.h"
 
 	struct str_PDC_Codeblock{
 		PDC_Subband*		subband;
@@ -80,18 +98,22 @@ START_C
 		PDC_uint*			coding_passes_per_layer;
 
 		PDC_uint		Lblock;
+		PDC_uint		save_Lblock;
 
 		PDC_uint32		cx0;
 		PDC_uint32		cx1;
 		PDC_uint32		cy0;
 		PDC_uint32		cy1;
-		PDC_uint32		mx0;
-		PDC_uint32		mx1;
-		PDC_uint32		my0;
-		PDC_uint32		my1;
+		PDC_int			mx0;
+		PDC_int			mx1;
+		PDC_int			my0;
+		PDC_int			my1;
 
 		PDC_bool		codeblock_inclusion;
 		PDC_bool		zero_bit_plane_inclusion;
+
+		PDC_bool		save_codeblock_inclusion;
+		PDC_bool		save_zero_bit_plane_inclusion;
 
 		PDC_uint32		zero_bitplanes;
 
@@ -126,6 +148,42 @@ START_C
 		PDC_bool		init_decoder;
 		PDC_PASS_STATE	pass_state;
 
+		PDC_MARK		mark;
+		PDC_uint		runlengthpos;
+		PDC_uint		pos_y;
+		PDC_uint		significant_pos_x;
+		PDC_uint		significant_pos_x1;
+		PDC_uint		significant_pos_shift;
+
+
+		PDC_uint8		*significante_context_use;
+		PDC_uint8		*sign_context_base_address1;
+		PDC_uint8		*significant_context_base_address;
+		PDC_uint32		significant_context_value;
+		PDC_uint32		sign_context1;
+		PDC_uint32		sign_context2;
+		PDC_uint32		sign_context3;
+		PDC_uint32		context;
+		PDC_uint32		sign_context_use;
+		PDC_uint32		pos_x_end;
+		PDC_uint32		is_coded_temp;
+		PDC_uint32		sign_temp;
+		PDC_uint32		significant_temp;
+		PDC_uint32		current_bit;
+		PDC_uint32		shift_temp;
+
+		/*
+		 * For thread scheduling
+		 */
+		PDC_Codeblock_list	*all_list;
+		PDC_Codeblock_list	*work_list;
+		pthread_mutex_t		*in_work;
+		PDC_bool			has_job;
+		pthread_t			current_thread;
+
+		// Only for testing;
+		PDC_bool		layer_inclusion;
+		PDC_uint		number_of_codingpasses, number_of_codeword_segment, codewordlength;;
 	};
 
 	struct str_PDC_Codeword_List{
@@ -141,6 +199,8 @@ START_C
 		PDC_uint	number_of_coding_passes;
 		PDC_uint	number_of_byte;
 		PDC_bool	empty;
+
+		PDC_uint	save_coding_pass_to;
 	};
 
 
@@ -238,6 +298,33 @@ START_C
 	 *
 	 */
 	PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_Codeblock *codeblock);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_push(PDC_Exception* exception, PDC_Codeblock* codeblock);
+
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_pop(PDC_Exception* exception, PDC_Codeblock* codeblock);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_lock(PDC_Exception* exception, PDC_Codeblock* codeblock);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_trylock(PDC_Exception* exception, PDC_Codeblock* codeblock);
+
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_unlock(PDC_Exception* exception, PDC_Codeblock* codeblock);
+
 
 STOP_C
 #endif

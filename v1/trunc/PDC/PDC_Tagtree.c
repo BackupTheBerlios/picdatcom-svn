@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -399,6 +399,9 @@ PDC_bool PDC_Tagtree_decode_item(	PDC_Exception* exception,
 	}
 	while(max_value > item->value_noted){
 		bit = PDC_Buffer_get_next_bit(exception, buffer);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return PDC_false;
+		}
 		if(bit == 0){
 			item->value_noted += 1;
 		}else{

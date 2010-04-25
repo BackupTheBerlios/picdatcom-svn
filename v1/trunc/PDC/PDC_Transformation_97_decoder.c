@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -256,11 +256,11 @@ extern int uwe_count;
  *
  */
 PDC_Transformation_97_decoder* PDC_td_start_v1(	PDC_Exception* exception,
-													PDC_Transformation_97_decoder* decoder,
-													float *out, float *in_high, float* in_low,
-													PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even,
-													PDC_uint in_high_start, PDC_uint in_high_plus,
-													PDC_uint in_low_start, PDC_uint in_low_plus)
+												PDC_Transformation_97_decoder* decoder,
+												float *out, float *in_high, float* in_low,
+												PDC_uint out_start, PDC_uint out_size, PDC_uint out_plus, PDC_bool even,
+												PDC_uint in_high_start, PDC_uint in_high_plus,
+												PDC_uint in_low_start, PDC_uint in_low_plus)
 {
 
 	PDC_uint i_help1, i_help2, i_help1_end, greensize, orangesize, out_1, out_1end, out_plus2;
@@ -3284,8 +3284,234 @@ PDC_Transformation_97_decoder* PDC_td_start_v2_sse2(	PDC_Exception* exception,
 
 }
 
+
+/*
+ *
+ */
+PDC_Transformation_97_decoder* PDC_td_start_v3_vertical(	PDC_Threadcall *variable ){
+	//PDC_Exception* exception				= variable->exception;
+	PDC_Transformation_97_decoder* decoder	= variable->decoder;
+	float *out								= variable->out_data1;
+	float *in_high							= variable->sub2_data;
+	float* in_low							= variable->sub1_data;
+	//PDC_int out_start;
+	PDC_int out_size						= variable->out_size_horizontal;
+	//PDC_int out_plus,
+	PDC_bool even							= variable->evenhl;
+	//PDC_int in_high_start, PDC_int in_high_plus,
+	//PDC_int in_low_start, PDC_int in_low_plus,
+	PDC_int end_row							= variable->end_row;
+	PDC_int start_row						= variable->start_row;
+	PDC_int high_stride						= variable->linestride_float;
+	PDC_int low_stride						= variable->linestride_float;
+	PDC_int out_stride						= variable->linestride_float;
+
+	PDC_int		pos_row, low_pos, high_pos, size, temp_size, i_help1, i_help2,
+				out_pos1, out_pos2;
+	float		*orange, *green;
+	PDC_bool 	even_left, even_right;
+	float		delta_K1, temp1, temp2;
+
+	orange	= decoder->orange;
+	green 	= decoder->green;
+
+	size = PDC_i_floor(out_size, 2) + 4;
+	even_left	= even;
+	if(even_left == PDC_true){
+		if(out_size % 2 == 0){
+			even_right = PDC_false;
+		}else{
+			even_right = PDC_true;
+		}
+	}else{
+		if(out_size % 2 != 0){
+			even_right = PDC_false;
+		}else{
+			size = PDC_i_ceiling(out_size, 2) + 4;
+			even_right = PDC_true;
+		}
+	}
+
+	// green = high
+	delta_K1 = delta * K1;
+	for(pos_row = start_row; pos_row < end_row; pos_row += 1){
+		temp_size 	= size - 1;
+		high_pos	= pos_row * high_stride;
+		low_pos		= pos_row * low_stride;
+		/*
+		for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
+			green[i_help1] *= K1;
+		}
+		for(i_help1 = 0; i_help1 < orangesize; i_help1 += 1){
+			orange[i_help1] *= K;
+		}
+		*/
+		temp2	= in_high[high_pos];
+		high_pos 	+= 1;
+		for(i_help1 = 0; i_help1 < temp_size; i_help1 += 1, low_pos += 1, high_pos += 1){
+			temp1 = temp2;
+			temp2 = in_high[high_pos];
+			orange[i_help1] = K * in_low[low_pos] - delta_K1 * ( temp1 + temp2);
+		}
+
+		high_pos	= pos_row * high_stride + 1;
+		temp_size 	= size - 2;
+		for(i_help1 = 0, i_help2 = 1; i_help1 < temp_size;high_pos += 1){
+			green[i_help1] = K1 * in_high[high_pos] - f_gamma * ( orange[i_help1] + orange[i_help2]);
+			i_help1 = i_help2;
+			i_help2 += 1;
+		}
+
+		out_pos1 = pos_row * out_stride;
+		if(even){
+			out_pos1 -= 1;
+		}
+		temp_size 	= size - 3;
+		for(i_help1 = 0, i_help2 = 1; i_help1 < temp_size; out_pos1 += 2){
+			out[out_pos1] = orange[i_help2] - beta * ( green[i_help1] + green[i_help2]);
+
+			i_help1 = i_help2;
+			i_help2 += 1;
+		}
+
+		out_pos1 = pos_row * out_stride + 1;
+		out_pos2 = out_pos1 - 1;
+		if(even){
+			out_pos1 -= 1;
+			out_pos2 -= 1;
+		}
+		temp2 = out[out_pos2];
+		out_pos2 += 2;
+		temp_size 	= size - 4;
+		for(i_help1 = 0, i_help2 = 1; i_help1 < temp_size;out_pos1 += 2, out_pos2 += 2){
+			temp1 = temp2;
+			temp2 = out[out_pos2];
+			out[out_pos1] = green[i_help2] - alpha * ( temp1 + temp2);
+
+
+			i_help1 = i_help2;
+			i_help2 += 1;
+		}
+	}
+
+	return decoder;
+}
+
+
+/*
+ *
+ */
+PDC_Transformation_97_decoder* PDC_td_start_v3_horizontal(	PDC_Threadcall *variable ){
+	//PDC_Exception* exception				= variable->exception;
+	PDC_Transformation_97_decoder* decoder	= variable->decoder;
+	float *out								= variable->out_data1;
+	float *in_high							= variable->sub2_data;
+	float* in_low							= variable->sub1_data;
+	//PDC_uint out_start						= variable->out_data;
+	PDC_uint out_size						= variable->out_size_vertical;
+	//PDC_uint out_plus						= variable->linestride_float;
+	PDC_bool even							= variable->evenvl;
+	PDC_uint in_high_start					= 0;
+	PDC_uint in_high_plus					= variable->linestride_float;
+	PDC_uint in_low_start					= 0;
+	PDC_uint in_low_plus					= variable->linestride_float;
+	PDC_uint end_col						= variable->end_col;
+	PDC_uint start_col						= variable->start_col;
+	//PDC_uint high_stride					= variable->linestride_float;
+	//PDC_uint low_stride						= variable->linestride_float;
+	PDC_uint out_stride						= variable->linestride_float;
+
+	PDC_int	pos_col, high_pos, low_pos, temp_size, size, out_stride_2, out_pos1, out_pos2, i_help1;
+	float	*orange, *green,  *in_high_work, *in_low_work;
+	float	temp1, temp2, delta_K1;
+
+	out_stride_2 = out_stride * 2;
+
+	orange	= decoder->orange;
+	green	= decoder->green;
+
+	delta_K1 = delta * K1;
+
+	size = PDC_i_floor(out_size, 2) + 4;
+	if(even != PDC_true){
+		if(out_size % 2 == 0){
+			size = PDC_i_ceiling(out_size, 2) + 4;
+		}
+	}
+
+	for(pos_col = start_col; pos_col < end_col; pos_col += 1){
+		in_high_work 	= in_high + pos_col;
+		in_low_work		= in_low +  pos_col;
+
+/*
+		for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
+			green[i_help1] *= K1;
+		}
+		for(i_help1 = 0; i_help1 < orangesize; i_help1 += 1){
+			orange[i_help1] *= K;
+		}
+*/
+
+		high_pos 	= in_high_start;
+		low_pos		= in_low_start;
+		temp2 		= in_high_work[high_pos];
+		high_pos	+= in_high_plus;
+		temp_size	= size - 1;
+
+		for(i_help1 = 0; i_help1 < temp_size; i_help1 += 1, high_pos += in_high_plus, low_pos += in_low_plus){
+			temp1	= temp2;
+			temp2	= in_high_work[high_pos];
+
+			orange[i_help1] = K * in_low_work[low_pos] - delta_K1 * ( temp1 + temp2);
+
+		}
+
+
+		temp_size 	= size - 1;
+		i_help1 	= 0;
+		temp2		= orange[i_help1];
+		i_help1		+= 1;
+		high_pos	= in_high_start + in_high_plus;
+
+		for(; i_help1 < temp_size; i_help1 += 1, high_pos += in_high_plus ){
+			temp1 	= temp2;
+			temp2	= orange[i_help1];
+			green[i_help1 - 1] = K1 * in_high_work[high_pos] - f_gamma * ( temp1 + temp2);
+
+		}
+
+		out_pos1 = pos_col ;
+		if(even){
+			out_pos1 -= out_stride;
+		}
+		temp_size	= size - 2;
+		temp2		= green[0];
+		for(i_help1 = 1; i_help1 < temp_size; i_help1 += 1, out_pos1 += out_stride_2){
+			temp1	= temp2;
+			temp2	= green[i_help1];
+			out[out_pos1] = orange[i_help1] - beta * ( temp1 + temp2);
+		}
+
+		out_pos1 = pos_col ;
+		out_pos2 = pos_col + out_stride;
+		if(even){
+			out_pos1 -= out_stride;
+			out_pos2 -= out_stride;
+		}
+		temp_size 	= size - 3;
+		temp2 		= out[out_pos1];
+		for(i_help1 = 1, out_pos1 += out_stride_2; i_help1 < temp_size; i_help1 += 1, out_pos1 += out_stride_2, out_pos2 += out_stride_2){
+			temp1	= temp2;
+			temp2	= out[out_pos1];
+			out[out_pos2] = green[i_help1] - alpha * ( temp1 + temp2);
+		}
+	}
+
+
+	return decoder;
+}
+
 #endif
 
 
 STOP_C
-

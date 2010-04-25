@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -62,6 +62,7 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
 	PDC_uint			pos_x, pos_y, pos, sizex, sizey;
 	PDC_uint			number_codeblocks_x, number_codeblocks_y;
 	PDC_Codeblock**		codeblocks;
+	PDC_bool			evenh, evenv;
 
 	PDC_Subband* subband = NULL;
 	subband = new_PDC_Subband_01(exception);
@@ -107,34 +108,95 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
 	sizex			= subband->tbx1 - subband->tbx0;
 	sizey			= subband->tby1 - subband->tby0;
 
+	if(resolution->trx0 % 2 == 1){
+		evenh = PDC_false;
+	}else{
+		evenh = PDC_true;
+	}
+
+	if(resolution->try0 % 2 == 1){
+		evenv = PDC_false;
+	}else{
+		evenv = PDC_true;
+	}
+
 	switch(subband->type){
 		case SUBBAND_LL:
-			subband->mx0	= resolution->mx0;
-			subband->my0	= resolution->my0;
+			if(evenh){
+				subband->mx0	= resolution->mx0 - 1;
+			}else{
+				subband->mx0	= resolution->mx0;
+			}
+
+			if(evenv){
+				subband->my0	= resolution->my0 - 1;
+			}else{
+				subband->my0	= resolution->my0;
+			}
 			subband->mx1	= subband->mx0 + sizex;
 			subband->my1	= subband->my0 + sizey;
 			break;
 		case SUBBAND_HL:
-			subband->mx1	= resolution->mx1;
-			subband->my0	= resolution->my0;
+			if(evenh){
+				subband->mx1	= resolution->mx1 + 5;
+			}else{
+				subband->mx1	= resolution->mx1 + 5;
+			}
 			subband->mx0	= subband->mx1 - sizex;
+			if(subband->mx0 % 4 != 0){
+				subband->mx0 += 4 - (subband->mx0 % 4);
+				subband->mx1 = subband->mx0 + sizex;
+			}
+
+
+			if(evenv){
+				subband->my0	= resolution->my0 - 1;
+			}else{
+				subband->my0	= resolution->my0;
+			}
 			subband->my1	= subband->my0 + sizey;
+
 			break;
 		case SUBBAND_LH:
-			subband->mx0	= resolution->mx0;
-			subband->my1	= resolution->my1;
+			if(evenh){
+				subband->mx0	= resolution->mx0 - 1;
+			}else{
+				subband->mx0	= resolution->mx0;
+			}
 			subband->mx1	= subband->mx0 + sizex;
+
+
+			if(evenv){
+				subband->my1	= resolution->my1  + 5;
+			}else{
+				subband->my1	= resolution->my1 + 5;
+			}
 			subband->my0	= subband->my1 - sizey;
 			break;
+
 		case SUBBAND_HH:
-			subband->mx1	= resolution->mx1;
-			subband->my1	= resolution->my1;
+			if(evenh){
+				subband->mx1	= resolution->mx1 + 5;
+			}else{
+				subband->mx1	= resolution->mx1 + 5;
+			}
 			subband->mx0	= subband->mx1 - sizex;
+			if(subband->mx0 % 4 != 0){
+				subband->mx0 += 4 - (subband->mx0 % 4);
+				subband->mx1 = subband->mx0 + sizex;
+			}
+
+			if(evenv){
+				subband->my1	= resolution->my1 + 5;
+			}else{
+				subband->my1	= resolution->my1 + 5;
+			}
 			subband->my0	= subband->my1 - sizey;
 			break;
 		default:
 			break;
 	}
+
 	number_codeblocks_x	= resolution->codeblock_x1 - resolution->codeblock_x0;
 	number_codeblocks_y = resolution->codeblock_y1 - resolution->codeblock_y0;
 	subband->number_codeblocks	=  number_codeblocks_x * number_codeblocks_y;
@@ -185,7 +247,7 @@ PDC_Subband* delete_PDC_Subband(PDC_Exception* exception, PDC_Subband* subband)
  *
  */
 PDC_Subband* PDC_Subband_inverse_quantization(	PDC_Exception* exception,
-						PDC_Subband* subband)
+												PDC_Subband* subband)
 {
 	PDC_uint pos_codeblock, num_codeblock;
 	PDC_Codeblock* codeblock;

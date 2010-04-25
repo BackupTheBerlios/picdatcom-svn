@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -32,6 +32,7 @@ START_C
 	#include "PDC_Pointer_Buffer.h"
 	#include "PDC_Buffer.h"
 	#include "PDC_SIZ_Segment_Componente.h"
+	#include "PDC_Decoder.h"
 
 	#define DEFAULT_NUMBER_COMPONENTEN 3
 
@@ -74,5 +75,18 @@ START_C
 													PDC_SIZ_Segment* siz_segment,
 													PDC_Buffer* buffer);
 
+	/*
+	 *
+	 */
+	PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer_01(	PDC_Exception* exception,
+														PDC_Buffer* buffer,
+														PDC_Decoder* decoder);
+
+	/*
+	 *
+	 */
+	PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer_02(	PDC_Exception* exception,
+														PDC_Buffer* buffer,
+														PDC_Decoder* decoder);
 STOP_C
 #endif

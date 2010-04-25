@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  *      Contact Email:
  *
  * This file is part of PicDatCom.
@@ -94,6 +94,8 @@ START_C
 	PDC_int min_int(PDC_int in1, PDC_int in2);
 
 	PDC_uint PDC_floor_log2( PDC_uint in);
+
+	PDC_int PDC_max_thread();
 
 STOP_C
 

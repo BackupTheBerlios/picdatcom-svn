@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
@@ -28,6 +28,7 @@ START_C
 	struct str_PDC_Precinct;
 	typedef struct str_PDC_Precinct PDC_Precinct;
 
+	#include "PDC_Parameter.h"
 	#include "PDC_Subband.h"
 	#include "PDC_Resolution.h"
 	#include "PDC_Codeblock.h"
@@ -42,6 +43,8 @@ START_C
 		PDC_uint codeblock_x1;
 		PDC_uint codeblock_y0;
 		PDC_uint codeblock_y1;
+
+		PDC_bit	bit1;
 	};
 
 	/*
@@ -89,5 +92,32 @@ START_C
 	 */
 	PDC_Precinct* PDC_Precinct_set_End_of_Buffer(	PDC_Exception *exception,
 													PDC_Precinct *precinct);
+
+	/*
+	 *
+	 */
+	PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
+														PDC_Precinct* precinct,
+														PDC_Buffer*	buffer,
+														PDC_uint layer_pos,
+														PDC_Decoder* decoder);
+
+	/*
+	 *
+	 */
+	PDC_Precinct* PDC_Precinct_push(PDC_Exception* exception,
+									PDC_Precinct* precinct);
+
+	/*
+	 *
+	 */
+	PDC_Precinct* PDC_Precinct_pop(PDC_Exception* exception,
+									PDC_Precinct* precinct);
+
+	/*
+	 *
+	 */
+	PDC_Precinct* PDC_Precinct_pop_unlock(	PDC_Exception* exception,
+											PDC_Precinct* precinct);
 STOP_C
 #endif

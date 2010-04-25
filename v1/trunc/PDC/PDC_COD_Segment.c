@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Brünen
+ * Copyright (C) 2008  Uwe BrÃ¼nen
  * Contact Email: bruenen.u@web.de
  * 
  * This file is part of PicDatCom.
@@ -45,6 +45,7 @@ START_C
 	cod_segment->code_block_style					= 0;
 	cod_segment->transformation						= 0;
 	cod_segment->precinct_size						= NULL;
+	cod_segment->reading_state						= PDC_COD_SEGMENT_READING_STATE1;
 
 	return cod_segment;
 }
@@ -129,6 +130,79 @@ PDC_COD_Segment* PDC_COD_Segment_read_buffer(	PDC_Exception* exception,
 			}
 		}
 	}
+	return cod_segment;
+}
+
+/*
+ *
+ */
+PDC_COD_Segment* PDC_COD_Segment_read_buffer_01(PDC_Exception* exception,
+												PDC_COD_Segment* cod_segment,
+												PDC_Buffer* buffer,
+												PDC_Decoder* decoder)
+{
+	PDC_uint32	level_pos;
+	PDC_uint8	precinct_size;
+
+	switch(cod_segment->reading_state){
+	case PDC_COD_SEGMENT_READING_STATE1:
+		if(buffer->read_byte_pos + 2 > buffer->write_byte_pos){
+			if(buffer->end_state == END_OF_BUFFER){
+				PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return cod_segment;
+			}else{
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return cod_segment;
+			}
+		}
+		PDC_Buffer_read_uint16(exception, buffer, &(cod_segment->lcot));
+
+		cod_segment->reading_state = PDC_COD_SEGMENT_READING_STATE2;
+	case PDC_COD_SEGMENT_READING_STATE2:
+
+		if((buffer->read_byte_pos + cod_segment->lcot - 2) > buffer->write_byte_pos){
+			if(buffer->end_state == END_OF_BUFFER){
+				PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return cod_segment;
+			}else{
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return cod_segment;
+			}
+		}
+
+		PDC_Buffer_read_uint8(exception, buffer, &(cod_segment->scot));
+		PDC_Buffer_read_uint8(exception, buffer, &(cod_segment->progression_order));
+		PDC_Buffer_read_uint16(exception, buffer, &(cod_segment->number_of_layer));
+		PDC_Buffer_read_uint8(exception, buffer, &(cod_segment->multiple_component_transformation));
+		PDC_Buffer_read_uint8(exception, buffer, &(cod_segment->number_of_decompostion_levels));
+		PDC_Buffer_read_uint8(exception, buffer, &(cod_segment->code_block_width));
+		PDC_Buffer_read_uint8(exception, buffer, &(cod_segment->code_block_height));
+		PDC_Buffer_read_uint8(exception, buffer, &(cod_segment->code_block_style));
+		PDC_Buffer_read_uint8(exception, buffer, &(cod_segment->transformation));
+
+
+		cod_segment->precinct_size = new_PDC_Buffer_1(exception, cod_segment->number_of_decompostion_levels + 1);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_OUT_OF_RANGE, __LINE__, __FILE__);
+			return cod_segment;
+		}
+
+		if((cod_segment->scot & DEFAULT_PRECINCT_SIZE) == DEFAULT_PRECINCT_SIZE){
+			for(level_pos = 0; level_pos <= cod_segment->number_of_decompostion_levels; level_pos += 1){
+				PDC_Buffer_read_uint8(exception, buffer, &precinct_size);
+				PDC_Buffer_add_byte_1(exception, cod_segment->precinct_size, precinct_size);
+			}
+		}else{
+			precinct_size = 0xFF;
+			for(level_pos = 0; level_pos <= cod_segment->number_of_decompostion_levels; level_pos += 1){
+				PDC_Buffer_add_byte_1(exception, cod_segment->precinct_size, precinct_size);
+			}
+		}
+		cod_segment->reading_state = PDC_COD_SEGMENT_READING_STATE1;
+	}
+
 	return cod_segment;
 }
 

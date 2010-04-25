@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -34,9 +34,10 @@ PDC_COM_Segment* new_PDC_COM_Segment_01(	PDC_Exception* exception)
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
-	com_segment->Ccom	= NULL;
-	com_segment->Lcom	= 0;
-	com_segment->Rcom	= 0;
+	com_segment->Ccom			= NULL;
+	com_segment->Lcom			= 0;
+	com_segment->Rcom			= 0;
+	com_segment->reading_state	= PDC_COM_SEGMENT_READING_STATE1;
 
 	return com_segment;
 }
@@ -112,6 +113,61 @@ PDC_COM_Segment* PDC_COM_Segment_read_buffer(	PDC_Exception*		exception,
 	}
 
 	buffer = PDC_Buffer_read_uint8_02(exception, buffer, com_segment->Ccom, number_bytes);
+
+	return com_segment;
+}
+
+/*
+ *
+ */
+PDC_COM_Segment* PDC_COM_Segment_read_buffer_01(PDC_Exception*		exception,
+												PDC_COM_Segment*	com_segment,
+												PDC_Buffer*			buffer,
+												PDC_Decoder*		decoder)
+{
+	PDC_uint32 number_bytes;
+
+	switch(com_segment->reading_state){
+	case PDC_COM_SEGMENT_READING_STATE1:
+		if(buffer->read_byte_pos + 2 > buffer->write_byte_pos){
+			if(buffer->end_state == END_OF_BUFFER){
+				PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return com_segment;
+			}else{
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return com_segment;
+			}
+		}
+		buffer = PDC_Buffer_read_uint16(exception, buffer, &(com_segment->Lcom));
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return com_segment;
+		}
+
+		com_segment->reading_state = PDC_COM_SEGMENT_READING_STATE2;
+
+	case PDC_COM_SEGMENT_READING_STATE2:
+		if(buffer->read_byte_pos - 2 + com_segment->Lcom > buffer->write_byte_pos){
+			if(buffer->end_state == END_OF_BUFFER){
+				PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return com_segment;
+			}else{
+				decoder->data_situation = PDC_WAIT_FOR_DATA;
+				return com_segment;
+			}
+		}
+
+		buffer = PDC_Buffer_read_uint16(exception, buffer, &(com_segment->Rcom));
+
+		number_bytes = com_segment->Lcom - 4;
+		com_segment->Ccom = malloc(number_bytes);
+		if(com_segment->Ccom == NULL){
+			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+			return com_segment;
+		}
+		buffer = PDC_Buffer_read_uint8_02(exception, buffer, com_segment->Ccom, number_bytes);
+	}
 
 	return com_segment;
 }

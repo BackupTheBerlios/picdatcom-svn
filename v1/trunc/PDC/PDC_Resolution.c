@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -243,10 +243,10 @@ PDC_Resolution* PDC_Resolution_init_01(	PDC_Exception* exception,
 	precinct_number_y		= in_resolution->precinct_y1 - in_resolution->precinct_y0;
 	precinct_number_xy		= precinct_number_x * precinct_number_y;
 
-	in_resolution->mx0	= tile_component->mx0;
-	in_resolution->mx1	= tile_component->mx0 + in_resolution->trx1 - in_resolution->trx0;
-	in_resolution->my0	= tile_component->my0;
-	in_resolution->my1	= tile_component->my0 + in_resolution->try1 - in_resolution->try0;
+	in_resolution->mx0	= 0;
+	in_resolution->mx1	= in_resolution->trx1 - in_resolution->trx0;
+	in_resolution->my0	= 0;
+	in_resolution->my1	= in_resolution->try1 - in_resolution->try0;
 
 	in_resolution->precinct = malloc(sizeof(PDC_Precinct*) * precinct_number_xy);
 	if(in_resolution->precinct == NULL){
@@ -394,11 +394,20 @@ PDC_Resolution* PDC_Resolution_inverse_quantization(PDC_Exception* exception,
 		}
 	}
 
+	if(resolution->r != 0){
+		PDC_Resolution_inverse_transformation_97_v3(exception, resolution);
+		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+			return resolution;
+		}
+	}
+
+
+
 	return resolution;
 }
 
 
-int uwe_count = -2;
+int uwe_count = 0;
 
 /*
  *
@@ -421,7 +430,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97(	PDC_Exception* excepti
 	}
 
 	m_size		= resolution->tile_component->msizex;
-	out = in_high = in_low = resolution->tile_component->memory;
+	out = in_high = in_low = resolution->tile_component->image_memory;
 
 	out_plus = in_hight_plus = in_low_plus = 1;
 	out_start		= resolution->mx0 + resolution->my0 * m_size;
@@ -505,7 +514,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 	}
 
 	m_size	= resolution->tile_component->msizex;
-	out = in_high = in_low = resolution->tile_component->memory;
+	out = in_high = in_low = resolution->tile_component->image_memory;
 
 	out_plus 		= in_hight_plus = in_low_plus = 1;
 	out_start		= resolution->mx0 + resolution->my0 * m_size;
@@ -634,22 +643,826 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 			}
 		}
 	}
+
+	return resolution;
+}
+
+
 /*
-	uwe_count += 2;
-	if(uwe_count == 0){
-		out_start = resolution->mx0 + resolution->my0 * m_size;
-		for(pos_y = 0, pos_y_end = resolution->my1 - resolution->my0; pos_y < pos_y_end; pos_y += 1, out_start += m_size){
-			for(pos_x = 0, pos_x_end = resolution->mx1 - resolution->mx0; pos_x < pos_x_end; pos_x += 1){
-				fprintf(DEBUG_FILE2,"%5d   %13.2f \n",pos_y, out[out_start + pos_x]);
-			}
-		}
+ *
+ */
+PDC_Resolution* PDC_Resolution_inverse_transformation_97_v3(	PDC_Exception* exception,
+																PDC_Resolution* resolution)
+{
+	PDC_int		line_stride_float, out_size1, out_size2 ,lowh_size, lowv_size, highh_size, highv_size;
+	float 		*sub1_data, *sub2_data, *sub3_data, *sub4_data, *out_data1, *out_data2;
+	PDC_bool	evenhl, evenvl, evenhr, evenvr;
+
+	line_stride_float = resolution->tile_component->line_stride_float;
+
+	PDC_int		max_threads, pos_thread;
+	PDC_Threadcall *variable;
+
+	if(resolution->trx0 % 2 == 1){
+		evenhl = PDC_false;
+	}else{
+		evenhl = PDC_true;
 	}
-	uwe_count += 1;
+
+	if((resolution->trx1 - 1) % 2 == 1){
+		evenhr = PDC_false;
+	}else{
+		evenhr = PDC_true;
+	}
+
+
+	if(resolution->try0 % 2 == 1){
+		evenvl = PDC_false;
+	}else{
+		evenvl = PDC_true;
+	}
+
+	if((resolution->try1 - 1) % 2 == 1){
+		evenvr = PDC_false;
+	}else{
+		evenvr = PDC_true;
+	}
+
+	lowv_size	= resolution->subband[0]->my1 - resolution->subband[0]->my0;
+	lowh_size	= resolution->subband[1]->mx1 - resolution->subband[1]->mx0;
+	highv_size	= resolution->subband[1]->my1 - resolution->subband[1]->my0;
+	highh_size	= resolution->subband[0]->mx1 - resolution->subband[0]->mx0;
+
+	out_size1	= resolution->trx1 - resolution->trx0;
+	out_size2	= resolution->try1 - resolution->try0;
+	out_data1	= resolution->tile_component->tile_memory2;
+	out_data2	= out_data1 + resolution->subband[1]->my0 * line_stride_float;
+
+	sub1_data	= resolution->tile_component->tile_memory2 - 2;
+
+	sub2_data	= resolution->tile_component->tile_memory2 + resolution->subband[0]->mx0 +
+				  resolution->subband[0]->my0 * line_stride_float;
+	sub2_data	= sub2_data - 2;
+
+	sub3_data	= resolution->tile_component->tile_memory2 + resolution->subband[1]->mx0 +
+				  resolution->subband[1]->my0 * line_stride_float;
+	if(evenhl){
+		sub3_data 	= sub3_data - 1;
+	}else{
+		sub3_data 	= sub3_data - 2;
+	}
+
+	sub4_data 	= resolution->tile_component->tile_memory2 + resolution->subband[2]->mx0 +
+				  resolution->subband[2]->my0 * line_stride_float;
+	sub4_data 	= sub4_data - 2;
+
+	max_threads = PDC_max_thread();
+	*(resolution->tile_component->threadcalls[0]->thread_counter) = 0;
+
+	for(pos_thread = 0; pos_thread < max_threads; pos_thread += 1){
+		variable = resolution->tile_component->threadcalls[pos_thread];
+
+		variable->exception				= exception;
+		variable->resolution			= resolution;
+		variable->linestride_float		= resolution->tile_component->line_stride_float;
+
+		variable->evenhl				= evenhl;
+		variable->evenhr				= evenhr;
+		variable->evenvl				= evenvl;
+		variable->evenvr				= evenvr;
+		variable->sub1_data				= sub1_data;
+		variable->sub2_data				= sub2_data;
+		variable->sub3_data				= sub3_data;
+		variable->sub4_data				= sub4_data;
+		variable->size_high_horizontal	= highh_size;
+		variable->size_high_vertical	= highv_size;
+		variable->size_low_horizontal	= lowh_size;
+		variable->size_low_vertical		= lowv_size;
+		variable->out_size_horizontal	= out_size1;
+		variable->out_size_vertical		= out_size2;
+
+		pthread_create(&(variable->pthread_id), NULL, &PDC_threadcall_func, variable);
+	}
+
+	for(pos_thread = 0; pos_thread < max_threads; pos_thread += 1){
+		pthread_join(variable->pthread_id, NULL);
+	}
+
+/*
+	stop 		= resolution->subband[0]->my1 - resolution->subband[0]->my0;
+	start		= 0;
+
+	if(evenhl){
+		sub1_data -= line_stride_float;
+		out_data1 -= line_stride_float;
+	}
+
+
+
+	extend_vertical_low(exception,
+						sub1_data,
+						lowh_size,
+						line_stride_float,
+						0,
+						lowv_size,
+						evenhl,
+						evenhr);
+
+	extend_vertical_high(	exception,
+							sub2_data,
+							highh_size,
+							line_stride_float,
+							0,
+							lowv_size,
+							evenhl,
+							evenhr);
+
+	PDC_td_start_v3_vertical(	exception,
+								resolution->tile_component->transformer_97_decoder,
+								out_data1, sub2_data, sub1_data,
+								0, out_size,
+								1,  evenhl,
+								0, line_stride_float,
+								0, line_stride_float,
+								stop, start,
+								line_stride_float, line_stride_float, line_stride_float);
+
+	stop 		= resolution->subband[1]->my1 - resolution->subband[1]->my0;
+	start		= 0;
+
+	extend_vertical_low(exception,
+						sub3_data,
+						lowh_size,
+						line_stride_float,
+						0,
+						highv_size,
+						evenhl,
+						evenhr);
+
+	extend_vertical_high(	exception,
+							sub4_data,
+							highh_size,
+							line_stride_float,
+							0,
+							highv_size,
+							evenhl,
+							evenhr);
+
+	PDC_td_start_v3_vertical(	exception,
+								resolution->tile_component->transformer_97_decoder,
+								out_data2, sub4_data, sub3_data,
+								0, out_size,
+								1,  evenhl,
+								0, line_stride_float,
+								0, line_stride_float,
+								stop, start,
+								line_stride_float, line_stride_float, line_stride_float);
+
+	if(uwe_count == 0 ){
+			int posx, posy, endx, endy;
+			endx = resolution->mx1 - resolution->mx0;
+			endy = resolution->my1 - resolution->my0;
+			out_data1	= resolution->tile_component->tile_memory2;
+
+			if(evenvl){
+				out_data1 -= 1;
+			}
+
+			if(evenhl){
+				out_data1 -= line_stride_float;
+			}
+
+			// fprintf(DEBUG_FILE,"endx = %d endy = %d \n", endx, endy);
+			for(posy = 0; posy < endy; posy += 1){
+				out_data2 = out_data1 + (posy * line_stride_float);
+				for(posx = 0; posx < endx; posx += 1){
+					fprintf(DEBUG_FILE," %12.6f ", out_data2[posx]);
+				}
+				fprintf(DEBUG_FILE,"\n");
+			}
+			uwe_count +=1;
+		}
+
+
+
+	out_size	= resolution->try1 - resolution->try0;
+*/
+	/*
+	sub1_data	= resolution->tile_component->tile_memory2 - 2 * line_stride_float;
+
+	sub2_data	= resolution->tile_component->tile_memory2 + resolution->subband[1]->mx0 +
+				  resolution->subband[1]->my0 * line_stride_float;
+	sub2_data	= sub2_data - 2 * line_stride_float;
+	*/
+
+	/*
+	out_data1	= resolution->tile_component->tile_memory2;
+	sub1_data	= out_data1 - 2 * line_stride_float;
+	sub2_data	= out_data2 - 2 * line_stride_float;
+
+	if(evenvl){
+		sub1_data -= 1;
+		sub2_data -= 1;
+		out_data1 -= 1;
+	}
+
+	//stop 		= resolution->subband[1]->mx1 - resolution->subband[1]->mx0;
+	stop		= resolution->mx1 - resolution->mx0;
+	start		= 0;
+
+	extend_horizontal_low(	exception,
+							sub1_data,
+							lowv_size,
+							line_stride_float,
+							start,
+							stop,
+							evenvl,
+							evenvr);
+
+	extend_horizontal_high(	exception,
+							sub2_data,
+							highv_size,
+							line_stride_float,
+							start,
+							stop,
+							evenvl,
+							evenvr);
+
+	PDC_td_start_v3_horizontal(	exception,
+								resolution->tile_component->transformer_97_decoder,
+								out_data1, sub2_data, sub1_data,
+								0, out_size,
+								line_stride_float,  evenvl,
+								0, line_stride_float,
+								0, line_stride_float,
+								stop, start, line_stride_float,line_stride_float,
+								line_stride_float);
+
+	*/
+
+/*
+	if(uwe_count == 0 && resolution->n == 1 ){
+		int posx, posy, endx, endy;
+		endx = resolution->mx1 - resolution->mx0;
+		endy = resolution->my1 - resolution->my0;
+		out_data1	= resolution->tile_component->tile_memory2;
+
+		if(evenvl){
+			out_data1 -= 1;
+		}
+
+		if(evenhl){
+			out_data1 -= line_stride_float;
+		}
+
+		// fprintf(DEBUG_FILE,"endx = %d endy = %d \n", endx, endy);
+		for(posy = 0; posy < endy; posy += 1){
+			out_data2 = out_data1 + (posy * line_stride_float);
+			for(posx = 0; posx < endx; posx += 1){
+				fprintf(DEBUG_FILE," %6.1f", out_data2[posx]);
+			}
+			fprintf(DEBUG_FILE,"\n");
+		}
+		uwe_count +=1;
+	}
 */
 
 	return resolution;
 }
 
+
+// orange
+void extend_vertical_low( PDC_Threadcall *variable)
+{
+//	PDC_Exception *exception	= variable->exception;
+	float *in					= variable->sub1_data;
+	PDC_int size				= variable->size_low_horizontal;
+	PDC_int linestride_float	= variable->linestride_float;
+	PDC_int start_row			= variable->start_row;
+	PDC_int	end_row				= variable->end_row;
+	PDC_bool evenl				= variable->evenhl;
+	PDC_bool evenr				= variable->evenhr;
+
+	float *work, * workend, *inr;
+
+	if(evenl){
+		inr 	= in + size ;
+		workend = in + linestride_float * end_row;
+		if(size > 1){
+			for(work = in + linestride_float * start_row; work < workend; work += linestride_float){
+				work[0] = work[2];
+			}
+		}else{
+			for(work = in + linestride_float * start_row; work < workend; work += linestride_float){
+				work[0] = work[1];
+			}
+		}
+
+	}else{
+		inr		= in + size + 1;
+		workend = in + linestride_float * end_row;
+		if(size > 1){
+			for(work = in + linestride_float * start_row; work < workend; work += linestride_float){
+				work[0] = work[3];
+				work[1] = work[2];
+			}
+		}else{
+			for(work = in + linestride_float * start_row; work < workend; work += linestride_float){
+				work[0] = work[3] = work[1] = work[2];
+			}
+		}
+	}
+
+	if(evenr){
+		workend = inr + linestride_float * end_row;
+		if(size > 1){
+			for(work = inr + linestride_float * start_row; work < workend; work += linestride_float){
+				work[1] = work[-1];
+			}
+		}else{
+			for(work = inr + linestride_float * start_row; work < workend; work += linestride_float){
+				work[1] = work[0];
+			}
+		}
+
+	}else{
+		workend = inr + linestride_float * end_row;
+		if(size > 1){
+			for(work = inr + linestride_float * start_row; work < workend; work += linestride_float){
+				work[1] = work[0];
+				work[2] = work[-1];
+			}
+		}else{
+			for(work = inr + linestride_float * start_row; work < workend; work += linestride_float){
+				work[1] = work[0];
+				work[2] = work[0];
+			}
+		}
+	}
+
+}
+
+//green
+void extend_vertical_high( PDC_Threadcall *variable)
+{
+	//PDC_Exception *exception	= variable->exception;
+	float *in					= variable->sub2_data;
+	PDC_int size				= variable->size_high_horizontal;
+	PDC_int linestride_float	= variable->linestride_float;
+	PDC_int start_row			= variable->start_row;
+	PDC_int	end_row				= variable->end_row;
+	PDC_bool evenl				= variable->evenhl;
+	PDC_bool evenr				= variable->evenhr;
+
+	float *work, * workend, *inr;
+
+	if(evenl){
+		inr	= in + size + 1;
+		if(size > 2){
+			workend = in + end_row * linestride_float;
+			for(work = in + start_row * linestride_float; work < workend; work += linestride_float){
+				work[0] = work[3];
+				work[1] = work[2];
+			}
+		}else{
+			workend = in + end_row * linestride_float;
+			for(work = in + start_row * linestride_float; work < workend; work += linestride_float){
+				work[0] = work[2];
+				work[1] = work[2];
+			}
+		}
+
+	}else{
+		inr	= in + size + 1;
+		if(size > 2){
+			workend = in + end_row * linestride_float;
+			for(work = in + start_row * linestride_float; work < workend; work += linestride_float){
+				work[0] = work[4];
+				work[1] = work[3];
+			}
+		}else{
+			workend = in + end_row * linestride_float;
+			for(work = in + start_row * linestride_float; work < workend; work += linestride_float){
+				work[0] = work[2];
+				work[1] = work[2];
+			}
+		}
+	}
+
+	if(evenr){
+		if(size > 2){
+			workend = inr + end_row * linestride_float;
+			for(work = inr + start_row * linestride_float; work < workend; work += linestride_float){
+				work[1] = work[0];
+				work[2] = work[-1];
+			}
+		}else{
+			workend = inr + end_row * linestride_float;
+			for(work = inr + start_row * linestride_float; work < workend; work += linestride_float){
+				work[1] = work[0];
+				work[2] = work[0];
+			}
+		}
+	}else{
+		if(size > 2){
+			workend = inr + end_row * linestride_float;
+			for(work = inr + start_row * linestride_float; work < workend; work += linestride_float){
+				work[1] = work[-1];
+				work[2] = work[-2];
+			}
+		}else{
+			workend = inr + end_row * linestride_float;
+			for(work = inr + start_row * linestride_float; work < workend; work += linestride_float){
+				work[1] = work[0];
+				work[2] = work[0];
+			}
+		}
+	}
+}
+
+// orange
+void extend_horizontal_low( PDC_Threadcall *variable)
+{
+	//PDC_Exception *exception	= variable->exception;
+	float *in					= variable->sub1_data;
+	PDC_int size				= variable->size_low_vertical;
+	PDC_int linestride_float	= variable->linestride_float;
+	PDC_int start_col			= variable->start_col;
+	PDC_int	end_col				= variable->end_col;
+	PDC_bool evenl				= variable->evenvl;
+	PDC_bool evenr				= variable->evenvr;
+
+	float *work, * workend, *inr;
+	PDC_int linestride_float_1 = linestride_float;
+	PDC_int linestride_float_2 = linestride_float * 2;
+	PDC_int linestride_float_3 = linestride_float * 3;
+	//PDC_int linestride_float_4 = linestride_float * 4;
+
+
+	if(evenl){
+		inr 	= in + size * linestride_float ;
+
+		workend = in + end_col;
+		if(size > 1){
+			for(work = in + start_col; work < workend; work += 1){
+				work[0] = work[linestride_float_2];
+			}
+		}else{
+			for(work = in + start_col; work < workend; work += 1){
+				work[0] = work[linestride_float_1];
+			}
+		}
+	}else{
+		inr		= in + (size + 1) * linestride_float;
+		workend = in + end_col;
+		if(size > 1){
+			for(work = in + start_col; work < workend; work += 1){
+				work[0] 					= work[linestride_float_3];
+				work[linestride_float_1] 	= work[linestride_float_2];
+			}
+		}else{
+			for(work = in +  start_col; work < workend; work += 1){
+				work[0] = work[linestride_float_1] = work[linestride_float_2];
+			}
+		}
+	}
+
+	if(evenr){
+		workend = inr +  end_col;
+		if(size > 1){
+			for(work = inr +  start_col; work < workend; work += 1){
+				work[linestride_float_1] = work[-linestride_float_1];
+			}
+		}else{
+			for(work = inr + start_col; work < workend; work += 1){
+				work[linestride_float_1] = work[0];
+			}
+		}
+
+	}else{
+		workend = inr + end_col;
+		if(size > 1){
+			for(work = inr + start_col; work < workend; work += 1){
+				work[linestride_float_1] = work[0];
+				work[linestride_float_2] = work[-linestride_float_1];
+			}
+		}else{
+			for(work = inr + start_col; work < workend; work += 1){
+				work[linestride_float_1] = work[0];
+				work[linestride_float_2] = work[0];
+			}
+		}
+	}
+}
+
+
+void extend_horizontal_high(PDC_Threadcall *variable){
+
+	//PDC_Exception *exception	= variable->exception;
+	float *in					= variable->sub2_data;
+	PDC_int size				= variable->size_high_vertical;
+	PDC_int linestride_float	= variable->linestride_float;
+	PDC_int start_col			= variable->start_col;
+	PDC_int	end_col				= variable->end_col;
+	PDC_bool evenl				= variable->evenvl;
+	PDC_bool evenr				= variable->evenvr;
+
+	float *work, *workend, *inr;
+	PDC_int linestride_float_1 = linestride_float;
+	PDC_int linestride_float_2 = linestride_float * 2;
+	PDC_int linestride_float_3 = linestride_float * 3;
+	PDC_int linestride_float_4 = linestride_float * 4;
+
+	if(evenl){
+		inr	= in + (size + 1) * linestride_float;
+		if(size > 2){
+			workend = in + end_col;
+			for(work = in + start_col; work < workend; work += 1){
+				work[0] 					= work[linestride_float_3];
+				work[linestride_float_1]	= work[linestride_float_2];
+			}
+		}else{
+			workend = in + end_col ;
+			for(work = in + start_col ; work < workend; work += 1){
+				work[0]						= work[linestride_float_2];
+				work[linestride_float_1]	= work[linestride_float_2];
+			}
+		}
+
+	}else{
+		inr	= in + (size + 1) * linestride_float;
+		if(size > 2){
+			workend = in + end_col;
+			for(work = in + start_col; work < workend; work += 1){
+				work[0] 					= work[linestride_float_4];
+				work[linestride_float_1]	= work[linestride_float_3];
+			}
+		}else{
+			workend = in + end_col;
+			for(work = in + start_col; work < workend; work += 1){
+				work[0] 					= work[linestride_float_2];
+				work[linestride_float_1]	= work[linestride_float_2];
+			}
+		}
+	}
+
+	if(evenr){
+		if(size > 2){
+			workend = inr + end_col;
+			for(work = inr + start_col ; work < workend; work += 1){
+				work[linestride_float_1]	= work[0];
+				work[linestride_float_2]	= work[-linestride_float_1];
+			}
+		}else{
+			workend = inr + end_col;
+			for(work = inr + start_col; work < workend; work += 1){
+				work[linestride_float_1]	= work[0];
+				work[linestride_float_1]	= work[0];
+			}
+		}
+	}else{
+		if(size > 2){
+			workend = inr + end_col;
+			for(work = inr + start_col; work < workend; work += 1){
+				work[linestride_float_1]	= work[-linestride_float_1];
+				work[linestride_float_2]	= work[-linestride_float_2];
+			}
+		}else{
+			workend = inr + end_col;
+			for(work = inr + start_col; work < workend; work += 1){
+				work[linestride_float_1] = work[0];
+				work[linestride_float_2] = work[0];
+			}
+		}
+	}
+}
+
+/*
+ *
+ */
+PDC_Threadcall* new_PDC_Threadcall_01(PDC_Exception	*exception)
+{
+	PDC_Threadcall *threadcall;
+
+	threadcall = (PDC_Threadcall*)malloc(sizeof(PDC_Threadcall));
+	if(threadcall == NULL){
+		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
+		return NULL;
+	}
+
+	threadcall->exception				= NULL;
+	threadcall->resolution				= NULL;
+	threadcall->thread_id				= 0;
+	threadcall->thread_number			= 0;
+	threadcall->thread_counter			= NULL;
+	threadcall->mutex_counter			= NULL;
+	threadcall->cond_counter			= NULL;
+
+	threadcall->sub1_data				= NULL;
+	threadcall->sub2_data				= NULL;
+	threadcall->sub3_data				= NULL;
+	threadcall->sub4_data				= NULL;
+	threadcall->linestride_float		= 0;
+
+	threadcall->size_low_horizontal		= 0;
+	threadcall->size_high_horizontal	= 0;
+	threadcall->start_row				= 0;
+	threadcall->end_row					= 0;
+	threadcall->evenhl					= 0;
+	threadcall->evenhr					= 0;
+
+	threadcall->size_low_vertical		= 0;
+	threadcall->size_high_vertical		= 0;
+	threadcall->start_col				= 0;
+	threadcall->end_col					= 0;
+	threadcall->evenvl					= 0;
+	threadcall->evenvr					= 0;
+
+	threadcall->decoder					= NULL;
+	threadcall->out_size_horizontal		= 0;
+	threadcall->out_size_vertical		= 0;
+	threadcall->end_row					= 0;
+	threadcall->start_row				= 0;
+
+	return threadcall;
+}
+
+/*
+ *
+ */
+PDC_Threadcall* new_PDC_Threadcall_02(
+		PDC_Exception	*exception,
+		PDC_int thread_id,
+		PDC_int thread_number,
+		PDC_int maxSize)
+{
+	PDC_Threadcall *threadcall;
+
+	threadcall = new_PDC_Threadcall_01(exception);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return NULL;
+	}
+
+	threadcall->decoder = new_PDC_Transformation_97_decoder(exception, maxSize);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return NULL;
+	}
+
+	threadcall->thread_id		= thread_id;
+	threadcall->thread_number	= thread_number;
+
+	return threadcall;
+}
+
+/*
+ *
+ */
+void delete_PDC_Threadcall(
+		PDC_Exception *exception,
+		PDC_Threadcall* threadcall)
+{
+	if(threadcall != NULL){
+		delete_PDC_Transformation_97_decoder(exception, threadcall->decoder);
+		free(threadcall);
+	}
+}
+
+/*
+ *
+ */
+void *PDC_threadcall_func(void *in)
+{
+	PDC_Threadcall *variable 	= (PDC_Threadcall*)in;
+	PDC_Resolution* resolution	= variable->resolution;
+
+	PDC_int	size1, size2, start, stop;
+	float 	*sub1_data, *sub2_data, *sub3_data, *sub4_data, *out_data1, *out_data2;
+
+
+	sub1_data 	= variable->sub1_data;
+	sub2_data 	= variable->sub2_data;
+	sub3_data 	= variable->sub3_data;
+	sub4_data 	= variable->sub4_data;
+
+	size1 = resolution->subband[0]->my1 - resolution->subband[0]->my0;
+
+	size2	= PDC_i_ceiling( size1 , variable->thread_number);
+	start	= size2 * variable->thread_id;
+	stop	= start + size2;
+	out_data1 = variable->out_data1 = resolution->tile_component->tile_memory2;
+
+	if(start < size1){
+		if(stop > size1){
+			stop = size1;
+		}
+		variable->start_row = start;
+		variable->end_row	= stop;
+
+
+
+		if(variable->evenhl){
+			variable->sub1_data -= variable->linestride_float;
+			variable->out_data1 -= variable->linestride_float;
+		}
+
+		extend_vertical_low(variable);
+		extend_vertical_high(variable);
+		PDC_td_start_v3_vertical(variable);
+	}
+
+	size1 = resolution->subband[1]->my1 - resolution->subband[1]->my0;
+
+	size2	= PDC_i_ceiling( size1 , variable->thread_number);
+	start	= size2 * variable->thread_id;
+	stop	= start + size2;
+	out_data2 = variable->out_data1	= out_data1 + resolution->subband[1]->my0 * variable->linestride_float;
+
+	if(start < size1){
+		if(stop > size1){
+			stop = size1;
+		}
+		variable->start_row = start;
+		variable->end_row	= stop;
+
+
+
+		variable->sub1_data	= sub3_data;
+		variable->sub2_data = sub4_data;
+
+		extend_vertical_low(variable);
+		extend_vertical_high(variable);
+		PDC_td_start_v3_vertical(variable);
+	}
+
+	/*
+	if(uwe_count == 0 ){
+		int posx, posy, endx, endy;
+		endx = resolution->mx1 - resolution->mx0;
+		endy = resolution->my1 - resolution->my0;
+		out_data1	= resolution->tile_component->tile_memory2;
+
+		if(variable->evenvl){
+			out_data1 -= 1;
+		}
+
+		if(variable->evenhl){
+			out_data1 -= variable->linestride_float;
+		}
+
+		// fprintf(DEBUG_FILE,"endx = %d endy = %d \n", endx, endy);
+		for(posy = 0; posy < endy; posy += 1){
+			out_data2 = out_data1 + (posy * variable->linestride_float);
+			for(posx = 0; posx < endx; posx += 1){
+				fprintf(DEBUG_FILE2," %12.6f ", out_data2[posx]);
+			}
+			fprintf(DEBUG_FILE2,"\n");
+		}
+	}
+	*/
+
+	/*
+	 * All threads have to sync here.
+	 */
+	pthread_mutex_lock(variable->mutex_counter);
+	*(variable->thread_counter) += 1;
+	if(*(variable->thread_counter) == variable->thread_number){
+		pthread_mutex_unlock(variable->mutex_counter);
+		pthread_cond_broadcast(variable->cond_counter);
+	}else{
+		pthread_cond_wait(variable->cond_counter, variable->mutex_counter);
+		pthread_mutex_unlock(variable->mutex_counter);
+	}
+
+	variable->out_data1	= resolution->tile_component->tile_memory2;
+	variable->sub1_data	= out_data1 - 2 * variable->linestride_float;
+	variable->sub2_data	= out_data2 - 2 * variable->linestride_float;
+
+	if(variable->evenhl){
+		variable->sub1_data -= 1;
+		variable->sub2_data -= 1;
+		variable->out_data1 -= 1;
+	}
+
+
+	size1	= resolution->mx1 - resolution->mx0;
+	size2	= PDC_i_ceiling( size1 , variable->thread_number);
+	start	= size2 * variable->thread_id;
+	stop	= start + size2;
+
+	if(start < size1){
+		if(stop > size1){
+			stop = size1;
+		}
+		variable->start_col = start;
+		variable->end_col	= stop;
+
+		extend_horizontal_low(	variable);
+		extend_horizontal_high(	variable);
+		PDC_td_start_v3_horizontal(	variable );
+
+	}
+	return NULL;
+}
 
 STOP_C
 

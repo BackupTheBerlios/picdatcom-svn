@@ -1,5 +1,5 @@
 /*
- * Copyright (C) 2008  Uwe Br�nen
+ * Copyright (C) 2008  Uwe Brünen
  * Contact Email: bruenen.u@web.de
  *
  * This file is part of PicDatCom.
@@ -32,7 +32,6 @@ unsigned int exception_pos	= 0;
 
 
 pthread_mutex_t exception_mutex =	PTHREAD_MUTEX_INITIALIZER;
-
 
 /*
  *
