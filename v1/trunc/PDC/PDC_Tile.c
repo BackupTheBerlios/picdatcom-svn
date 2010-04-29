@@ -251,7 +251,7 @@ PDC_Tile* PDC_Tile_read_SOD_02(	PDC_Exception* exception,
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return NULL;
 		}
-		tile->read_sod_state = PDC_READ_SOD_COUNTER_ADD;
+		tile->read_sod_state = PDC_READ_SOD_INIT;
 	}
 	return tile;
 }

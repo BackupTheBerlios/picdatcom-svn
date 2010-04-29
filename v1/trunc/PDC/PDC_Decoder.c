@@ -369,6 +369,9 @@ DLL PDC_Decoder* PDC_Decoder_decode(PDC_Exception* exception, PDC_Decoder* decod
 			case PDC_ERROR:
 				PDC_Exception_error(exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 				break;
+			case PDC_EOC:
+				decoder->data_situation = PDC_NO_DATA;
+				break;
 		}
 
 		if(reading_state == PDC_ERROR){
@@ -807,7 +810,7 @@ PDC_Decoder* PDC_Decoder_decode_tile_part_header(	PDC_Exception* exception,
 			if(decoder->data_situation == PDC_WAIT_FOR_DATA){
 				return decoder;
 			}
-
+			symbol = PDC_SYMBOL;
 			break;
 		case PDC_EOC:
 			decoder->data_situation = PDC_NO_DATA;
@@ -893,7 +896,10 @@ PDC_Decoder* PDC_Decoder_set_decode_tile_part_header_symbol(PDC_Exception* excep
 	case PDC_SOD:
 		tile->symbol = symbol;
 		break;
-
+	case PDC_EOC:
+		tile->symbol = symbol;
+		decoder->reading_state = symbol;
+		break;
 	}
 
 	return decoder;
