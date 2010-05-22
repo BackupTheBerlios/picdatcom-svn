@@ -226,6 +226,26 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
 	return subband;
 }
 
+void PDC_Subband_print(PDC_Exception *exception, PDC_Subband *subband, FILE *file, int component)
+{
+	PDC_Resolution *resolution = subband->resolution;
+	PDC_uint pos_y, pos_x, pos;
+
+	for(pos_y = resolution->codeblock_y0, pos = 0; pos_y < resolution->codeblock_y1;pos_y += 1){
+		for(pos_x = resolution->codeblock_x0; pos_x < resolution->codeblock_x1; pos_x += 1){
+			print_codeblock_02(	subband->codeblocks[pos], 
+								file, 
+								component, 
+								resolution->r, 
+								pos_x - resolution->codeblock_x0, 
+								pos_y - resolution->codeblock_y0);
+		}
+	}
+
+
+}
+
+
 /*
  *
  */

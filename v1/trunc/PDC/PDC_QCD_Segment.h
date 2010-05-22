@@ -46,7 +46,7 @@ START_C
 	
 	struct str_PDC_QCD_Segment{
 		PDC_bool						succesfull_read;
-		PDC_uint32						read_buffer_pos;
+		PDC_size_t						read_buffer_pos;
 		PDC_uint16						Lqcd;
 		PDC_uint8						Sqcd;
 		PDC_uint16*						SPqcd;

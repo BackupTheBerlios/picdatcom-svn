@@ -49,7 +49,7 @@ PDC_COM_Segment* new_PDC_COM_Segment_02(	PDC_Exception*	exception,
 											PDC_Buffer*		buffer)
 {
 	PDC_COM_Segment*	com_segment = NULL;
-	PDC_uint32			read_byte_pos;
+	PDC_size_t			read_byte_pos;
 	com_segment = new_PDC_COM_Segment_01(exception);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return NULL;
@@ -88,7 +88,7 @@ PDC_COM_Segment* PDC_COM_Segment_read_buffer(	PDC_Exception*		exception,
 												PDC_COM_Segment*	com_segment,
 												PDC_Buffer*			buffer)
 {
-	PDC_uint32 read_byte_pos = buffer->read_byte_pos;
+	PDC_size_t read_byte_pos = buffer->read_byte_pos;
 	PDC_uint32 number_bytes;
 
 	buffer = PDC_Buffer_read_uint16(exception, buffer, &(com_segment->Lcom));

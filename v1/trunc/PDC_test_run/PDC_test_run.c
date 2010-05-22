@@ -53,11 +53,11 @@ void print(PDC_Exception* exception){
 	}
 
 	printf("In file %s on line %d \n", exception->file, exception->line );
-}
+};
 
 int main(int argc, char* argv[]){
 	unsigned char*	data;
-	unsigned int	read_byte;
+	PDC_size_t		read_byte;
 	FILE* fp;
 
 	PDC_Decoder*	decoder;
@@ -66,46 +66,52 @@ int main(int argc, char* argv[]){
 
 
 	printf("Hallo Picdatcom  new %ld \n", sizeof(unsigned long));
+	printf("sizeof(int) = %d \n", sizeof(int));
+	printf("sizeof(size_t) = %d \n", sizeof(size_t));
 
 	//printf("Hallo Picdatcom  new %d \n", sizeof(unsigned long));
 
 
 	data = (unsigned char*)malloc(data_read_plus);
-
-	fp = fopen(test_file, "rb");
-	if(fp == NULL){
-		printf("Can't open file \n");
-		return 0;
-	}
-	exception	= new_PDC_Exception();
-	decoder		= new_PDC_Decoder(exception);
-
-	do{
-		read_byte = fread(data, 1, data_read_plus, fp);
-		if(read_byte != 0){
-			PDC_Decoder_add_Data_01(exception, decoder, data, read_byte, PDC_DATA_MORE_DATA);
-			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
-				break;
-			}
-
-			PDC_Decoder_decode(exception, decoder);
-			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
-				break;
-			}
+	if(argc > 1){
+		fp = fopen(argv[1], "rb");
+		if(fp == NULL){
+			printf("Can't open file \n");
+			return EXIT_FAILURE;
 		}
-	}while(read_byte > 0) ;//data_read_plus);
-	fclose(fp);
+		exception	= new_PDC_Exception();
+		decoder		= new_PDC_Decoder(exception);
 
-	if(exception->code == PDC_EXCEPTION_NO_EXCEPTION){
-		PDC_Decoder_add_Data_01(exception, decoder, NULL, 0, PDC_DATA_END);
-		PDC_Decoder_decode(exception, decoder);
+		do{
+			read_byte = fread(data, 1, data_read_plus, fp);
+			if(read_byte != 0){
+				PDC_Decoder_add_Data_01(exception, decoder, data, read_byte, PDC_DATA_MORE_DATA);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					break;
+				}
+
+				PDC_Decoder_decode(exception, decoder);
+				if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+					break;
+				}
+			}
+		}while(read_byte > 0) ;//data_read_plus);
+		fclose(fp);
+
+		if(exception->code == PDC_EXCEPTION_NO_EXCEPTION){
+			PDC_Decoder_add_Data_01(exception, decoder, NULL, 0, PDC_DATA_END);
+			PDC_Decoder_decode(exception, decoder);
+		}
+		print(exception);
+
+		delete_PDC_Decoder(exception, decoder);
+		delete_PDC_Exception(exception);
+
+		free(data);
+		printf("Goodbye PicDatCom \n");
+	}else{
+		printf("You must add the Path to a JPEG2000 file.\n");
+		return EXIT_FAILURE;
 	}
-	print(exception);
-
-	delete_PDC_Decoder(exception, decoder);
-	delete_PDC_Exception(exception);
-
-	free(data);
-	printf("Goodbye PicDatCom \n");
-	return 0;
+	return EXIT_SUCCESS;
 }

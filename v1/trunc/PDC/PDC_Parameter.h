@@ -35,7 +35,8 @@
 #if defined(PDC_IMPORT)
 	#if defined(_MSC_VER)
 		#include <windows.h>
-		#define DLL extern "C" __declspec(dllimport)
+		#define DLL __declspec(dllimport)
+		//#define DLL extern "C" __declspec(dllimport)
 	#else
 		#define DLL
 	#endif
@@ -66,11 +67,12 @@ START_C
 	typedef uint32_t			PDC_uint32;
 	typedef uint8_t				PDC_decision;
 	typedef uint8_t				PDC_context;
-	typedef int				PDC_int;
+	typedef int					PDC_int;
 	typedef uint16_t			PDC_uint16;
 	typedef uint8_t				PDC_uint8;
 	typedef float				PDC_float32;
 	typedef uint8_t				PDC_bit;
+	typedef size_t				PDC_size_t;
 
 	typedef unsigned long POINTER;
 

@@ -657,11 +657,12 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v3(	PDC_Exception* exce
 	PDC_int		line_stride_float, out_size1, out_size2 ,lowh_size, lowv_size, highh_size, highv_size;
 	float 		*sub1_data, *sub2_data, *sub3_data, *sub4_data, *out_data1, *out_data2;
 	PDC_bool	evenhl, evenvl, evenhr, evenvr;
+	PDC_int		max_threads, pos_thread;
+	PDC_Threadcall *variable;
 
 	line_stride_float = resolution->tile_component->line_stride_float;
 
-	PDC_int		max_threads, pos_thread;
-	PDC_Threadcall *variable;
+
 
 	if(resolution->trx0 % 2 == 1){
 		evenhl = PDC_false;

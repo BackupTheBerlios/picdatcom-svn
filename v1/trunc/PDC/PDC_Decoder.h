@@ -120,8 +120,8 @@ START_C
 	 */
 	DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception	*exception,
 												PDC_Decoder		*decoder,
-												const PDC_uchar		*data,
-												PDC_uint32 		length,
+												const PDC_uchar	*data,
+												PDC_size_t 		length,
 												PDC_DECODER_DATA_END end);
 
 	/*

@@ -73,6 +73,11 @@ START_C
 	PDC_Subband* PDC_Subband_inverse_quantization(	PDC_Exception* exception,
 													PDC_Subband* subband);
 
+	
+	/*
+	 *	Only to compare it with other decoder. 
+	 */
+	void PDC_Subband_print(PDC_Exception *exception, PDC_Subband *subband, FILE *file, int component);
 
 STOP_C
 #endif

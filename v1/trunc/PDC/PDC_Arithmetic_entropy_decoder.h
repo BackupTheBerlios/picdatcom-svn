@@ -86,6 +86,13 @@ START_C
 															PDC_decision* default_MPS,
 															PDC_uint32* default_I);
 
+	/*
+	 *
+	 */
+	void PDC_Aed_save_01(	PDC_Exception* exception,
+							PDC_Arithmetic_entropy_decoder* decoder,
+							PDC_context context,
+							PDC_Buffer* in_buffer);
 
 STOP_C
 #endif

@@ -100,6 +100,7 @@ START_C
 														PDC_Precinct* precinct,
 														PDC_Buffer*	buffer,
 														PDC_uint layer_pos,
+														PDC_uint layer_max,
 														PDC_Decoder* decoder);
 
 	/*
@@ -119,5 +120,7 @@ START_C
 	 */
 	PDC_Precinct* PDC_Precinct_pop_unlock(	PDC_Exception* exception,
 											PDC_Precinct* precinct);
+
+	void PDC_Precinct_print_codeblock_01(PDC_Exception* exception, PDC_Precinct* precinct, FILE *file, int component, int resolution, int n, int m);
 STOP_C
 #endif

@@ -37,6 +37,8 @@ typedef struct str_PDC_Codeblock_list PDC_Codeblock_list;
 struct str_PDC_Worker_thread;
 typedef struct str_PDC_Worker_thread PDC_Worker_thread;
 
+typedef enum {MORE_CODEBLOCKS_EXCPECTED, NO_MORE_CODEBLOCKS_EXCPECTED} PDC_Worker_state;
+
 #include "PDC_Codeblock.h"
 #include "PDC_Exception.h"
 
@@ -45,6 +47,9 @@ struct str_PDC_Worker{
 	pthread_cond_t		*worker_wait;
 	PDC_Codeblock_list	*all_codeblock;
 	PDC_Codeblock_list	*open_work;
+	PDC_Worker_state	state;
+
+	PDC_Worker_thread	**threads;
 };
 
 struct str_PDC_Codeblock_list{
@@ -57,6 +62,7 @@ struct str_PDC_Worker_thread{
 	PDC_Exception 	*exception;
 	PDC_Worker		*worker;
 	PDC_uint		end;
+	pthread_t		thread_id;
 };
 
 /*
@@ -121,7 +127,17 @@ void delete_PDC_Worker_thread(	PDC_Exception *exception,
 /*
  *
  */
-void start_worker_01(void *in_info);
+void* start_worker_01(void *in_info);
+
+/*
+ *
+ */
+void set_PDC_Worker_state(PDC_Exception *exception, PDC_Worker *worker, PDC_Worker_state new_state);
+
+/*
+ *
+ */
+void PDC_Worker_wait_to_finish(PDC_Exception *exception, PDC_Worker *worker);
 
 STOP_C
 #endif /* PDC_WORKER_H_ */

@@ -38,7 +38,8 @@ typedef struct str_PDC_Exception PDC_Exception;
 					PDC_EXCEPTION_FALSE_SYMBOL				=  7,
 					PDC_EXCEPTION_UNKNOW_CODE				=  8,
 					PDC_EXCEPTION_DECODER					=  9,
-					PDC_EXCEPTION_DAMAGED_CODE				= 10 }PDC_EXCEPTION_TYPES;
+					PDC_EXCEPTION_DAMAGED_CODE				= 10,
+					PDC_EXCEPTION_THREAD					= 11 }PDC_EXCEPTION_TYPES;
 
 
 	#define MAX_NUMBER_OF_EXCEPTION 10
@@ -74,7 +75,7 @@ typedef struct str_PDC_Exception PDC_Exception;
 	/*
 	 *
 	 */
-	void delete_PDC_Exception(PDC_Exception* exception);
+	DLL void delete_PDC_Exception(PDC_Exception* exception);
 
 
 	/*

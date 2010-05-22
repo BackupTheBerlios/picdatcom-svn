@@ -36,21 +36,21 @@ START_C
 
 	struct str_PDC_Buffer{
 		PDC_uchar*				buffer;
-		PDC_uint32				length;
-		PDC_uint32				read_byte_pos;
-		PDC_uint32				write_byte_pos;
-		PDC_uint32				read_bit_pos;
-		PDC_uint32				write_bit_pos;
-		PDC_uint32				save_read_byte_pos;
-		PDC_uint32				save_write_byte_pos;
-		PDC_uint32				save_read_bit_pos;
+		PDC_size_t				length;
+		PDC_size_t				read_byte_pos;
+		PDC_size_t				write_byte_pos;
+		PDC_size_t				read_bit_pos;
+		PDC_size_t				write_bit_pos;
+		PDC_size_t				save_read_byte_pos;
+		PDC_size_t				save_write_byte_pos;
+		PDC_size_t				save_read_bit_pos;
 		PDC_buffer_end_state	end_state;
 	};
 
 	/*
 	 *	Length of the buffer
 	 */
-	PDC_Buffer* new_PDC_Buffer_1(PDC_Exception* exception, PDC_uint32 length);
+	PDC_Buffer* new_PDC_Buffer_1(PDC_Exception* exception, PDC_size_t length);
 
 	/*
 	 *	Length of the buffer
@@ -61,8 +61,8 @@ START_C
 	 *
 	 */
 	PDC_Buffer* new_PDC_Buffer_2(	PDC_Exception* exception,
-									PDC_uint32 length,
-									PDC_uint32 buffer_size,
+									PDC_size_t length,
+									PDC_size_t buffer_size,
 									PDC_uchar* buffer);
 
 	/*
@@ -79,7 +79,7 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Buffer* PDC_Buffer_realloc(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint32 plus_buffer_length);
+	PDC_Buffer* PDC_Buffer_realloc(PDC_Exception* exception, PDC_Buffer* buffer, PDC_size_t plus_buffer_length);
 
 	/*
 	 *
@@ -89,7 +89,7 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Exception* exception, PDC_Buffer* buffer, const PDC_uchar* byte, PDC_uint numbytes);
+	PDC_Buffer* PDC_Buffer_add_bytes_1(PDC_Exception* exception, PDC_Buffer* buffer, const PDC_uchar* byte, PDC_size_t numbytes);
 
 	/*
 	 *
@@ -114,12 +114,12 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Buffer* PDC_Buffer_read_uint8_02(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint8 *value, PDC_uint32 number);
+	PDC_Buffer* PDC_Buffer_read_uint8_02(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint8 *value, PDC_size_t number);
 
 	/*
 	 *
 	 */
-	PDC_Buffer* PDC_Buffer_read_uint8_03(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint8 *value, PDC_uint32 position);
+	PDC_Buffer* PDC_Buffer_read_uint8_03(PDC_Exception* exception, PDC_Buffer* buffer, PDC_uint8 *value, PDC_size_t position);
 
 	/*
 	 *
@@ -169,7 +169,7 @@ START_C
 	 */
 	PDC_uint PDC_Buffer_read_bits(	PDC_Exception* exception,
 									PDC_Buffer* buffer,
-									PDC_uint number_bits);
+									PDC_size_t number_bits);
 
 	/*
 	 *
@@ -183,7 +183,7 @@ START_C
 	void PDC_Buffer_copy_bytes_01(	PDC_Exception* exception,
 									PDC_Buffer* buffer_source,
 									PDC_Buffer* buffer_destination,
-									PDC_uint num_bytes);
+									PDC_size_t num_bytes);
 
 STOP_C
 

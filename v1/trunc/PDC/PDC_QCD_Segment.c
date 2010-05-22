@@ -106,7 +106,7 @@ PDC_QCD_Segment* PDC_QCD_Segment_read_buffer(	PDC_Exception* exception,
 												PDC_Buffer* buffer,
 												PDC_COD_Segment* cod_segment)
 {
-	PDC_uint32	read_byte_pos;
+	PDC_size_t	read_byte_pos;
 	PDC_uint8	quantization, temp;
 	PDC_uint32	malloc_size, number_subbands, pos_subband;
 	PDC_uint16	exponent, mantissa, temp_exponent, NL, nb;
@@ -210,7 +210,7 @@ PDC_QCD_Segment* PDC_QCD_Segment_read_buffer_01(PDC_Exception* exception,
 												PDC_COD_Segment* cod_segment,
 												PDC_Decoder* decoder)
 {
-	PDC_uint32	read_byte_pos;
+	PDC_size_t	read_byte_pos;
 	PDC_uint8	quantization, temp;
 	PDC_uint32	malloc_size, number_subbands, pos_subband;
 	PDC_uint16	exponent, mantissa, temp_exponent, NL, nb;

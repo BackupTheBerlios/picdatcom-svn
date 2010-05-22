@@ -31,8 +31,6 @@ PDC_Tile* new_PDC_Tile_01(PDC_Exception* exception, PDC_uint32 t, PDC_Picture* p
 	PDC_Tile* tile						= NULL;
 	PDC_SIZ_Segment* siz_segment		= picture->siz_segment;
 	PDC_Tile_Component* tile_component	= NULL;
-	PDC_int	max_thread					= PDC_max_thread();
-	PDC_int	pos_thread;
 
 	tile = malloc(sizeof(PDC_Tile));
 	if(tile == NULL){
@@ -90,16 +88,6 @@ PDC_Tile* new_PDC_Tile_01(PDC_Exception* exception, PDC_uint32 t, PDC_Picture* p
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		delete_PDC_Tile(exception, tile);
 		return NULL;
-	}
-
-	tile->worker_threads = (PDC_Worker_thread**)malloc(sizeof(PDC_Worker_thread*) * max_thread);
-	if(tile->worker_threads == NULL){
-		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
-		delete_PDC_Tile(exception, tile);
-		return NULL;
-	}
-	for(pos_thread = 0; pos_thread < max_thread; pos_thread += 1){
-		tile->worker_threads[pos_thread] = NULL;
 	}
 
 	return tile;
@@ -235,7 +223,7 @@ PDC_Tile* PDC_Tile_read_SOD_02(	PDC_Exception* exception,
 		}
 
 
-		PDC_Tile_decode_Package_01(exception, tile, tile->cod_segment);
+		//PDC_Tile_decode_Package_01(exception, tile, tile->cod_segment);
 		if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 			return NULL;
 		}
@@ -378,6 +366,55 @@ PDC_Tile* PDC_Tile_read_Packageheader(	PDC_Exception* exception,
 /*
  *
  */
+PDC_Tile* PDC_Tile_print_Packageheader_02(	PDC_Exception* exception,
+											PDC_Tile* tile,
+											PDC_COD_Segment* cod_segment)
+{
+	PDC_uint r, Nmax, L, i, Csiz;
+	PDC_Tile_Component*	component;
+	PDC_Resolution*		resolution;
+	FILE *file;
+	PDC_Subband* subband;
+	Nmax			= cod_segment->number_of_decompostion_levels;
+	L				= cod_segment->number_of_layer;
+	Csiz			= tile->picture->siz_segment->Csiz;
+
+	file = fopen("codeblock_result", "wb");
+
+	for(i = 0; i < Csiz; i += 1){
+		for(r = 0; r <= Nmax; r += 1){
+			component = (PDC_Tile_Component*)PDC_Pointer_Buffer_get_pointer(exception,
+																			tile->tile_component,
+																			i);
+			if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+				fclose(file);
+				return tile;
+			}
+			resolution = PDC_Tile_Component_get_Resolution(	exception,
+															component,
+															r);
+			if(resolution->r == 0){
+				 subband = resolution->subband[0];
+				PDC_Subband_print(exception, subband, file, i);
+			}else{
+				subband = resolution->subband[0];
+				PDC_Subband_print(exception, subband, file, i);
+				subband = resolution->subband[1];
+				PDC_Subband_print(exception, subband, file, i);
+				subband = resolution->subband[2];
+				PDC_Subband_print(exception, subband, file, i);
+			}
+			
+		}
+	}
+
+	fclose(file);
+	return tile;
+}
+
+/*
+ *
+ */
 PDC_Tile* PDC_Tile_read_Packageheader_02(	PDC_Exception* exception,
 											PDC_Tile* tile,
 											PDC_COD_Segment* cod_segment,
@@ -410,6 +447,7 @@ PDC_Tile* PDC_Tile_read_Packageheader_02(	PDC_Exception* exception,
 															r,
 															k,
 															l,
+															L - 1,
 															decoder);
 							if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 								tile->k	= k;
@@ -448,6 +486,11 @@ PDC_Tile* PDC_Tile_read_Packageheader_02(	PDC_Exception* exception,
 			PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
 			break;
 	}
+	set_PDC_Worker_state(exception, tile->worker, NO_MORE_CODEBLOCKS_EXCPECTED);
+	PDC_Worker_wait_to_finish(exception, tile->worker);
+	PDC_Tile_print_Packageheader_02(	exception,
+										tile,
+										cod_segment);
 	return tile;
 }
 
@@ -603,6 +646,7 @@ void PDC_Tile_read_package_header_02(	PDC_Exception* exception,
 										PDC_uint resolution_pos,
 										PDC_uint precinct_pos,
 										PDC_uint layer_pos,
+										PDC_uint layer_max,
 										PDC_Decoder* decoder)
 {
 	PDC_Tile_Component*	component;
@@ -632,12 +676,60 @@ void PDC_Tile_read_package_header_02(	PDC_Exception* exception,
 										precinct,
 										buffer,
 										layer_pos,
+										layer_max,
 										decoder);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 		return;
 	}
 	if(decoder->data_situation == PDC_WAIT_FOR_DATA){
 		return ;
+	}
+}
+
+/*
+ *
+ */
+void PDC_Tile_print_package_header_02(	PDC_Exception* exception,
+										PDC_Tile* tile,
+										FILE *file,
+										PDC_uint component_pos,
+										PDC_uint resolution_pos,
+										PDC_uint precinct_pos,
+										int n, 
+										int m)
+{
+	PDC_Tile_Component*	component;
+	PDC_Resolution*		resolution;
+	PDC_Precinct*		precinct;
+	component = (PDC_Tile_Component*)PDC_Pointer_Buffer_get_pointer(exception,
+																	tile->tile_component,
+																	component_pos);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return;
+	}
+	resolution = PDC_Tile_Component_get_Resolution(	exception,
+													component,
+													resolution_pos);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return;
+	}
+
+	precinct = PDC_Resolution_get_precinct(	exception,
+											resolution,
+											precinct_pos);
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return;
+	}
+	PDC_Precinct_print_codeblock_01(	exception, 
+										precinct, 
+										file, 
+										component_pos, 
+										resolution_pos, 
+										n, 
+										m);
+	
+	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
+		return;
 	}
 }
 
@@ -809,9 +901,8 @@ PDC_Tile* PDC_Tile_get_RGB_float(	PDC_Exception *exception,
 {
 	PDC_Tile_Component* tile_component_Y, *tile_component_Cb, *tile_component_Cr;
 	PDC_float32 red, green, blue, Y, Cb, Cr, *ptr_Y, *ptr_Cb, *ptr_Cr, normalisierer, *out;
-	PDC_uint	in_point, out_point, out_point_plus, mx0, mx1, my0, my1, x, y,
-				msizex;
-	PDC_int		tile_mx0, tile_mx1, tile_my0, tile_my1, stride;
+	PDC_uint	in_point, out_point, out_point_plus, mx0, mx1, my0, my1, msizex;
+	PDC_int		tile_mx0, tile_mx1, tile_my0, tile_my1, stride, x, y;
 
 	normalisierer	= 255.0f;
 	out				= out_vector;
@@ -910,10 +1001,9 @@ PDC_Tile* PDC_Tile_get_RGB_int(		PDC_Exception *exception,
 {
 	PDC_Tile_Component* tile_component_Y, *tile_component_Cb, *tile_component_Cr;
 	PDC_float32 red, green, blue, Y, Cb, Cr, *ptr_Y, *ptr_Cb, *ptr_Cr;
-	PDC_uint	in_point, out_point, out_point_plus, mx0, mx1, my0, my1, x, y,
-				msizex;
+	PDC_uint	in_point, out_point, out_point_plus, mx0, mx1, my0, my1, msizex;
 	PDC_uint32	*out;
-	PDC_int		tile_mx0, tile_mx1, tile_my0, tile_my1, stride;
+	PDC_int		tile_mx0, tile_mx1, tile_my0, tile_my1, stride, x, y;
 
 	out				= out_vector;
 

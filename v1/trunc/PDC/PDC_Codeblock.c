@@ -22,7 +22,9 @@
 
 START_C
 
+
 extern FILE* DEBUG_FILE;
+
 extern FILE* DEBUG_FILE2;
 extern int uwe_count;
 
@@ -204,7 +206,8 @@ PDC_Codeblock* new_PDC_Codeblock_01(PDC_Exception* exception)
 	codeblock->significant_pos_shift		= 0;
 	codeblock->mark							= MARK_00;
 	codeblock->has_job						= PDC_false;
-	codeblock->current_thread				= 0;
+	codeblock->current_thread				= pthread_self();
+	codeblock->root_thread					= codeblock->current_thread;
 
 	codeblock->all_list = new_PDC_Codeblock_list_02(exception, codeblock);
 	if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
@@ -330,6 +333,8 @@ PDC_Codeblock* PDC_Codeblock_init_bit_modeling_variable(PDC_Exception* exception
 	size1 = size_x_bit * codeblock->num_street;
 
 	size2 = size_x * size_y;
+	codeblock->extra1 = malloc(size2 * 4); //only for tests;
+	codeblock->extra2 = malloc(size2 * 4); //only for tests;
 	codeblock->value8		= malloc(size2);
 	if(codeblock->value8 == NULL){
 		delete_PDC_Codeblock(exception, codeblock);
@@ -338,6 +343,8 @@ PDC_Codeblock* PDC_Codeblock_init_bit_modeling_variable(PDC_Exception* exception
 	};
 	for(size_pos = 0; size_pos < size2; size_pos += 1){
 		codeblock->value8[size_pos] = 0;
+		codeblock->extra1[size_pos] = 0;
+		codeblock->extra2[size_pos]	= 0;
 	}
 	codeblock->value_size = STATE_BIT_8;
 
@@ -680,9 +687,63 @@ PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *ex
 	return codeblock;
 }
 
+
+struct daten{
+	int size, component, resolution, n, m, x, y;
+} ;
+
+void print_codeblock_02(PDC_Codeblock *codeblock,FILE *file, int component, int resolution, int n, int m)
+{
+	int posx, posy, sizex, sizey, size_base, out, pos;
+	PDC_uint sign, pos_sign_x, pos_sign_x_rest, pos_street, street_rest, help;
+	struct daten PDC;
+
+	
+
+	sizex = codeblock->cx1 - codeblock->cx0;
+	sizey = codeblock->cy1 - codeblock->cy0;
+	size_base = PDC_i_ceiling(sizex, 8);
+
+	// fprintf(file,"%d%d%d%d%d%d%d",28 + sizex * sizey * 4; component, resolution, n, m, sizex, sizey);
+	PDC.size		= 28 + sizex * sizey * 4 * 3;
+	PDC.component	= component;
+	PDC.n			= n;
+	PDC.m			= m;
+	PDC.x			= sizex;
+	PDC.y			= sizey;
+	PDC.resolution	= resolution;
+
+	fwrite(&PDC, sizeof(struct daten), 1, file);
+
+	for(posy = 0, pos = 0; posy < sizey; posy += 1){
+		pos_street = posy / 4;
+		street_rest = posy % 4;
+		for(posx = 0; posx < sizex; posx += 1){
+			pos_sign_x		= posx / 8;
+			pos_sign_x_rest	= posx % 8;
+			if(codeblock->value_size == STATE_BIT_8){
+				out = codeblock->value8[posy * sizex + posx];
+				out <<= 23;
+			}else{
+				out = codeblock->value16[posy * sizex + posx];
+				out <<= 15;				
+			}
+			sign = codeblock->sign[pos_street * size_base + pos_sign_x];
+			help = street_rest + pos_sign_x_rest * 4;
+			if((sign & (1 << help)) != 0){
+				out |= 1 << 31;
+			}
+			fwrite(&out, 4, 1,file);
+			fwrite(&(codeblock->extra1[pos]), 4, 1, file);
+			fwrite(&(codeblock->extra2[pos]), 4, 1, file);
+			pos += 1;
+		}
+	}
+}
+
 void print_codeblock(PDC_Codeblock *codeblock, int count){
-	int posx, posy, sizex, sizey, pos_street, size_base, pos_base, pos;;
-	PDC_uint sign, help;
+	int posx, posy, sizex, sizey, size_base, pos_base, pos;
+	PDC_uint sign, help, pos_street;
 
 	sizex = codeblock->cx1 - codeblock->cx0;
 	sizey = codeblock->cy1 - codeblock->cy0;
@@ -764,6 +825,8 @@ void print_codeblock(PDC_Codeblock *codeblock, int count){
 
 #define UWE_COUNT_BASE 16
 
+
+extern unsigned int DOIT;
 /*
  *
  */
@@ -774,6 +837,11 @@ PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode_01( PDC_Exception 
 
 	codeword_list			= codeblock->write_codeword;
 
+	if(codeblock->subband->resolution->r == 0 && codeblock->subband->resolution->tile_component->pos == 0){
+		DOIT = 0;
+	}else{
+		DOIT = 1;
+	}
 
 	if(codeword_list != NULL){
 		done_codingpasses		= codeword_list->coding_pass_next;
@@ -895,8 +963,14 @@ PDC_Codeblock* PDC_Codeblock_reset_is_coded(PDC_Exception* exception, PDC_Codebl
 									codeblock->sign_context_use				= sign_context_use;					\
 									return PDC_false;
 
-
-
+#undef SETEXTRAS0
+#undef SETEXTRAS1
+#undef SETEXTRAS2
+#undef SETEXTRAS3
+#define SETEXTRAS0(codeblock, layer, extra, decoder) set_extra(codeblock, ((size_x * (pos_y_base + 0)) + pos_x), layer, 1, extra, decoder)
+#define SETEXTRAS1(codeblock, layer, extra, decoder) set_extra(codeblock, ((size_x * (pos_y_base + 1)) + pos_x), layer, 1, extra, decoder)
+#define SETEXTRAS2(codeblock, layer, extra, decoder) set_extra(codeblock, ((size_x * (pos_y_base + 2)) + pos_x), layer, 1, extra, decoder)
+#define SETEXTRAS3(codeblock, layer, extra, decoder) set_extra(codeblock, ((size_x * (pos_y_base + 3)) + pos_x), layer, 1, extra, decoder)
 /*
  *
  */
@@ -919,6 +993,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 	PDC_uint32		significant_temp, is_coded_temp, sign_temp, shift, significant_pos_x, sign_temp2;
 	PDC_uint8		*PDK_context_states;
 
+	int		temp = 0; //only for tests
 
 	significant 				= 0;
 	is_coded					= 0;
@@ -1046,6 +1121,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_02)
 										}
+										SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x1;
@@ -1090,6 +1166,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_04)
 										}
+										SETEXTRAS1(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x2;
@@ -1134,6 +1211,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_06)
 										}
+										SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x4;
@@ -1178,6 +1256,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_08)
 										}
+										SETEXTRAS3(codeblock, bit_plane,  temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x8;
@@ -1236,6 +1315,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_10)
 										}
+										SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x10;
@@ -1280,6 +1360,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_12)
 										}
+										SETEXTRAS1(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x20;
@@ -1324,6 +1405,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_14)
 										}
+										SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x40;
@@ -1368,6 +1450,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_16)
 										}
+										SETEXTRAS3(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x80;
@@ -1428,6 +1511,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_18)
 										}
+										SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x100;
@@ -1472,6 +1556,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_20)
 										}
+										SETEXTRAS1(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x0200;
@@ -1516,6 +1601,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_22)
 										}
+										SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x400;
@@ -1560,6 +1646,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_24)
 										}
+										SETEXTRAS3(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x800;
@@ -1617,6 +1704,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_26)
 										}
+										SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x1000;
@@ -1661,6 +1749,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_28)
 										}
+										SETEXTRAS1(codeblock, bit_plane,  temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x2000;
@@ -1705,6 +1794,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_30)
 										}
+										SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x4000;
@@ -1749,6 +1839,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_32)
 										}
+										SETEXTRAS3(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x8000;
@@ -1810,6 +1901,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_34)
 										}
+										SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x10000;
@@ -1854,6 +1946,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_36)
 										}
+										SETEXTRAS1(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x20000;
@@ -1898,6 +1991,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_38)
 										}
+										SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x40000;
@@ -1942,6 +2036,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_40)
 										}
+										SETEXTRAS3(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x80000;
@@ -2000,6 +2095,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_42)
 										}
+										SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x100000;
@@ -2044,6 +2140,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_44)
 										}
+										SETEXTRAS1(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x200000;
@@ -2088,6 +2185,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_46)
 										}
+										SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x400000;
@@ -2132,6 +2230,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_48)
 										}
+										SETEXTRAS3(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x800000;
@@ -2191,6 +2290,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_50)
 										}
+										SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x1000000;
@@ -2235,6 +2335,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_52)
 										}
+										SETEXTRAS1(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x2000000;
@@ -2279,6 +2380,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_54)
 										}
+										SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x4000000;
@@ -2323,6 +2425,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_56)
 										}
+										SETEXTRAS3(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x8000000;
@@ -2380,6 +2483,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_58)
 										}
+										SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x10000000;
@@ -2424,6 +2528,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_60)
 										}
+										SETEXTRAS1(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x20000000;
@@ -2468,6 +2573,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_62)
 										}
+										SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x40000000;
@@ -2512,6 +2618,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 										if(decoder->decode_state != DECODE_SUCCESFULL){
 											SIGNIFICANT_SAVE(MARK_64)
 										}
+										SETEXTRAS3(codeblock, bit_plane, temp, decoder); // only for test
 										sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 										if(sign_temp != 0){
 											sign |= 0x80000000;
@@ -2602,6 +2709,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 								codeblock->sign_temp		= sign_temp;
 								SIGNIFICANT_SAVE(MARK_66)
 							}
+							SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 							sign_temp2 = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 							if(sign_temp2 != 0){
 								sign_temp |= 0x1;
@@ -2654,6 +2762,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 								codeblock->sign_temp		= sign_temp;
 								SIGNIFICANT_SAVE(MARK_68)
 							}
+							SETEXTRAS1(codeblock, bit_plane, temp, decoder); // only for test
 							sign_temp2 = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 							if(sign_temp2 != 0){
 								sign_temp |= 0x2;
@@ -2706,6 +2815,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 								codeblock->sign_temp		= sign_temp;
 								SIGNIFICANT_SAVE(MARK_70)
 							}
+							SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 							sign_temp2 = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 							if(sign_temp2 != 0){
 								sign_temp |= 0x4;
@@ -2758,6 +2868,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 								codeblock->sign_temp		= sign_temp;
 								SIGNIFICANT_SAVE(MARK_72)
 							}
+							SETEXTRAS3(codeblock, bit_plane, temp, decoder); // only for test
 							sign_temp2 = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 							if(sign_temp2 != 0){
 								sign_temp |= 0x8;
@@ -2879,6 +2990,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 							codeblock->sign_temp		= sign_temp;
 							SIGNIFICANT_SAVE(MARK_02)
 						}
+						SETEXTRAS0(codeblock, bit_plane, temp, decoder); // only for test
 						sign_temp2 = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 						if(sign_temp2 != 0){
 							sign_temp |= 0x1;
@@ -2929,6 +3041,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 							codeblock->sign_temp		= sign_temp;
 							SIGNIFICANT_SAVE(MARK_04)
 						}
+						SETEXTRAS1(codeblock, bit_plane, temp, decoder); // only for test
 						sign_temp2 = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 						if(sign_temp2 != 0){
 							sign_temp |= 0x2;
@@ -2979,6 +3092,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 							codeblock->sign_temp		= sign_temp;
 							SIGNIFICANT_SAVE(MARK_06)
 						}
+						SETEXTRAS2(codeblock, bit_plane, temp, decoder); // only for test
 						sign_temp2 = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 						if(sign_temp2 != 0){
 							sign_temp |= 0x4;
@@ -3029,6 +3143,7 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 							codeblock->sign_temp		= sign_temp;
 							SIGNIFICANT_SAVE(MARK_08)
 						}
+						SETEXTRAS3(codeblock, bit_plane, temp, decoder); // only for test
 						sign_temp2 = decoder->D ^ (0x1 & XORbit[sign_context_use]);
 						if(sign_temp2 != 0){
 							sign_temp |= 0x8;
@@ -3075,16 +3190,24 @@ PDC_bool PDC_Codeblock_significance_decoding_pass(PDC_Exception* exception, PDC_
 	return back;
 }
 
+#undef SETEXTRAS0
+#undef SETEXTRAS1
+#undef SETEXTRAS2
+#undef SETEXTRAS3
+#define SETEXTRAS0 set_extra(codeblock, ((size_x * (pos_y_base + 0)) + pos_x), bit_plane, 3, temp, decoder)
+#define SETEXTRAS1 set_extra(codeblock, ((size_x * (pos_y_base + 1)) + pos_x), bit_plane, 3, temp, decoder)
+#define SETEXTRAS2 set_extra(codeblock, ((size_x * (pos_y_base + 2)) + pos_x), bit_plane, 3, temp, decoder)
+#define SETEXTRAS3 set_extra(codeblock, ((size_x * (pos_y_base + 3)) + pos_x), bit_plane, 3, temp, decoder)
 /*
  *
  */
 PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC_Codeblock* codeblock, PDC_Buffer* codeword)
 {
-	PDC_uint		max_street, max_street_rest, pos_street, pos_x, pos_x_end, pos_y_base, pos_y,
+	PDC_int			max_street, max_street_rest, pos_street, pos_x, pos_x_end, pos_y_base, pos_y,
 					significant_size, significant_pos, sign_context_size_x,
 					significant_pos_x, context_size_y, size_x, size_y, size_y_rest,
 					sign_context_size_y, significant_pos_shift,
-					pos_value, sign_pos_base, runlengthpos, bit_plane;
+					pos_value, sign_pos_base, runlengthpos, bit_plane, temp_value;
 
 	PDC_uint32		*sign, sign_value,
 					sign_value_temp, *significant, significant_value, significant_value_temp,
@@ -3098,6 +3221,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 	PDC_uint8		*value8, *context_base_address1, *context, *sign_context,
 					*sign_context_address1, *sign_context_address2, *sign_context_address3, *BDK_context_states;
 	PDC_STATE_BIT	value_size;
+
+	int temp = 0; //only for tests.
 
 	PDC_Arithmetic_entropy_decoder *decoder;
 
@@ -3154,6 +3279,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 		significant_value		= significant[significant_pos + significant_pos_x];
 		is_coded_value			= is_coded[significant_pos + significant_pos_x];
 
+		temp_value				= (2 * pos_street) + (pos_x - 1) * sign_context_size_y - 1;
 		sign_context_address2	= sign_context + (2 * pos_street) + (pos_x - 1) * sign_context_size_y - 1;
 		sign_context_address3	= sign_context_address2 + sign_context_size_y;
 
@@ -3313,6 +3439,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 									*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 									return codeblock;
 								}
+								SETEXTRAS0; // only for test
 
 								sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 								if(sign_temp != 0){
@@ -3367,6 +3494,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 									return codeblock;
 								}
 
+								SETEXTRAS1; // only for test
 								sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 								if(sign_temp != 0){
 									sign_value_temp |= 0x02;
@@ -3419,7 +3547,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 									*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 									return codeblock;
 								}
-
+								SETEXTRAS2; // only for test
 								sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 								if(sign_temp != 0){
 									sign_value_temp |= 0x04;
@@ -3472,7 +3600,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 									*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 									return codeblock;
 								}
-
+								SETEXTRAS3; // only for test
 								sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 								if(sign_temp != 0){
 									sign_value_temp |= 0x08;
@@ -3565,7 +3693,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 										*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 										return codeblock;
 									}
-
+									SETEXTRAS0; // only for test
 									sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 									if(sign_temp != 0){
 										sign_value_temp |= 0x01;
@@ -3645,7 +3773,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 										*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 										return codeblock;
 									}
-
+									SETEXTRAS1; // only for test
 									sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 									if(sign_temp != 0){
 										sign_value_temp |= 0x02;
@@ -3680,7 +3808,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 									*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 									return codeblock;
 								}
-
+								
 								pos_y += 1;
 								if(decoder->D != 0){
 									pos_value = (size_x * (pos_y_base + 2)) + pos_x;
@@ -3726,7 +3854,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 										*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 										return codeblock;
 									}
-
+									SETEXTRAS2; // only for test
 									sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 									if(sign_temp != 0){
 										sign_value_temp |= 0x04;
@@ -3808,7 +3936,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 										*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 										return codeblock;
 									}
-
+									pos_value = (size_x * (pos_y_base + 3)) + pos_x;
+									SETEXTRAS3; // only for test
 									sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 									if(sign_temp != 0){
 										sign_value_temp |= 0x08;
@@ -3991,7 +4120,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 									*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 									return codeblock;
 								}
-
+								pos_value = (size_x * (pos_y_base + 1)) + pos_x;
+								SETEXTRAS0; // only for test
 								sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 								if(sign_temp != 0){
 									sign_value_temp		|= 0x01;
@@ -4074,7 +4204,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 									*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 									return codeblock;
 								}
-
+								pos_value = (size_x * (pos_y_base + 1)) + pos_x;
+								SETEXTRAS1; // only for test
 								sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 								if(sign_temp != 0){
 									sign_value_temp		|= 0x02;
@@ -4158,7 +4289,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 									*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 									return codeblock;
 								}
-
+								pos_value = (size_x * (pos_y_base + 1)) + pos_x;
+								SETEXTRAS2; // only for test
 								sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 								if(sign_temp != 0){
 									sign_value_temp		|= 0x04;
@@ -4240,7 +4372,7 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 									*((PDC_uint32*)sign_context_address3) = sign_context_value3;
 									return codeblock;
 								}
-
+								SETEXTRAS3; // only for test
 								decoder = PDC_Aed_decode_01(exception, decoder, PDC_context_signstates[sign_context_value], codeword);
 								sign_temp = decoder->D ^ (0x1 & XORbit[sign_context_value]);
 								if(sign_temp != 0){
@@ -4318,6 +4450,8 @@ PDC_Codeblock* PDC_Codeblock_cleanup_decoding_pass(PDC_Exception* exception, PDC
 	first_refinement[significant_pos + significant_pos_x]	= first_refinement_value;			\
 	return codeblock;
 
+
+#define SETEXTRAS set_extra(codeblock, pos_value, bit_plane, 2, temp, decoder)
 /*
  *
  */
@@ -4337,6 +4471,8 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 	PDC_uint8		*significant_context_base_address, *significant_context, *value8;
 	PDC_Arithmetic_entropy_decoder *decoder;
 	PDC_uint16		*value16;
+
+	int temp = 0; //Only for tests.
 
 	value32						= NULL;
 	value16						= NULL;
@@ -4470,6 +4606,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4507,6 +4644,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4544,6 +4682,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4581,6 +4720,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 							}
@@ -4620,6 +4760,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4657,6 +4798,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4694,6 +4836,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4731,6 +4874,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 							}
@@ -4772,6 +4916,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4809,6 +4954,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4846,6 +4992,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4883,6 +5030,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 							}
@@ -4922,6 +5070,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4959,6 +5108,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -4996,6 +5146,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5033,6 +5184,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 							}
@@ -5076,6 +5228,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5113,6 +5266,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5150,6 +5304,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5187,6 +5342,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 							}
@@ -5226,6 +5382,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5264,6 +5421,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5301,6 +5459,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5338,6 +5497,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 							}
@@ -5379,6 +5539,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5416,6 +5577,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5453,6 +5615,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5490,6 +5653,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 							}
@@ -5529,6 +5693,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5566,6 +5731,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5603,6 +5769,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 
@@ -5640,6 +5807,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 										}else if(value_size == STATE_BIT_32){
 											value32[pos_value]	|= 1 << bit_plane;
 										}
+										SETEXTRAS; // only for test
 									}
 								}
 							}
@@ -5709,6 +5877,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 								}else if(value_size == STATE_BIT_32){
 									value32[pos_value]	|= 1 << bit_plane;
 								}
+								SETEXTRAS; // only for test
 							}
 						}
 
@@ -5752,6 +5921,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 								}else if(value_size == STATE_BIT_32){
 									value32[pos_value]	|= 1 << bit_plane;
 								}
+								SETEXTRAS; // only for test
 							}
 						}
 
@@ -5795,6 +5965,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 								}else if(value_size == STATE_BIT_32){
 									value32[pos_value]	|= 1 << bit_plane;
 								}
+								SETEXTRAS; // only for test
 							}
 						}
 
@@ -5838,6 +6009,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 								}else if(value_size == STATE_BIT_32){
 									value32[pos_value]	|= 1 << bit_plane;
 								}
+								SETEXTRAS; // only for test
 							}
 						}
 						first_refinement_value	|= (first_refinement_value_temp & 0xF) << shift_temp;
@@ -5960,6 +6132,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else if(value_size == STATE_BIT_32){
 										value32[pos_value]	|= 1 << bit_plane;
 									}
+									SETEXTRAS; // only for test
 								}
 							}
 							pos_y = 4;
@@ -6008,6 +6181,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else if(value_size == STATE_BIT_32){
 										value32[pos_value]	|= 1 << bit_plane;
 									}
+									SETEXTRAS; // only for test
 								}
 							}
 							pos_y = 8;
@@ -6057,6 +6231,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else if(value_size == STATE_BIT_32){
 										value32[pos_value]	|= 1 << bit_plane;
 									}
+									SETEXTRAS; // only for test
 								}
 							}
 							pos_y = 12;
@@ -6106,6 +6281,7 @@ PDC_Codeblock* PDC_Codeblock_magnitude_decoding_pass(PDC_Exception* exception, P
 									}else if(value_size == STATE_BIT_32){
 										value32[pos_value]	|= 1 << bit_plane;
 									}
+									SETEXTRAS; // only for test
 								}
 							}
 							pos_y = 0;
@@ -6491,6 +6667,30 @@ PDC_Codeblock* PDC_Codeblock_unlock(PDC_Exception* exception, PDC_Codeblock* cod
 {
 	pthread_mutex_unlock(codeblock->in_work);
 	return codeblock;
+}
+
+/*
+ *
+ */
+PDC_Codeblock* PDC_Codeblock_set_false_has_job(PDC_Exception* exception, PDC_Codeblock* codeblock)
+{
+	codeblock->has_job = PDC_false;
+	return codeblock;
+}
+
+void set_extra(PDC_Codeblock *codeblock, int pos, int layer,int codingpasstype, int extra, PDC_Arithmetic_entropy_decoder *decoder)
+{
+	int shift;
+
+	if(codeblock->value_size == STATE_BIT_8){
+		shift = (7 - layer) * 2;
+	}else{
+		shift = (15 - layer) * 2;
+	}
+	codeblock->extra1[pos] |= codingpasstype << shift;
+	if(shift == 0){
+		codeblock->extra2[pos] = decoder->a_register;
+	}
 }
 
 STOP_C

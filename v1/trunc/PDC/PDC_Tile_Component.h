@@ -51,7 +51,7 @@ START_C
 		PDC_int				image_my1;
 		PDC_int				msizex;
 		PDC_int				msizey;
-
+		PDC_int				pos;
 		/*
 		 * Pointer to the data with the data for the transformation.
 		 */
@@ -82,7 +82,7 @@ START_C
 	/*
 	 *
 	 */
-	PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile* tile, PDC_uint32 pos);
+	PDC_Tile_Component* new_PDC_Tile_Component_01(PDC_Exception* exception, PDC_Tile* tile, PDC_int pos);
 
 	/*
 	 *

@@ -22,7 +22,7 @@
 
 START_C
 
-extern FILE* DEBUG_FILE;
+//extern FILE* DEBUG_FILE;
 
 /*
  *
@@ -498,6 +498,7 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 													PDC_Precinct* precinct,
 													PDC_Buffer*	buffer,
 													PDC_uint layer_pos,
+													PDC_uint layer_max,
 													PDC_Decoder* decoder)
 {
 	PDC_bit				bit;
@@ -576,6 +577,7 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 					if(exception->code != PDC_EXCEPTION_NO_EXCEPTION){
 						PDC_Buffer_pop_state(exception, buffer);
 						PDC_Precinct_pop(exception, precinct);
+						PDC_Codeblock_unlock(exception, codeblock);
 						return precinct;
 					}
 
@@ -593,13 +595,14 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 							if(buffer->end_state == END_OF_BUFFER){
 								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}else{
 								PDC_Exception_unset_exception(exception);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}
-							return precinct;
 						}
 						if(codeblock->codeblock_inclusion == PDC_true){
 							layer_inclusion = PDC_true;
@@ -613,13 +616,14 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 							if(buffer->end_state == END_OF_BUFFER){
 								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}else{
 								PDC_Exception_unset_exception(exception);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}
-							return precinct;
 						}
 
 						if(bit != 0){
@@ -644,10 +648,12 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 								if(buffer->end_state == END_OF_BUFFER){
 									PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									PDC_Codeblock_unlock(exception, codeblock);
 									return precinct;
 								}else{
 									PDC_Exception_unset_exception(exception);
 									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									PDC_Codeblock_unlock(exception, codeblock);
 									return precinct;
 								}
 								return precinct;
@@ -663,13 +669,14 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 								if(buffer->end_state == END_OF_BUFFER){
 									PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									PDC_Codeblock_unlock(exception, codeblock);
 									return precinct;
 								}else{
 									PDC_Exception_unset_exception(exception);
 									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									PDC_Codeblock_unlock(exception, codeblock);
 									return precinct;
 								}
-								return precinct;
 							}
 						}
 						number_of_codingpasses = PDC_Buffer_get_number_of_codingpasses(exception, buffer);
@@ -679,13 +686,14 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 							if(buffer->end_state == END_OF_BUFFER){
 								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}else{
 								PDC_Exception_unset_exception(exception);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}
-							return precinct;
 						}
 
 						number_of_codeword_segment = PDC_Codeblock_set_number_of_coding_passes(	exception,
@@ -698,13 +706,15 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 							if(buffer->end_state == END_OF_BUFFER){
 								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}else{
 								PDC_Exception_unset_exception(exception);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}
-							return precinct;
+							
 						}
 						codeblock->number_of_codingpasses		= number_of_codingpasses;
 						codeblock->number_of_codeword_segment	= number_of_codeword_segment;
@@ -718,13 +728,14 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 							if(buffer->end_state == END_OF_BUFFER){
 								PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}else{
 								PDC_Exception_unset_exception(exception);
 								decoder->data_situation = PDC_WAIT_FOR_DATA;
+								PDC_Codeblock_unlock(exception, codeblock);
 								return precinct;
 							}
-							return precinct;
 						}
 						for(codeword_segment_pos = 0; codeword_segment_pos < number_of_codeword_segment; codeword_segment_pos++){
 							codeword_list = codeblock->write_codeword;
@@ -741,13 +752,14 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 								if(buffer->end_state == END_OF_BUFFER){
 									PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									PDC_Codeblock_unlock(exception, codeblock);
 									return precinct;
 								}else{
 									PDC_Exception_unset_exception(exception);
 									decoder->data_situation = PDC_WAIT_FOR_DATA;
+									PDC_Codeblock_unlock(exception, codeblock);
 									return precinct;
 								}
-								return precinct;
 							}
 
 							codewordslength_total += codewordlength;
@@ -769,6 +781,7 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 			PDC_Buffer_pop_state(exception, buffer);
 			PDC_Precinct_pop_unlock(exception, precinct);
 			decoder->data_situation = PDC_WAIT_FOR_DATA;
+			PDC_Codeblock_unlock(exception, codeblock);
 			return precinct;
 		}
 
@@ -786,17 +799,18 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 						if(buffer->end_state == END_OF_BUFFER){
 							PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 							decoder->data_situation = PDC_WAIT_FOR_DATA;
+							PDC_Codeblock_unlock(exception, codeblock);
 							return precinct;
 						}else{
 							PDC_Exception_unset_exception(exception);
 							decoder->data_situation = PDC_WAIT_FOR_DATA;
+							PDC_Codeblock_unlock(exception, codeblock);
 							return precinct;
 						}
-						return precinct;
 					}
 					codeblock = subband->codeblocks[pos_codeblock];
 					new_job = PDC_false;
-					if(codeblock->codeblock_inclusion == PDC_true){
+					if(codeblock->layer_inclusion == PDC_true){
 						codeword_list = codeblock->write_codeword;
 						new_job = PDC_true;
 
@@ -813,27 +827,47 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 									if(buffer->end_state == END_OF_BUFFER){
 										PDC_Exception_error(exception, exception, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 										decoder->data_situation = PDC_WAIT_FOR_DATA;
+										PDC_Codeblock_unlock(exception, codeblock);
 										return precinct;
 									}else{
 										PDC_Exception_unset_exception(exception);
 										decoder->data_situation = PDC_WAIT_FOR_DATA;
+										PDC_Codeblock_unlock(exception, codeblock);
 										return precinct;
+									}
+									if(layer_pos == layer_max){
+										codeword_list->codeword->end_state = END_OF_BUFFER;
 									}
 									return precinct;
 								}
 							}
 							codeword_list = codeword_list->next_codedword;
 						}
+						PDC_Worker_add_02(	exception,
+											worker,
+											codeblock,
+											new_job);
+					}else{
+						if(layer_pos == layer_max){
+							codeword_list = codeblock->write_codeword;
+							
+							while(codeword_list != NULL){
+								codeword_list->codeword->end_state = END_OF_BUFFER;
+								codeword_list = codeword_list->next_codedword;
+							}
+
+							PDC_Worker_add_02(	exception,
+												worker,
+												codeblock,
+												new_job);
+						}
+						PDC_Codeblock_unlock(exception, codeblock);
 					}
-					PDC_Worker_add_02(	exception,
-										worker,
-										codeblock,
-										new_job);
 				}
 			}
 		}
 	}
-	PDC_Precinct_print(exception, DEBUG_FILE, precinct, layer_pos);
+	//PDC_Precinct_print(exception, DEBUG_FILE, precinct, layer_pos);
 
 	return precinct;
 }
@@ -896,7 +930,7 @@ PDC_Precinct* PDC_Precinct_decode_package_02(	PDC_Exception *exception,
 	PDC_Subband*	subband;
 	PDC_Codeblock*	codeblock;
 
-	PDC_uint32		write_byte_pos; // write_byte_pos1;
+	PDC_size_t		write_byte_pos; // write_byte_pos1;
 
 	if(precinct->resolution->r == 0){
 		size_subband = 1;
@@ -1135,6 +1169,36 @@ PDC_Precinct* PDC_Precinct_pop_unlock(	PDC_Exception* exception,
 	return precinct;
 }
 
+void PDC_Precinct_print_codeblock_01(PDC_Exception* exception, PDC_Precinct* precinct, FILE *file, int component, int resolution, int n, int m)
+{
+	PDC_uint			pos_subband, size_subband, pos_codeblock, pos_codeblock_x, pos_codeblock_y, size_codeblock_x, size_codeblock_y;
+//	PDC_uint			pos_x, pos_y, size_x;
+	PDC_Subband			*subband;
 
+	PDC_Codeblock		*codeblock;
+	if(precinct->resolution->r == 0){
+		size_subband = 1;
+	}else{
+		size_subband = 3;
+	}
+
+	for(pos_subband = 0; pos_subband < size_subband; pos_subband += 1){
+		subband = precinct->resolution->subband[pos_subband];
+		pos_codeblock = 0;
+		size_codeblock_x = precinct->codeblock_x1;
+		size_codeblock_y = precinct->codeblock_y1;
+		for(pos_codeblock_y = precinct->codeblock_y0; pos_codeblock_y < size_codeblock_y; pos_codeblock_y += 1){
+			for(pos_codeblock_x = precinct->codeblock_x0; pos_codeblock_x < size_codeblock_x; pos_codeblock_x += 1){
+				// pos_x	= pos_codeblock_x - precinct->codeblock_x0;
+				// pos_y	= pos_codeblock_y - precinct->codeblock_y0;
+				// size_x	= precinct->codeblock_x1 - precinct->codeblock_x0;
+				pos_codeblock = PDC_Resolution_get_codeblock_position(exception, precinct->resolution, pos_codeblock_x, pos_codeblock_y);
+				codeblock = subband->codeblocks[pos_codeblock];
+				print_codeblock_02(codeblock,file, component, resolution, n, m);
+			}
+		}
+	}
+
+}
 STOP_C
 

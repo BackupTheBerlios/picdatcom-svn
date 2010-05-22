@@ -62,9 +62,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 	PDC_uint32		I_old;
 
 	PDC_uchar*		buffer;
-	PDC_uint32		length;
-	PDC_uint32		read_byte_pos, read_byte_pos_new;
-	PDC_uint32		write_byte_pos;
+	PDC_size_t		length, read_byte_pos, read_byte_pos_new, write_byte_pos;
 	PDC_uint32		B, B1;
 
 	return_decoder = decoder;
@@ -222,16 +220,8 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 		return_decoder->B			= B;
 		return_decoder->D			= D;
 
-		count += 1;
-		if(uwe_count == 1){
-			fprintf(DEBUG_FILE3,"%6d A= %10d  C = %13d  context = %10d D = %3d \n",count, A, C, context,D);
-		}
+		PDC_Aed_save_01(exception, decoder, context, in_buffer);
 	}
-/*
-	count += 1;
-	if(count >= 2000000 && count < 2500000)
-		fprintf(DEBUG_FILE,"%10d  %7d %4d %9X %9X \n",count, context, D, C, A);
-*/
 	return return_decoder;
 }
 
@@ -277,9 +267,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_initdec_01(	PDC_Exception* exception,
 	PDC_uint32		CT;
 
 	PDC_uchar*		buffer;
-	PDC_uint32		length;
-	PDC_uint32		read_byte_pos, read_byte_pos_new;
-	PDC_uint32		write_byte_pos;
+	PDC_size_t		length, read_byte_pos, read_byte_pos_new, write_byte_pos;
 	PDC_uint32		B, B1;
 
 	buffer			= in_buffer->buffer;
@@ -364,4 +352,36 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_set_I_MPS_01(	PDC_Exception* exception,
 	}
 	return decoder;
 }
+
+struct SAVESTATE
+{
+	unsigned int a;
+	unsigned int c;
+	unsigned int count;
+	unsigned int context;
+};
+
+unsigned int STATECOUNT = 0;
+unsigned int DOIT = 1;
+
+void PDC_Aed_save_01(	PDC_Exception* exception,
+						PDC_Arithmetic_entropy_decoder* decoder,
+						PDC_context context,
+						PDC_Buffer* in_buffer)
+{
+	struct SAVESTATE state;
+	FILE * file;
+
+	if(DOIT == 0 ){
+		state.a			= decoder->a_register;
+		state.c			= decoder->c_register;
+		state.count		= STATECOUNT;
+		state.context	= context;
+		file = fopen("PDC_decoder", "ab");
+		fwrite(&state, sizeof(struct SAVESTATE), 1, file);
+		fclose(file);
+	}
+	STATECOUNT += 1;
+}
+
 STOP_C

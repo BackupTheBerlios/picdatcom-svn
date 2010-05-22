@@ -3415,8 +3415,8 @@ PDC_Transformation_97_decoder* PDC_td_start_v3_horizontal(	PDC_Threadcall *varia
 	PDC_uint in_high_plus					= variable->linestride_float;
 	PDC_uint in_low_start					= 0;
 	PDC_uint in_low_plus					= variable->linestride_float;
-	PDC_uint end_col						= variable->end_col;
-	PDC_uint start_col						= variable->start_col;
+	PDC_int end_col							= variable->end_col;
+	PDC_int start_col						= variable->start_col;
 	//PDC_uint high_stride					= variable->linestride_float;
 	//PDC_uint low_stride						= variable->linestride_float;
 	PDC_uint out_stride						= variable->linestride_float;

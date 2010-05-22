@@ -28,15 +28,15 @@ FILE* DEBUG_FILE;
 FILE* DEBUG_FILE2;
 FILE* DEBUG_FILE3;
 
+
 /*
  *
  */
 DLL PDC_Decoder* new_PDC_Decoder(PDC_Exception* exception)
 {
-	DEBUG_FILE 	= fopen("debugnew_file1.txt", "w");
-
-
 	PDC_Decoder* decoder = NULL;
+
+	//DEBUG_FILE 	= fopen("debugnew_file1.txt", "w");
 
 	decoder = malloc(sizeof(PDC_Decoder));
 	if(decoder == NULL){
@@ -124,8 +124,8 @@ DLL PDC_Decoder* new_PDC_Decoder_02(const char *filepath)
 	PDC_Decoder	*decoder			= NULL;
 	PDC_Exception *exception		= NULL;
 	FILE *fp						= NULL;
-	unsigned int read_byte			= 0;
-	unsigned int data_read_plus	= 1048576;
+	PDC_size_t read_byte			= 0;
+	PDC_size_t data_read_plus	= 1048576;
 	unsigned char*	data			= NULL;
 
 
@@ -207,7 +207,7 @@ DLL PDC_Decoder* new_PDC_Decoder_03(const unsigned char *byte_stream, unsigned i
 DLL PDC_Decoder* PDC_Decoder_add_Data_01(	PDC_Exception* exception,
 											PDC_Decoder* decoder,
 											const PDC_uchar* data,
-											PDC_uint32 length,
+											PDC_size_t length,
 											PDC_DECODER_DATA_END end)
 {
 	if(decoder->in_data->end_state != END_OF_BUFFER && data != NULL && length != 0 && decoder != NULL){
@@ -327,7 +327,7 @@ DLL PDC_Decoder* delete_PDC_Decoder(PDC_Exception* exception, PDC_Decoder* decod
 
 	}
 
-	fclose(DEBUG_FILE);
+	//fclose(DEBUG_FILE);
 	return NULL;
 }
 

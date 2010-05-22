@@ -140,7 +140,7 @@ PDC_uint PDC_floor_log2( PDC_uint in)
 
 PDC_int PDC_max_thread()
 {
-	return 4;
+	return 1;
 }
 
 STOP_C

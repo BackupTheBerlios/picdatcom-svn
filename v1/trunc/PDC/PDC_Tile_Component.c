@@ -28,7 +28,7 @@ START_C
  */
 PDC_Tile_Component* new_PDC_Tile_Component_01(	PDC_Exception* exception,
 												PDC_Tile* tile,
-												PDC_uint32 pos)
+												PDC_int pos)
 {
 	PDC_Tile_Component*			tile_component;
 	PDC_Picture*				picture;
@@ -58,6 +58,7 @@ PDC_Tile_Component* new_PDC_Tile_Component_01(	PDC_Exception* exception,
 		PDC_Exception_error( exception, NULL, PDC_EXCEPTION_OUT_OF_MEMORY, __LINE__, __FILE__);
 		return NULL;
 	}
+	tile_component->pos					= pos;
 
 	tile_component->tile_memory1		= NULL;
 	tile_component->tile_memory2		= NULL;

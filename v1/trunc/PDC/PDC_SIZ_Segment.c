@@ -109,7 +109,8 @@ PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer(	PDC_Exception* exception,
 												PDC_SIZ_Segment* siz_segment,
 												PDC_Buffer* buffer)
 {
-	PDC_uint32 read_byte_pos, csiz_pos_delete;
+	PDC_uint32  csiz_pos_delete;
+	PDC_size_t	read_byte_pos;
 	PDC_uint16 csiz_pos;
 	PDC_SIZ_Segment_Componente* siz_segment_com;
 
@@ -197,14 +198,15 @@ PDC_SIZ_Segment* PDC_SIZ_Segment_read_buffer_02(	PDC_Exception* exception,
 													PDC_Decoder* decoder)
 {
 	PDC_SIZ_Segment* siz_segment;
-	PDC_uint32 read_byte_pos, csiz_pos_delete;
+	PDC_size_t read_byte_pos;
+	PDC_uint32 csiz_pos_delete;
 	PDC_uint16 csiz_pos;
 	PDC_SIZ_Segment_Componente* siz_segment_com;
 
-	siz_segment = decoder->siz_segment;
+	siz_segment		= decoder->siz_segment;
+	read_byte_pos	= buffer->read_byte_pos;
 
-
-	if((PDC_uint32)(siz_segment->Csiz * 3) > (buffer->write_byte_pos - buffer->read_byte_pos)){
+	if((PDC_size_t)(siz_segment->Csiz * 3) > (buffer->write_byte_pos - buffer->read_byte_pos)){
 		if(buffer->end_state == END_OF_BUFFER){
 			PDC_Exception_error(exception, NULL, PDC_EXCEPTION_NO_CODE_FOUND, __LINE__, __FILE__);
 			decoder->data_situation = PDC_WAIT_FOR_DATA;

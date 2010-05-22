@@ -180,10 +180,12 @@ START_C
 		pthread_mutex_t		*in_work;
 		PDC_bool			has_job;
 		pthread_t			current_thread;
+		pthread_t			root_thread;
 
 		// Only for testing;
 		PDC_bool		layer_inclusion;
-		PDC_uint		number_of_codingpasses, number_of_codeword_segment, codewordlength;;
+		PDC_uint		number_of_codingpasses, number_of_codeword_segment, codewordlength;
+		PDC_uint		*extra1, *extra2;
 	};
 
 	struct str_PDC_Codeword_List{
@@ -325,6 +327,12 @@ START_C
 	 */
 	PDC_Codeblock* PDC_Codeblock_unlock(PDC_Exception* exception, PDC_Codeblock* codeblock);
 
+	/*
+	 *
+	 */
+	PDC_Codeblock* PDC_Codeblock_set_false_has_job(PDC_Exception* exception, PDC_Codeblock* codeblock);
 
+	void print_codeblock_02(PDC_Codeblock *codeblock,FILE *file, int component, int resolution, int n, int m);
+	void set_extra(PDC_Codeblock *codeblock, int pos, int layer,int codingpasstype, int extra, PDC_Arithmetic_entropy_decoder *decoder);
 STOP_C
 #endif

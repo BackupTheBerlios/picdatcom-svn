@@ -107,8 +107,8 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_encode_01(	PDC_Exception* exception,
 	PDC_uchar		B;
 
 	PDC_uchar*		buffer;
-	PDC_uint32		length;
-	PDC_uint32		write_byte_pos;
+	PDC_size_t		length;
+	PDC_size_t		write_byte_pos;
 
 	sym_index_max	= size;
 	MPS				= return_encoder->MPS;
@@ -343,8 +343,8 @@ PDC_Arithmetic_entropy_encoder* PDC_Aee_flush_01(	PDC_Exception* exception,
 	PDC_uchar	B;
 
 	PDC_uchar*		buffer;
-	PDC_uint32		length;
-	PDC_uint32		write_byte_pos;
+	PDC_size_t		length;
+	PDC_size_t		write_byte_pos;
 
 	A	= return_encoder->a_register;
 	C	= return_encoder->c_register;

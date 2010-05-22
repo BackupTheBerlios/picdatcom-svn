@@ -219,6 +219,7 @@ START_C
 											PDC_uint resolution_pos,
 											PDC_uint precinct_pos,
 											PDC_uint layer_pos,
+											PDC_uint layer_max,
 											PDC_Decoder* decoder);
 	
 	/*
@@ -229,6 +230,10 @@ START_C
 												PDC_COD_Segment* cod_segment,
 												PDC_Buffer* buffer,
 												PDC_Decoder* decoder);
+
+	PDC_Tile* PDC_Tile_print_Packageheader_02(	PDC_Exception* exception,
+												PDC_Tile* tile,
+												PDC_COD_Segment* cod_segment);
 
 STOP_C
 #endif
