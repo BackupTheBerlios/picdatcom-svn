@@ -25,12 +25,14 @@ START_C
 #define MPS_I_LENGTH 19
 #define RESIZE_BUFFER 10
 
+/*
 extern FILE* DEBUG_FILE;
 extern FILE* DEBUG_FILE3;
 extern int uwe_count;
 
-unsigned int count = 0;
 
+unsigned int count = 0;
+*/
 
 extern PDC_uint32 PDC_A_Encoder_qe[];
 extern PDC_uint32 PDC_A_Encoder_switcher[];
@@ -58,7 +60,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 	PDC_uint32		CT;
 	PDC_decision*	MPS;
 	PDC_decision	MPS_old;
-	PDC_uint32*	I;
+	PDC_uint32*		I;
 	PDC_uint32		I_old;
 
 	PDC_uchar*		buffer;
@@ -220,7 +222,7 @@ PDC_Arithmetic_entropy_decoder* PDC_Aed_decode_01(	PDC_Exception* exception,
 		return_decoder->B			= B;
 		return_decoder->D			= D;
 
-		PDC_Aed_save_01(exception, decoder, context, in_buffer);
+		//PDC_Aed_save_01(exception, decoder, context, in_buffer);
 	}
 	return return_decoder;
 }
@@ -359,7 +361,12 @@ struct SAVESTATE
 	unsigned int c;
 	unsigned int count;
 	unsigned int context;
+	unsigned int MPS[MPS_I_LENGTH];
+	unsigned int I[MPS_I_LENGTH];
+		
+		
 };
+
 
 unsigned int STATECOUNT = 0;
 unsigned int DOIT = 1;
@@ -371,17 +378,23 @@ void PDC_Aed_save_01(	PDC_Exception* exception,
 {
 	struct SAVESTATE state;
 	FILE * file;
+	int i;
 
 	if(DOIT == 0 ){
 		state.a			= decoder->a_register;
 		state.c			= decoder->c_register;
 		state.count		= STATECOUNT;
 		state.context	= context;
+		for(i = 0; i < MPS_I_LENGTH; i += 1){
+			state.MPS[i]	= decoder->MPS[i];
+			state.I[i]		= decoder->I[i];
+		}
 		file = fopen("PDC_decoder", "ab");
 		fwrite(&state, sizeof(struct SAVESTATE), 1, file);
 		fclose(file);
+		STATECOUNT += 1;
 	}
-	STATECOUNT += 1;
+	
 }
 
 STOP_C

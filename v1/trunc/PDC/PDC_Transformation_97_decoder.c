@@ -24,9 +24,10 @@
 
 START_C
 
-
+/*
 extern FILE* DEBUG_FILE;
 extern FILE* DEBUG_FILE2;
+*/
 
 #define d_ALPHA	-1.586134342f
 #define d_BETA	-0.05298011854f
@@ -250,7 +251,7 @@ PDC_Transformation_97_decoder* delete_PDC_Transformation_97_decoder(	PDC_Excepti
 }
 
 
-extern int uwe_count;
+//extern int uwe_count;
 
 /*
  *
@@ -2750,6 +2751,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2_sse2(	PDC_Exception* exception,
 			}
 		}
 
+		/*
 		if(uwe_count == 0){
 			for(i_help1 = 0; i_help1 < greensize; i_help1 += 1){
 				fprintf(DEBUG_FILE2,"%6d green   %13.2f \n",(int)i_help1, green2[i_help1 * 4]);
@@ -2760,6 +2762,7 @@ PDC_Transformation_97_decoder* PDC_td_start_v2_sse2(	PDC_Exception* exception,
 			}
 			uwe_count += 1;
 		}
+		*/
 
 		__asm__ volatile (
 	"	mov		ecx,	%2					/* 			*/" "\n\t"

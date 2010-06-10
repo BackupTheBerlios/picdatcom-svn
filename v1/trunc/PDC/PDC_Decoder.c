@@ -24,10 +24,11 @@
 
 START_C
 
+	/*
 FILE* DEBUG_FILE;
 FILE* DEBUG_FILE2;
 FILE* DEBUG_FILE3;
-
+*/
 
 /*
  *

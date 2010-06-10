@@ -22,8 +22,10 @@
 
 START_C
 
+	/*
 extern FILE* DEBUG_FILE;
 extern FILE* DEBUG_FILE2;
+*/
 /*
  *
  */
@@ -407,7 +409,7 @@ PDC_Resolution* PDC_Resolution_inverse_quantization(PDC_Exception* exception,
 }
 
 
-int uwe_count = 0;
+//int uwe_count = 0;
 
 /*
  *
@@ -647,6 +649,21 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v2(	PDC_Exception* exce
 	return resolution;
 }
 
+void printData(float *data, int width, int height, int linefeed)
+{
+	FILE *file;
+	int posY;
+	float *pointer;
+
+	file = fopen("PDC_trans", "ab");
+	fwrite(&width, sizeof(int), 1, file);
+	fwrite(&height, sizeof(int), 1, file);
+	for(posY = 0; posY < height; posY += 1){
+		pointer = data + (posY * linefeed);
+		fwrite(pointer,sizeof(float), width, file);
+	} 
+	fclose(file);
+}
 
 /*
  *
@@ -659,6 +676,7 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v3(	PDC_Exception* exce
 	PDC_bool	evenhl, evenvl, evenhr, evenvr;
 	PDC_int		max_threads, pos_thread;
 	PDC_Threadcall *variable;
+	float *data;
 
 	line_stride_float = resolution->tile_component->line_stride_float;
 
@@ -746,8 +764,18 @@ PDC_Resolution* PDC_Resolution_inverse_transformation_97_v3(	PDC_Exception* exce
 	}
 
 	for(pos_thread = 0; pos_thread < max_threads; pos_thread += 1){
-		pthread_join(variable->pthread_id, NULL);
+		pthread_join(resolution->tile_component->threadcalls[pos_thread]->pthread_id, NULL);
 	}
+	data = resolution->tile_component->tile_memory2;
+	if(evenhl){
+		data -= 1;
+	}
+
+	if(evenvl){
+		data -= resolution->tile_component->line_stride_float;
+	}
+
+	printData(data, out_size1, out_size2, resolution->tile_component->line_stride_float);
 
 /*
 	stop 		= resolution->subband[0]->my1 - resolution->subband[0]->my0;
@@ -1361,7 +1389,7 @@ void *PDC_threadcall_func(void *in)
 
 
 
-		if(variable->evenhl){
+		if(variable->evenvl){
 			variable->sub1_data -= variable->linestride_float;
 			variable->out_data1 -= variable->linestride_float;
 		}
@@ -1394,32 +1422,6 @@ void *PDC_threadcall_func(void *in)
 		extend_vertical_high(variable);
 		PDC_td_start_v3_vertical(variable);
 	}
-
-	/*
-	if(uwe_count == 0 ){
-		int posx, posy, endx, endy;
-		endx = resolution->mx1 - resolution->mx0;
-		endy = resolution->my1 - resolution->my0;
-		out_data1	= resolution->tile_component->tile_memory2;
-
-		if(variable->evenvl){
-			out_data1 -= 1;
-		}
-
-		if(variable->evenhl){
-			out_data1 -= variable->linestride_float;
-		}
-
-		// fprintf(DEBUG_FILE,"endx = %d endy = %d \n", endx, endy);
-		for(posy = 0; posy < endy; posy += 1){
-			out_data2 = out_data1 + (posy * variable->linestride_float);
-			for(posx = 0; posx < endx; posx += 1){
-				fprintf(DEBUG_FILE2," %12.6f ", out_data2[posx]);
-			}
-			fprintf(DEBUG_FILE2,"\n");
-		}
-	}
-	*/
 
 	/*
 	 * All threads have to sync here.

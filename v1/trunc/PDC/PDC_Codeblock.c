@@ -23,10 +23,10 @@
 START_C
 
 
-extern FILE* DEBUG_FILE;
+//extern FILE* DEBUG_FILE;
 
-extern FILE* DEBUG_FILE2;
-extern int uwe_count;
+//extern FILE* DEBUG_FILE2;
+//extern int uwe_count;
 
 /*
  * H0 H1 V0 V1 D0 D1 D2 D3
@@ -689,7 +689,7 @@ PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode( PDC_Exception *ex
 
 
 struct daten{
-	int size, component, resolution, n, m, x, y;
+	int size, component, resolution, n, m, x, y, subband;
 } ;
 
 void print_codeblock_02(PDC_Codeblock *codeblock,FILE *file, int component, int resolution, int n, int m)
@@ -705,13 +705,22 @@ void print_codeblock_02(PDC_Codeblock *codeblock,FILE *file, int component, int 
 	size_base = PDC_i_ceiling(sizex, 8);
 
 	// fprintf(file,"%d%d%d%d%d%d%d",28 + sizex * sizey * 4; component, resolution, n, m, sizex, sizey);
-	PDC.size		= 28 + sizex * sizey * 4 * 3;
+	PDC.size		= 32 + sizex * sizey * 4 * 3;
 	PDC.component	= component;
 	PDC.n			= n;
 	PDC.m			= m;
 	PDC.x			= sizex;
 	PDC.y			= sizey;
 	PDC.resolution	= resolution;
+	if(codeblock->subband->type == SUBBAND_LL){
+		PDC.subband = 0;
+	}else if(codeblock->subband->type == SUBBAND_HL){
+		PDC.subband = 1;
+	}else if(codeblock->subband->type == SUBBAND_LH){
+		PDC.subband = 2;
+	}else if(codeblock->subband->type == SUBBAND_HH){
+		PDC.subband = 3;
+	}
 
 	fwrite(&PDC, sizeof(struct daten), 1, file);
 
@@ -741,6 +750,7 @@ void print_codeblock_02(PDC_Codeblock *codeblock,FILE *file, int component, int 
 	}
 }
 
+/*
 void print_codeblock(PDC_Codeblock *codeblock, int count){
 	int posx, posy, sizex, sizey, size_base, pos_base, pos;
 	PDC_uint sign, help, pos_street;
@@ -824,9 +834,9 @@ void print_codeblock(PDC_Codeblock *codeblock, int count){
 }
 
 #define UWE_COUNT_BASE 16
+*/
 
-
-extern unsigned int DOIT;
+//extern unsigned int DOIT;
 /*
  *
  */
@@ -837,11 +847,17 @@ PDC_Codeblock *PDC_Codeblock_coefficient_bit_moddeling_decode_01( PDC_Exception 
 
 	codeword_list			= codeblock->write_codeword;
 
-	if(codeblock->subband->resolution->r == 0 && codeblock->subband->resolution->tile_component->pos == 0){
+	/*
+	if(	codeblock->subband->resolution->r == 3 && 
+		codeblock->subband->resolution->tile_component->pos == 0 && 
+		codeblock->subband->type == SUBBAND_HH &&
+		codeblock->m == 0 &&
+		codeblock->n == 1){
 		DOIT = 0;
 	}else{
 		DOIT = 1;
 	}
+	*/
 
 	if(codeword_list != NULL){
 		done_codingpasses		= codeword_list->coding_pass_next;
@@ -6382,13 +6398,6 @@ PDC_Codeblock* PDC_Codeblock_set_End_of_Buffer(PDC_Exception* exception, PDC_Cod
 }
 
 
-#ifdef _DEBUG_OUT
-	int g = 0;
-	#define OUTPUT(float_wert) if(g++ < 50000000)fprintf(DEBUG_FILE,"%13f \n",float_wert);
-#else
-	#define OUTPUT(float_wert)
-#endif
-
 /*
  *
  */
@@ -6471,6 +6480,7 @@ PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_
 				break;
 			case SUBBAND_UNKNOW:
 				PDC_Exception_error( exception, NULL, PDC_EXCEPTION_UNKNOW_CODE, __LINE__, __FILE__);
+				return codeblock;
 				break;
 		}
 		Mb = G + eb - 1;
@@ -6522,7 +6532,6 @@ PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_
 					}else{
 						mOut[mPos] = .0f;
 					}
-					OUTPUT(mOut[mPos])
 				}
 			}
 			#undef VALUE
@@ -6554,7 +6563,7 @@ PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_
 					}else{
 						mOut[mPos] = .0f;
 					}
-					OUTPUT(mOut[mPos])
+					
 				}
 			}
 			#undef VALUE
@@ -6586,7 +6595,6 @@ PDC_Codeblock* PDC_Codeblock_inverse_quantization(PDC_Exception* exception, PDC_
 					}else{
 						mOut[mPos] = .0f;
 					}
-					OUTPUT(mOut[mPos])
 				}
 			}
 			#undef VALUE

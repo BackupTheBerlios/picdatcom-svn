@@ -488,9 +488,12 @@ PDC_Tile* PDC_Tile_read_Packageheader_02(	PDC_Exception* exception,
 	}
 	set_PDC_Worker_state(exception, tile->worker, NO_MORE_CODEBLOCKS_EXCPECTED);
 	PDC_Worker_wait_to_finish(exception, tile->worker);
+
+	/*
 	PDC_Tile_print_Packageheader_02(	exception,
 										tile,
 										cod_segment);
+	*/
 	return tile;
 }
 

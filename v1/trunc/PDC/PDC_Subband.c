@@ -219,6 +219,8 @@ PDC_Subband* new_PDC_Subband_02(PDC_Exception* exception, SUBBAND_TYPE type, PDC
 				delete_PDC_Subband(exception, subband);
 				return NULL;
 			}
+			subband->codeblocks[pos]->m = pos_y - resolution->codeblock_y0;
+			subband->codeblocks[pos]->n	= pos_x - resolution->codeblock_x0;
 			pos += 1;
 		}
 	}
@@ -239,6 +241,7 @@ void PDC_Subband_print(PDC_Exception *exception, PDC_Subband *subband, FILE *fil
 								resolution->r, 
 								pos_x - resolution->codeblock_x0, 
 								pos_y - resolution->codeblock_y0);
+			pos += 1;
 		}
 	}
 

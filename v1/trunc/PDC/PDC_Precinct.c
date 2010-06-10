@@ -22,8 +22,6 @@
 
 START_C
 
-//extern FILE* DEBUG_FILE;
-
 /*
  *
  */
@@ -835,11 +833,11 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 										PDC_Codeblock_unlock(exception, codeblock);
 										return precinct;
 									}
-									if(layer_pos == layer_max){
-										codeword_list->codeword->end_state = END_OF_BUFFER;
-									}
 									return precinct;
 								}
+							}
+							if(layer_pos == layer_max){
+								codeword_list->codeword->end_state = END_OF_BUFFER;
 							}
 							codeword_list = codeword_list->next_codedword;
 						}
@@ -859,7 +857,7 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 							PDC_Worker_add_02(	exception,
 												worker,
 												codeblock,
-												new_job);
+												PDC_true);
 						}
 						PDC_Codeblock_unlock(exception, codeblock);
 					}
@@ -867,8 +865,6 @@ PDC_Precinct* PDC_Precinct_read_package_header_02(	PDC_Exception* exception,
 			}
 		}
 	}
-	//PDC_Precinct_print(exception, DEBUG_FILE, precinct, layer_pos);
-
 	return precinct;
 }
 

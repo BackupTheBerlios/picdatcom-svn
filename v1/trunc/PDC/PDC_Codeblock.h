@@ -186,6 +186,7 @@ START_C
 		PDC_bool		layer_inclusion;
 		PDC_uint		number_of_codingpasses, number_of_codeword_segment, codewordlength;
 		PDC_uint		*extra1, *extra2;
+		int		n, m;
 	};
 
 	struct str_PDC_Codeword_List{
